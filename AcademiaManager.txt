@@ -1,0 +1,174 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class AcademiaManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		AcademiaManager.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	public void clickedCell(GameObject thisCell)
+	{
+		if (thisCell.GetComponent<AcademiaCell>().thisAcademia != this.selectedCell)
+		{
+			this.selectedCell = thisCell.GetComponent<AcademiaCell>().thisAcademia;
+			RectTransform component = thisCell.gameObject.GetComponent<RectTransform>();
+			RectTransform component2 = this.selectedBg.GetComponent<RectTransform>();
+			component2.anchoredPosition = new Vector2(component2.anchoredPosition.x, component.anchoredPosition.y + 2f);
+			this.selectedBg.SetActive(true);
+		}
+		else
+		{
+			this.selectedCell = null;
+			this.selectedBg.SetActive(false);
+		}
+		this.updatePanel();
+	}
+
+	public void updatePanel()
+	{
+		if (this.selectedCell == null)
+		{
+			this.noneSelectedPanel.SetActive(true);
+			return;
+		}
+		this.noneSelectedPanel.SetActive(false);
+		int num = this.selectedCell.bookNum - 1;
+		this.icon.sprite = this.listAcademiaIcons[num];
+		this.title.text = this.listAcademiaTitles[num];
+		this.pagesText.text = "Total Pages: " + this.selectedCell.totalPages.ToString("n0") + "\nCompleted Tomes: " + this.selectedCell.totalBooks.ToString("n0");
+		this.bonusText.text = "+" + UIManager.Instance.convertNumberFormat(this.selectedCell.totalBonus.ToString("0")) + "% " + this.listAcademiaBonusText[num];
+		this.nextSlider.value = (float)(this.selectedCell.totalPages - this.selectedCell.lastBookPages) / (float)(this.selectedCell.nextBookPages - this.selectedCell.lastBookPages);
+		if (this.nextSlider.value >= 1f)
+		{
+			this.nextSlider.value = 1f;
+		}
+		this.nextPagesText.text = string.Concat(new object[]
+		{
+			this.selectedCell.totalPages - this.selectedCell.lastBookPages,
+			" / ",
+			this.selectedCell.nextBookPages - this.selectedCell.lastBookPages,
+			" pages"
+		});
+		int num2 = this.selectedCell.totalBooks + 1;
+		int num3 = 10;
+		if (num == 2 || num == 4)
+		{
+			num3 = 5;
+		}
+		int num4 = num2 * num2 * num3;
+		this.nextBonusText.text = "+" + UIManager.Instance.convertNumberFormat(num4.ToString("0")) + "% " + this.listAcademiaBonusText[num];
+	}
+
+	public void getNewAcademiaPages(int waveNum)
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.nextWaveClaimedAcademia += 5;
+		int num = UnityEngine.Random.Range(0, 6);
+		int num2 = 2;
+		if (num == 2 || num == 4)
+		{
+			num2 = 1;
+		}
+		bool flag = false;
+		if (waveNum > GameManager.Instance.highestAcademiaWave)
+		{
+			num2 *= 5;
+			GameManager.Instance.highestAcademiaWave = waveNum;
+			flag = true;
+		}
+		int num3 = 1;
+		int num4 = 1 + GameManager.Instance.tech23Lvl + GameManager.Instance.badge15Lvl * 2;
+		int num5 = UnityEngine.Random.Range(0, 101);
+		if (num5 < num4)
+		{
+			num3 = 5 + GameManager.Instance.badge23Lvl;
+			num2 *= num3;
+			if (GameManager.Instance.q6Num == 2)
+			{
+				GameManager.Instance.q6CurrVal++;
+				GameManager.Instance.checkQuestStatus();
+			}
+		}
+		AchievementManager.Instance.listAch[14].currAmt += (double)num3;
+		AchievementManager.Instance.checkIfAchComplete(14);
+		this.listAcademia[num].totalPages += num3;
+		this.listAcademia[num].totalBonus += num2;
+		if (flag)
+		{
+			if (num3 < 5)
+			{
+				NotificationsMenu.Instance.createNotif(3, string.Empty, string.Empty, string.Empty, 0, this.listAcademiaTitles[num], num2);
+			}
+			else
+			{
+				NotificationsMenu.Instance.createNotif(5, string.Empty, string.Empty, string.Empty, 0, this.listAcademiaTitles[num], num2);
+			}
+		}
+		else if (num3 < 5)
+		{
+			NotificationsMenu.Instance.createNotif(4, string.Empty, string.Empty, string.Empty, 0, this.listAcademiaTitles[num], num2);
+		}
+		else
+		{
+			NotificationsMenu.Instance.createNotif(6, string.Empty, string.Empty, string.Empty, 0, this.listAcademiaTitles[num], num2);
+		}
+		if (this.listAcademia[num].totalPages >= this.listAcademia[num].nextBookPages)
+		{
+			this.listAcademia[num].totalBooks++;
+			int num6 = 10;
+			if (num == 2 || num == 4)
+			{
+				num6 = 5;
+			}
+			int num7 = this.listAcademia[num].totalBooks * this.listAcademia[num].totalBooks * num6;
+			this.listAcademia[num].totalBonus += num7;
+			this.listAcademia[num].lastBookPages = this.listAcademia[num].nextBookPages;
+			this.listAcademia[num].nextBookPages += (this.listAcademia[num].totalBooks + 1) * 5;
+			NotificationsMenu.Instance.createNotif(7, string.Empty, string.Empty, string.Empty, 0, this.listAcademiaTitles[num], num7);
+		}
+		UIManager.Instance.updAggStats();
+	}
+
+	private void Update()
+	{
+	}
+
+	public static AcademiaManager Instance;
+
+	public Academia selectedCell;
+
+	public GameObject selectedBg;
+
+	public GameObject noneSelectedPanel;
+
+	public Image icon;
+
+	public Text title;
+
+	public Text pagesText;
+
+	public Text bonusText;
+
+	public Slider nextSlider;
+
+	public Text nextPagesText;
+
+	public Text nextBonusText;
+
+	public List<Academia> listAcademia;
+
+	public List<string> listAcademiaTitles;
+
+	public List<Sprite> listAcademiaIcons;
+
+	public List<string> listAcademiaBonusText;
+}

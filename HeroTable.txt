@@ -1,0 +1,261 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HeroTable : MonoBehaviour
+{
+	private void Awake()
+	{
+		HeroTable.Instance = this;
+	}
+
+	private void Start()
+	{
+		this.updateTable();
+	}
+
+	private void OnEnable()
+	{
+		this.updateTable();
+	}
+
+	public void updatePrestigeButton()
+	{
+		if (GameManager.Instance.enemyWaveNum <= GameManager.Instance.nextPrestigeWave)
+		{
+			UIManager.Instance.changeButtonColorV2(this.prestigeButton, "grey", true);
+			this.prestigeButton.GetComponent<Button>().enabled = false;
+			this.prestigeButtonWaveText.text = "Wave " + GameManager.Instance.nextPrestigeWave + "\nRequired";
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.prestigeButton, "yellow", true);
+			this.prestigeButton.GetComponent<Button>().enabled = true;
+			this.prestigeButtonWaveText.text = "Prestige!";
+		}
+		this.savedWave = GameManager.Instance.enemyWaveNum;
+	}
+
+	public void clickedLvlMultButton()
+	{
+		if (this.lvlMultID == 1)
+		{
+			this.lvlMultID = 2;
+			this.heroMenuLvlMultText.text = "Level x10";
+		}
+		else if (this.lvlMultID == 2)
+		{
+			this.lvlMultID = 3;
+			this.heroMenuLvlMultText.text = "Level x100";
+		}
+		else if (this.lvlMultID == 3)
+		{
+			this.lvlMultID = 4;
+			this.heroMenuLvlMultText.text = "Level xMax";
+		}
+		else if (this.lvlMultID == 4)
+		{
+			this.lvlMultID = 1;
+			this.heroMenuLvlMultText.text = "Level x1";
+		}
+	}
+
+	public void updateTable()
+	{
+		this.updatePrestigeButton();
+		float num = -20f;
+		for (int i = 0; i < this.listHeroCells.Count; i++)
+		{
+			GameObject gameObject = this.listHeroCells[i];
+			Hero thisHero = gameObject.GetComponent<HeroCell>().thisHero;
+			if (thisHero.isActiveHero)
+			{
+				num -= 130f;
+				RectTransform component = gameObject.GetComponent<RectTransform>();
+				component.anchoredPosition = new Vector2(component.anchoredPosition.x, num);
+				gameObject.SetActive(true);
+				if (thisHero == UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero)
+				{
+					RectTransform component2 = this.selectedCellBg.GetComponent<RectTransform>();
+					component2.anchoredPosition = new Vector2(component2.anchoredPosition.x, component.anchoredPosition.y + 2f);
+					this.selectedCellBg.SetActive(true);
+				}
+			}
+		}
+		num -= 135f;
+		RectTransform component3 = this.otherHeroesTitlePanel.GetComponent<RectTransform>();
+		component3.anchoredPosition = new Vector2(component3.anchoredPosition.x, num);
+		num -= 40f;
+		for (int j = this.listHeroCells.Count - 1; j >= 0; j--)
+		{
+			GameObject gameObject2 = this.listHeroCells[j];
+			Hero thisHero2 = gameObject2.GetComponent<HeroCell>().thisHero;
+			if (!thisHero2.isActiveHero)
+			{
+				if (this.shouldDisplayHero(thisHero2))
+				{
+					RectTransform component4 = gameObject2.GetComponent<RectTransform>();
+					component4.anchoredPosition = new Vector2(component4.anchoredPosition.x, num);
+					num -= 130f;
+					gameObject2.SetActive(true);
+					if (thisHero2 == UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero)
+					{
+						RectTransform component5 = this.selectedCellBg.GetComponent<RectTransform>();
+						component5.anchoredPosition = new Vector2(component5.anchoredPosition.x, component4.anchoredPosition.y + 2f);
+						this.selectedCellBg.SetActive(true);
+					}
+				}
+				else
+				{
+					gameObject2.SetActive(false);
+				}
+			}
+		}
+		RectTransform component6 = this.tableContent.GetComponent<RectTransform>();
+		component6.sizeDelta = new Vector2(component6.sizeDelta.x, num * -1f);
+		if (UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero == null)
+		{
+			this.selectedCellBg.SetActive(false);
+		}
+		if (UIManager.Instance.onTutNum == 5)
+		{
+			UIManager.Instance.tutLvlUpButtonParent = UIManager.Instance.tutLvlUpButton.transform.parent.gameObject;
+			UIManager.Instance.tutLvlUpButton.transform.SetParent(UIManager.Instance.tutv2Bg.transform, true);
+		}
+	}
+
+	public bool shouldDisplayHero(Hero thisHero)
+	{
+		if (thisHero.level > 0)
+		{
+			return true;
+		}
+		Hero hero;
+		if (thisHero.tier <= 32)
+		{
+			hero = HeroManager.Instance.heroList[thisHero.tier - 2];
+		}
+		else
+		{
+			hero = HeroManager.Instance.heroList[31];
+		}
+		return hero.level > 0;
+	}
+
+	public void clickedBuyMaxActiveButton()
+	{
+		int count = GameManager.Instance.activeHeroes.Count;
+		double num = GameManager.Instance.goldAmt / (double)count;
+		num = Math.Round(num, 0);
+		for (int i = 0; i < this.listHeroCells.Count; i++)
+		{
+			GameObject gameObject = this.listHeroCells[i];
+			if (gameObject.activeSelf)
+			{
+				Hero thisHero = gameObject.GetComponent<HeroCell>().thisHero;
+				if (thisHero.isActiveHero)
+				{
+					gameObject.GetComponent<HeroCell>().clickedLevelMaxButton(num);
+				}
+			}
+		}
+		for (int j = this.listHeroCells.Count - 1; j >= 0; j--)
+		{
+			GameObject gameObject2 = this.listHeroCells[j];
+			if (gameObject2.activeSelf)
+			{
+				Hero thisHero2 = gameObject2.GetComponent<HeroCell>().thisHero;
+				if (thisHero2.isActiveHero)
+				{
+					gameObject2.GetComponent<HeroCell>().clickedLevelMaxButton(GameManager.Instance.goldAmt);
+				}
+			}
+		}
+	}
+
+	public void clickedBuyMaxOthersButton()
+	{
+		for (int i = 0; i < this.listHeroCells.Count; i++)
+		{
+			GameObject gameObject = this.listHeroCells[i];
+			Hero thisHero = gameObject.GetComponent<HeroCell>().thisHero;
+			if (thisHero.level == 0 && thisHero.tier <= 32)
+			{
+				if (GameManager.Instance.goldAmt < thisHero.lvlUpCost)
+				{
+					break;
+				}
+				gameObject.GetComponent<HeroCell>().clickedEmployButton(false);
+			}
+		}
+		int num = 0;
+		for (int j = 0; j < this.listHeroCells.Count; j++)
+		{
+			GameObject gameObject2 = this.listHeroCells[j];
+			if (gameObject2.activeSelf)
+			{
+				Hero thisHero2 = gameObject2.GetComponent<HeroCell>().thisHero;
+				if (!thisHero2.isActiveHero && thisHero2.level > 0)
+				{
+					num++;
+				}
+			}
+		}
+		double num2 = GameManager.Instance.goldAmt / (double)num;
+		num2 = Math.Round(num2, 0);
+		for (int k = 0; k < this.listHeroCells.Count; k++)
+		{
+			GameObject gameObject3 = this.listHeroCells[k];
+			if (gameObject3.activeSelf)
+			{
+				Hero thisHero3 = gameObject3.GetComponent<HeroCell>().thisHero;
+				if (!thisHero3.isActiveHero && thisHero3.level > 0)
+				{
+					gameObject3.GetComponent<HeroCell>().clickedLevelMaxButton(num2);
+				}
+			}
+		}
+		for (int l = this.listHeroCells.Count - 1; l >= 0; l--)
+		{
+			GameObject gameObject4 = this.listHeroCells[l];
+			if (gameObject4.activeSelf)
+			{
+				Hero thisHero4 = gameObject4.GetComponent<HeroCell>().thisHero;
+				if (!thisHero4.isActiveHero && thisHero4.level > 0)
+				{
+					gameObject4.GetComponent<HeroCell>().clickedLevelMaxButton(GameManager.Instance.goldAmt);
+				}
+			}
+		}
+	}
+
+	private void Update()
+	{
+		if (this.savedWave != GameManager.Instance.enemyWaveNum)
+		{
+			this.updatePrestigeButton();
+		}
+	}
+
+	public static HeroTable Instance;
+
+	public GameObject prestigeButton;
+
+	public Text prestigeButtonWaveText;
+
+	public GameObject otherHeroesTitlePanel;
+
+	public List<GameObject> listHeroCells;
+
+	public GameObject tableContent;
+
+	public GameObject selectedCellBg;
+
+	public int lvlMultID = 1;
+
+	public Text heroMenuLvlMultText;
+
+	private int savedWave;
+}

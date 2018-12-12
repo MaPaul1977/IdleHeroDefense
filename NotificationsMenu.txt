@@ -1,0 +1,194 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class NotificationsMenu : MonoBehaviour
+{
+	private void Awake()
+	{
+		NotificationsMenu.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	public void createNotif(int type, string heroName, string equipName, string equipRarity, int equipPower, string tomeName, int bonusAmt)
+	{
+		GameObject gameObject = null;
+		if (type == 1)
+		{
+			gameObject = UnityEngine.Object.Instantiate<GameObject>(this.equipPrefab);
+			gameObject.transform.SetParent(this.notifPanel.transform, false);
+			gameObject.GetComponent<Notification>().descText.text = string.Concat(new object[]
+			{
+				"<color=cyan>",
+				heroName,
+				"</color> found and <color=yellow>kept</color> a <color=cyan>",
+				equipRarity,
+				"</color><color=yellow> ",
+				equipName,
+				" (pwr ",
+				equipPower,
+				").</color>"
+			});
+			gameObject.GetComponent<Notification>().amtText.text = "+" + bonusAmt.ToString("0");
+		}
+		else if (type == 2)
+		{
+			gameObject = UnityEngine.Object.Instantiate<GameObject>(this.equipPrefab);
+			gameObject.transform.SetParent(this.notifPanel.transform, false);
+			gameObject.GetComponent<Notification>().descText.text = string.Concat(new object[]
+			{
+				"<color=cyan>",
+				heroName,
+				"</color> found and <color=yellow>sold</color> a <color=cyan>",
+				equipRarity,
+				"</color><color=yellow> ",
+				equipName,
+				" (pwr ",
+				equipPower,
+				").</color>"
+			});
+			gameObject.GetComponent<Notification>().amtText.text = "+" + bonusAmt.ToString("0");
+		}
+		else if (type == 3)
+		{
+			gameObject = UnityEngine.Object.Instantiate<GameObject>(this.pagePrefab);
+			gameObject.transform.SetParent(this.notifPanel.transform, false);
+			gameObject.GetComponent<Notification>().descText.text = "<color=yellow>Recovered</color> a <color=yellow>new page</color> of <color=cyan>" + tomeName + ".</color>";
+			gameObject.GetComponent<Notification>().amtText.text = "+" + bonusAmt.ToString("0") + "%";
+		}
+		else if (type == 4)
+		{
+			gameObject = UnityEngine.Object.Instantiate<GameObject>(this.pagePrefab);
+			gameObject.transform.SetParent(this.notifPanel.transform, false);
+			gameObject.GetComponent<Notification>().descText.text = "<color=yellow>Recovered</color> an <color=yellow>old page</color> of <color=cyan>" + tomeName + ".</color>";
+			gameObject.GetComponent<Notification>().amtText.text = "+" + bonusAmt.ToString("0") + "%";
+		}
+		else if (type == 5)
+		{
+			gameObject = UnityEngine.Object.Instantiate<GameObject>(this.pagePrefab);
+			gameObject.transform.SetParent(this.notifPanel.transform, false);
+			int num = 5 + GameManager.Instance.badge23Lvl;
+			gameObject.GetComponent<Notification>().descText.text = string.Concat(new object[]
+			{
+				"<color=yellow>Recovered</color> a <color=yellow>stack of ",
+				num,
+				" new pages</color> of <color=cyan>",
+				tomeName,
+				".</color>"
+			});
+			gameObject.GetComponent<Notification>().amtText.text = "+" + bonusAmt.ToString("0") + "%";
+		}
+		else if (type == 6)
+		{
+			gameObject = UnityEngine.Object.Instantiate<GameObject>(this.pagePrefab);
+			gameObject.transform.SetParent(this.notifPanel.transform, false);
+			int num2 = 5 + GameManager.Instance.badge23Lvl;
+			gameObject.GetComponent<Notification>().descText.text = string.Concat(new object[]
+			{
+				"<color=yellow>Recovered</color> a <color=yellow>stack of ",
+				num2,
+				" old pages</color> of <color=cyan>",
+				tomeName,
+				".</color>"
+			});
+			gameObject.GetComponent<Notification>().amtText.text = "+" + bonusAmt.ToString("0") + "%";
+		}
+		else if (type == 7)
+		{
+			gameObject = UnityEngine.Object.Instantiate<GameObject>(this.tomePrefab);
+			gameObject.transform.SetParent(this.notifPanel.transform, false);
+			gameObject.GetComponent<Notification>().descText.text = "<color=yellow>Completed</color> a <color=cyan>" + tomeName + ".</color>";
+			gameObject.GetComponent<Notification>().amtText.text = "+" + UIManager.Instance.convertNumberFormat(bonusAmt.ToString("0")) + "%";
+		}
+		else if (type == 8)
+		{
+			gameObject = UnityEngine.Object.Instantiate<GameObject>(this.evolvePrefab);
+			gameObject.transform.SetParent(this.notifPanel.transform, false);
+			gameObject.GetComponent<Notification>().descText.text = string.Concat(new object[]
+			{
+				"<color=cyan>",
+				heroName,
+				"</color> just reached <color=yellow>evolution level ",
+				equipPower,
+				"!</color>"
+			});
+			gameObject.GetComponent<Notification>().amtText.text = "+" + bonusAmt.ToString("0") + "%";
+		}
+		if (type >= 3 && type != 8)
+		{
+			if (tomeName == "Tome of Ruin")
+			{
+				gameObject.GetComponent<Notification>().bonusIcon.sprite = this.dpsIcon;
+			}
+			else if (tomeName == "Tome of Resistance")
+			{
+				gameObject.GetComponent<Notification>().bonusIcon.sprite = this.hpIcon;
+			}
+			else if (tomeName == "Tome of Dominance")
+			{
+				gameObject.GetComponent<Notification>().bonusIcon.sprite = this.critIcon;
+			}
+			else if (tomeName == "Tome of Prosperity")
+			{
+				gameObject.GetComponent<Notification>().bonusIcon.sprite = this.goldIcon;
+			}
+			else if (tomeName == "Tome of Fortune")
+			{
+				gameObject.GetComponent<Notification>().bonusIcon.sprite = this.chestIcon;
+			}
+			else if (tomeName == "Tome of Wisdom")
+			{
+				gameObject.GetComponent<Notification>().bonusIcon.sprite = this.bpIcon;
+			}
+		}
+		this.notifList.Add(gameObject);
+		if (this.notifList.Count > 3)
+		{
+			GameObject gameObject2 = this.notifList[0];
+			this.notifList.Remove(gameObject2);
+			UnityEngine.Object.Destroy(gameObject2);
+		}
+		for (int i = 0; i < this.notifList.Count; i++)
+		{
+			GameObject gameObject3 = this.notifList[i];
+			if (gameObject3 != gameObject)
+			{
+				gameObject3.transform.localPosition = new Vector3(gameObject3.transform.localPosition.x, gameObject3.transform.localPosition.y + 20f, gameObject3.transform.localPosition.z);
+			}
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	public static NotificationsMenu Instance;
+
+	public GameObject notifPanel;
+
+	public List<GameObject> notifList;
+
+	public GameObject equipPrefab;
+
+	public GameObject pagePrefab;
+
+	public GameObject tomePrefab;
+
+	public GameObject evolvePrefab;
+
+	public Sprite dpsIcon;
+
+	public Sprite hpIcon;
+
+	public Sprite critIcon;
+
+	public Sprite goldIcon;
+
+	public Sprite chestIcon;
+
+	public Sprite bpIcon;
+}

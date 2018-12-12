@@ -1,0 +1,342 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class SelectedHeroMenu : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void OnEnable()
+	{
+		this.updatePanel();
+	}
+
+	public void updatePanel()
+	{
+		this.thisHero = GameManager.Instance.selectedHero;
+		this.nameText.text = this.thisHero.heroName;
+		this.levelText.text = "Level " + this.thisHero.level;
+		this.dpsText.text = UIManager.Instance.convertNumberFormat(this.thisHero.getActDps(this.thisHero.baseDps, true).ToString("0"));
+		if (this.thisHero.currHp > 0.0)
+		{
+			this.hpText.text = UIManager.Instance.convertNumberFormat(this.thisHero.currHp.ToString("0"));
+			this.deadCover.SetActive(false);
+		}
+		else
+		{
+			this.hpText.text = "DEAD";
+			this.deadCover.SetActive(true);
+		}
+		this.manaText.text = this.thisHero.currMana.ToString();
+		double num = this.thisHero.currHp / this.thisHero.getActMaxHp(this.thisHero.baseDps);
+		if (num <= 0.0)
+		{
+			num = 0.0;
+		}
+		this.hpSlider.value = (float)num;
+		float num2 = (float)this.thisHero.currMana / (float)this.thisHero.getActMaxMana();
+		if (num2 <= 0f)
+		{
+			num2 = 0f;
+		}
+		this.manaSlider.value = num2;
+		this.skillTitle1.text = this.thisHero.getSkillTexts(1, 1);
+		this.skillDesc1.text = this.thisHero.getSkillTexts(1, 2);
+		if (this.thisHero.activeSkillAutocastNum == 1)
+		{
+			this.autocastCheckImage1.SetActive(true);
+		}
+		else
+		{
+			this.autocastCheckImage1.SetActive(false);
+		}
+		if (this.thisHero.activeSkill1ActiveTimer > 0f)
+		{
+			this.castButton1.SetActive(false);
+			this.cantCastButton1.SetActive(true);
+			this.cantCastDesc1.text = "Active";
+			this.cantCastTimer1.text = this.thisHero.activeSkill1ActiveTimer.ToString("n0") + "s";
+		}
+		else if (this.thisHero.activeSkill1CooldownTimer > 0f)
+		{
+			this.castButton1.SetActive(false);
+			this.cantCastButton1.SetActive(true);
+			this.cantCastDesc1.text = "Cooldown";
+			this.cantCastTimer1.text = this.thisHero.activeSkill1CooldownTimer.ToString("n0") + "s";
+		}
+		else
+		{
+			this.castButton1.SetActive(true);
+			this.cantCastButton1.SetActive(false);
+			this.castButtonCost1.text = this.thisHero.getActSkillCost(1).ToString("n0");
+			if (this.thisHero.currMana >= this.thisHero.getActSkillCost(1) && this.thisHero.currHp > 0.0)
+			{
+				this.castButton1.GetComponent<Button>().enabled = true;
+				UIManager.Instance.changeButtonColorV2(this.castButton1, "green", false);
+			}
+			else
+			{
+				this.castButton1.GetComponent<Button>().enabled = false;
+				UIManager.Instance.changeButtonColorV2(this.castButton1, "grey", false);
+			}
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				this.castButton1Text.text = "Cast (1)";
+			}
+			else
+			{
+				this.castButton1Text.text = "Cast";
+			}
+		}
+		this.skillTitle2.text = this.thisHero.getSkillTexts(2, 1);
+		this.skillDesc2.text = this.thisHero.getSkillTexts(2, 2);
+		if (this.thisHero.activeSkillAutocastNum == 2)
+		{
+			this.autocastCheckImage2.SetActive(true);
+		}
+		else
+		{
+			this.autocastCheckImage2.SetActive(false);
+		}
+		if (this.thisHero.activeSkill2ActiveTimer > 0f)
+		{
+			this.castButton2.SetActive(false);
+			this.cantCastButton2.SetActive(true);
+			this.cantCastDesc2.text = "Active";
+			this.cantCastTimer2.text = this.thisHero.activeSkill2ActiveTimer.ToString("n0") + "s";
+		}
+		else if (this.thisHero.activeSkill2CooldownTimer > 0f)
+		{
+			this.castButton2.SetActive(false);
+			this.cantCastButton2.SetActive(true);
+			this.cantCastDesc2.text = "Cooldown";
+			this.cantCastTimer2.text = this.thisHero.activeSkill2CooldownTimer.ToString("n0") + "s";
+		}
+		else
+		{
+			this.castButton2.SetActive(true);
+			this.cantCastButton2.SetActive(false);
+			this.castButtonCost2.text = this.thisHero.getActSkillCost(2).ToString("n0");
+			if (this.thisHero.currMana >= this.thisHero.getActSkillCost(2) && this.thisHero.currHp > 0.0)
+			{
+				this.castButton2.GetComponent<Button>().enabled = true;
+				UIManager.Instance.changeButtonColorV2(this.castButton2, "green", false);
+			}
+			else
+			{
+				this.castButton2.GetComponent<Button>().enabled = false;
+				UIManager.Instance.changeButtonColorV2(this.castButton2, "grey", false);
+			}
+			if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				this.castButton2Text.text = "Cast (2)";
+			}
+			else
+			{
+				this.castButton2Text.text = "Cast";
+			}
+		}
+		if (this.thisHero.battleStyle == 0)
+		{
+			UIManager.Instance.changeButtonColorV2(this.stanceButton1, "yellow", true);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.stanceButton1, "green", true);
+		}
+		if (this.thisHero.battleStyle == 1)
+		{
+			UIManager.Instance.changeButtonColorV2(this.stanceButton2, "yellow", true);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.stanceButton2, "green", true);
+		}
+		if (this.thisHero.battleStyle == 2)
+		{
+			UIManager.Instance.changeButtonColorV2(this.stanceButton3, "yellow", true);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.stanceButton3, "green", true);
+		}
+		if (this.thisHero.battleStyle == 3)
+		{
+			UIManager.Instance.changeButtonColorV2(this.stanceButton4, "yellow", true);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.stanceButton4, "green", true);
+		}
+		if (this.isMinimized)
+		{
+			this.minimizeButton.SetActive(false);
+			this.maximizeButton.SetActive(true);
+		}
+		else
+		{
+			this.minimizeButton.SetActive(true);
+			this.maximizeButton.SetActive(false);
+		}
+	}
+
+	public void clickedMinimizeButton()
+	{
+		this.isMinimized = true;
+		base.gameObject.transform.localPosition = new Vector3(base.gameObject.transform.localPosition.x, base.gameObject.transform.localPosition.y - 150f, base.gameObject.transform.localPosition.z);
+		this.exitButton.transform.localPosition = new Vector3(this.exitButton.transform.localPosition.x, this.exitButton.transform.localPosition.y - 15f, this.exitButton.transform.localPosition.z);
+	}
+
+	public void clickedMaximizeButton()
+	{
+		this.isMinimized = false;
+		base.gameObject.transform.localPosition = new Vector3(base.gameObject.transform.localPosition.x, base.gameObject.transform.localPosition.y + 150f, base.gameObject.transform.localPosition.z);
+		this.exitButton.transform.localPosition = new Vector3(this.exitButton.transform.localPosition.x, this.exitButton.transform.localPosition.y + 15f, this.exitButton.transform.localPosition.z);
+	}
+
+	public void clickedCastButton1()
+	{
+		this.thisHero.useSkill(1);
+	}
+
+	public void clickedCastButton2()
+	{
+		this.thisHero.useSkill(2);
+	}
+
+	public void clickedAutocastButton1()
+	{
+		if (this.thisHero.activeSkillAutocastNum != 1)
+		{
+			this.thisHero.activeSkillAutocastNum = 1;
+			this.autocastCheckImage1.SetActive(true);
+			this.autocastCheckImage2.SetActive(false);
+			if (!GameManager.Instance.doneTutorial)
+			{
+				this.thisHero.useSkill(1);
+			}
+		}
+		else
+		{
+			this.thisHero.activeSkillAutocastNum = 0;
+			this.autocastCheckImage1.SetActive(false);
+		}
+	}
+
+	public void clickedAutocastButton2()
+	{
+		if (this.thisHero.activeSkillAutocastNum != 2)
+		{
+			this.thisHero.activeSkillAutocastNum = 2;
+			this.autocastCheckImage2.SetActive(true);
+			this.autocastCheckImage1.SetActive(false);
+		}
+		else
+		{
+			this.thisHero.activeSkillAutocastNum = 0;
+			this.autocastCheckImage2.SetActive(false);
+		}
+	}
+
+	public void clickedStanceButton(int stanceNum)
+	{
+		this.thisHero.battleStyle = stanceNum;
+	}
+
+	public void clickedExitButton()
+	{
+		GameManager.Instance.selectedHero = null;
+	}
+
+	private void Update()
+	{
+		this.updatePanel();
+		if (Application.platform == RuntimePlatform.WebGLPlayer && GameManager.Instance.doneTutorial && GameManager.Instance.selectedHero != null)
+		{
+			if (Input.GetKeyUp(KeyCode.Alpha1))
+			{
+				if (this.castButton1.GetComponent<Button>().enabled)
+				{
+					this.clickedCastButton1();
+				}
+			}
+			else if (Input.GetKeyUp(KeyCode.Alpha2) && this.castButton2.GetComponent<Button>().enabled)
+			{
+				this.clickedCastButton2();
+			}
+		}
+	}
+
+	public Text nameText;
+
+	public Text levelText;
+
+	public Text dpsText;
+
+	public Text hpText;
+
+	public Text manaText;
+
+	public Slider hpSlider;
+
+	public Slider manaSlider;
+
+	public GameObject minimizeButton;
+
+	public GameObject maximizeButton;
+
+	public GameObject exitButton;
+
+	public GameObject castButton1;
+
+	public Text castButton1Text;
+
+	public Text castButtonCost1;
+
+	public GameObject cantCastButton1;
+
+	public Text cantCastDesc1;
+
+	public Text cantCastTimer1;
+
+	public Text skillTitle1;
+
+	public Text skillDesc1;
+
+	public GameObject autocastCheckImage1;
+
+	public GameObject castButton2;
+
+	public Text castButton2Text;
+
+	public Text castButtonCost2;
+
+	public GameObject cantCastButton2;
+
+	public Text cantCastDesc2;
+
+	public Text cantCastTimer2;
+
+	public Text skillTitle2;
+
+	public Text skillDesc2;
+
+	public GameObject autocastCheckImage2;
+
+	public GameObject stanceButton1;
+
+	public GameObject stanceButton2;
+
+	public GameObject stanceButton3;
+
+	public GameObject stanceButton4;
+
+	public GameObject deadCover;
+
+	private Hero thisHero;
+
+	private bool isMinimized;
+}

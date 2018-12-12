@@ -1,0 +1,68 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PrestigePanel : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void OnEnable()
+	{
+		this.updatePanel();
+	}
+
+	public void clickedPartialButton()
+	{
+		UIManager.Instance.closeBlackBg();
+		GameManager.Instance.doPrestige(false);
+	}
+
+	public void clickedFullButton()
+	{
+		UIManager.Instance.closeBlackBg();
+		GameManager.Instance.doPrestige(true);
+	}
+
+	private void updatePanel()
+	{
+		if (GameManager.Instance.statHighestWave >= 100)
+		{
+			this.earlyPrestigeButton.SetActive(false);
+		}
+		else
+		{
+			this.earlyPrestigeButton.SetActive(true);
+		}
+		double prestigeGems = GameManager.Instance.getPrestigeGems(GameManager.Instance.enemyWaveNum);
+		this.bpAmtText.text = "+" + UIManager.Instance.convertNumberFormat(prestigeGems.ToString("0")) + " blueprints";
+		int prestigeSkillpointAmt = GameManager.Instance.getPrestigeSkillpointAmt(GameManager.Instance.enemyWaveNum - 1);
+		this.spAmtText.text = "+" + UIManager.Instance.convertNumberFormat(prestigeSkillpointAmt.ToString("0")) + " skillpoints";
+		int num = 10 + GameManager.Instance.tech22Lvl;
+		float num2 = (float)num * 0.01f;
+		float num3 = (float)(GameManager.Instance.enemyWaveNum - 1) * num2;
+		int num4 = (int)num3;
+		this.partialResetWaveText.text = "Back to wave " + num4;
+		this.saveWave = GameManager.Instance.enemyWaveNum;
+	}
+
+	private void Update()
+	{
+		if (this.saveWave != GameManager.Instance.enemyWaveNum)
+		{
+			this.updatePanel();
+		}
+	}
+
+	public Text bpAmtText;
+
+	public Text spAmtText;
+
+	public GameObject earlyPrestigeButton;
+
+	public Text partialResetWaveText;
+
+	private int saveWave;
+}

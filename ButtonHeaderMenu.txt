@@ -1,0 +1,78 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
+
+public class ButtonHeaderMenu : MonoBehaviour
+{
+	private void Start()
+	{
+		this.thisParent = base.gameObject.transform.parent.gameObject;
+		this.thisButton = base.gameObject;
+		this.thisButton.transform.GetComponent<Button>().onClick.AddListener(new UnityAction(this.clickedThis));
+		this.startSize = base.gameObject.GetComponent<RectTransform>().sizeDelta;
+	}
+
+	private void clickedThis()
+	{
+		int childCount = this.thisParent.transform.childCount;
+		int num = 0;
+		for (int i = 0; i < childCount; i++)
+		{
+			GameObject gameObject = this.thisParent.transform.GetChild(i).gameObject;
+			if (i < childCount / 2)
+			{
+				if (!(gameObject != this.thisButton))
+				{
+					num = i + childCount / 2;
+				}
+			}
+			else if (i == num)
+			{
+				gameObject.SetActive(true);
+			}
+			else
+			{
+				gameObject.SetActive(false);
+			}
+		}
+	}
+
+	private void Update()
+	{
+		if (this.shouldBlink)
+		{
+			this.blinkTimer += Time.deltaTime;
+			if (this.blinkTimer >= 1f)
+			{
+				this.blinkTimer = 0f;
+				if (base.gameObject.GetComponent<Image>().color == UIManager.colorCyan)
+				{
+					this.shouldBlink = false;
+					base.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(this.startSize.x, this.startSize.y);
+				}
+				else if (base.gameObject.GetComponent<Image>().color == UIManager.colorGreen)
+				{
+					base.gameObject.GetComponent<Image>().color = Color.green;
+					base.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(this.startSize.x + 6f, this.startSize.y + 4f);
+				}
+				else if (base.gameObject.GetComponent<Image>().color == Color.green)
+				{
+					base.gameObject.GetComponent<Image>().color = UIManager.colorGreen;
+					base.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(this.startSize.x, this.startSize.y);
+				}
+			}
+		}
+	}
+
+	private GameObject thisParent;
+
+	private GameObject thisButton;
+
+	public bool shouldBlink;
+
+	private float blinkTimer;
+
+	private Vector2 startSize;
+}

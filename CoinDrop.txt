@@ -1,0 +1,108 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class CoinDrop : MonoBehaviour
+{
+	private void Start()
+	{
+		GameObject gameObject = base.transform.GetChild(0).gameObject;
+		this.animator = gameObject.GetComponent<Animator>();
+		this.spriteRenderer = gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+	}
+
+	private void initObject()
+	{
+		this.shouldInit = true;
+		this.spawnCounter = 0f;
+		base.gameObject.SetActive(false);
+	}
+
+	private void Update()
+	{
+		if (GameManager.Instance.prestigePause)
+		{
+			return;
+		}
+		if (this.shouldInit)
+		{
+			this.shouldInit = false;
+			if (this.fromEnemy != null && this.spriteRenderer != null)
+			{
+				this.spriteRenderer.sortingLayerName = this.fromEnemy.spriteRender0.sortingLayerName;
+			}
+			if (this.coinNum == 0)
+			{
+				this.animator.Play("drop_left");
+			}
+			else if (this.coinNum == 1)
+			{
+				this.animator.Play("drop_straight");
+			}
+			else
+			{
+				this.animator.Play("drop_right");
+			}
+		}
+		this.spawnCounter += Time.deltaTime;
+		if (this.spawnCounter >= 2.5f)
+		{
+			if (this.coinNum == 1)
+			{
+				if (GameManager.Instance.settingsCombatTexts)
+				{
+					GameObject poolObject = UIManager.Instance.getPoolObject(UIManager.Instance.poolGoldText);
+					if (poolObject != null)
+					{
+						UtilityMethods.MoveUiElementToWorldPosition(poolObject.GetComponent<RectTransform>(), base.transform.position + new Vector3(0f, -0.5f, 0f));
+						Text component = poolObject.GetComponent<Text>();
+						component.color = UIManager.colorYellow;
+						if (!this.isBoss)
+						{
+							component.fontSize = 20;
+						}
+						else
+						{
+							component.fontSize = 24;
+						}
+						component.text = "+" + UIManager.Instance.convertNumberFormat(this.coinAmt.ToString("0"));
+						poolObject.SetActive(true);
+					}
+				}
+				GameManager.Instance.goldAmt += this.coinAmt;
+				AchievementManager.Instance.listAch[16].currAmt += this.coinAmt;
+				AchievementManager.Instance.checkIfAchComplete(16);
+				if (GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject poolObject2 = UIManager.Instance.getPoolObject(UIManager.Instance.poolGoldDropParticles);
+					if (poolObject2 != null)
+					{
+						poolObject2.transform.position = base.transform.position + new Vector3(0f, -0.5f, 0f);
+						ParticleSystem component2 = poolObject2.GetComponent<ParticleSystem>();
+						poolObject2.SetActive(true);
+						component2.Play();
+					}
+				}
+				SoundManager.Instance.playCoin();
+			}
+			this.initObject();
+		}
+	}
+
+	public int coinNum;
+
+	public bool isBoss;
+
+	public double coinAmt;
+
+	public Enemy fromEnemy;
+
+	private bool shouldInit = true;
+
+	private float spawnCounter;
+
+	private Animator animator;
+
+	private SpriteRenderer spriteRenderer;
+}

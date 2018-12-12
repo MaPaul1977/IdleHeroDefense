@@ -1,0 +1,294 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EnemyManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		EnemyManager.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	private void spawnNewWave()
+	{
+		this.needNewWave = false;
+		List<Enemy> list = new List<Enemy>();
+		if (GameManager.Instance.onMapNum == 0)
+		{
+			list = this.orcSpawnList;
+		}
+		else if (GameManager.Instance.onMapNum == 1)
+		{
+			list = this.cyclopsSpawnList;
+		}
+		else if (GameManager.Instance.onMapNum == 2)
+		{
+			list = this.banditSpawnList;
+		}
+		else if (GameManager.Instance.onMapNum == 3)
+		{
+			list = this.orcSpawnList;
+		}
+		else if (GameManager.Instance.onMapNum == 4)
+		{
+			list = this.mayanSpawnList;
+		}
+		else if (GameManager.Instance.onMapNum == 5)
+		{
+			list = this.crystalSpawnList;
+		}
+		else if (GameManager.Instance.onMapNum == 6)
+		{
+			list = this.eskimoSpawnList;
+		}
+		else if (GameManager.Instance.onMapNum == 7)
+		{
+			list = this.zombieSpawnList;
+		}
+		for (int i = 0; i < 10; i++)
+		{
+			int index = UnityEngine.Random.Range(0, list.Count);
+			Enemy enemy = list[index];
+			enemy.isBoss = false;
+			enemy.isEvilChest = false;
+			if (GameManager.Instance.onMapNum != 0 && GameManager.Instance.onMapNum != 3)
+			{
+				enemy.transform.localScale = new Vector3(1.35f, 1.35f, 1f);
+			}
+			float num = (float)UnityEngine.Random.Range(0, 1001) * 0.1f;
+			float num2 = (float)GameManager.Instance.tech25Lvl * 0.25f;
+			if (num < num2)
+			{
+				enemy = this.evilChest;
+				enemy.isEvilChest = true;
+			}
+			float num3 = UnityEngine.Random.Range(90f, 120f) / 10f;
+			float num4 = UnityEngine.Random.Range(25f, 60f) / 10f;
+			float num5 = -8f;
+			if (i < 5)
+			{
+				num3 *= -1f;
+				num5 *= -1f;
+			}
+			if (GameManager.Instance.onMapNum == 3)
+			{
+				num4 -= 0.5f;
+			}
+			else if (GameManager.Instance.onMapNum == 4)
+			{
+				num4 -= 1f;
+			}
+			else if (GameManager.Instance.onMapNum == 5)
+			{
+				num4 -= 1f;
+			}
+			else if (GameManager.Instance.onMapNum == 6)
+			{
+				num4 -= 1f;
+			}
+			else if (GameManager.Instance.onMapNum == 7)
+			{
+				num4 -= 1.5f;
+			}
+			Vector3 position = new Vector3(num3, num4, 0f);
+			Vector3 startPos = new Vector3(num3 + num5, num4, 0f);
+			enemy.startPos = startPos;
+			UnityEngine.Object.Instantiate<Enemy>(enemy, position, Quaternion.identity);
+		}
+	}
+
+	private void spawnNewBoss()
+	{
+		this.needNewBoss = false;
+		Vector3 vector = default(Vector3);
+		Vector3 startPos = default(Vector3);
+		Enemy enemy;
+		if (!TheUnderground.Instance.playingMiniGame)
+		{
+			List<Enemy> list = new List<Enemy>();
+			if (GameManager.Instance.onMapNum == 0)
+			{
+				list = this.orcBossList;
+			}
+			else if (GameManager.Instance.onMapNum == 1)
+			{
+				list = this.cyclopsSpawnList;
+			}
+			else if (GameManager.Instance.onMapNum == 2)
+			{
+				list = this.banditSpawnList;
+			}
+			else if (GameManager.Instance.onMapNum == 3)
+			{
+				list = this.orcBossList;
+			}
+			else if (GameManager.Instance.onMapNum == 4)
+			{
+				list = this.mayanSpawnList;
+			}
+			else if (GameManager.Instance.onMapNum == 5)
+			{
+				list = this.crystalSpawnList;
+			}
+			else if (GameManager.Instance.onMapNum == 6)
+			{
+				list = this.eskimoSpawnList;
+			}
+			else if (GameManager.Instance.onMapNum == 7)
+			{
+				list = this.zombieSpawnList;
+			}
+			int index = UnityEngine.Random.Range(0, list.Count);
+			enemy = list[index];
+			if (GameManager.Instance.onMapNum != 0 && GameManager.Instance.onMapNum != 3)
+			{
+				enemy.transform.localScale = new Vector3(1.85f, 1.85f, 1f);
+			}
+			enemy.isBoss = true;
+			if (UnityEngine.Random.Range(0, 2) == 0)
+			{
+				vector = new Vector3(-10f, 4f, 0f);
+				startPos = new Vector3(-3f, 4f, 0f);
+			}
+			else
+			{
+				vector = new Vector3(10f, 4f, 0f);
+				startPos = new Vector3(3f, 4f, 0f);
+			}
+		}
+		else
+		{
+			TheUnderground.Instance.onWaveNum++;
+			int num = UnityEngine.Random.Range(0, 3);
+			if (num == 0)
+			{
+				enemy = this.hellBossMelee;
+			}
+			else if (num == 1)
+			{
+				enemy = this.hellBossRange;
+			}
+			else
+			{
+				enemy = this.hellBossMage;
+			}
+			if (TheUnderground.Instance.onWaveNum % 2 == 0)
+			{
+				vector = new Vector3(-5f, 3.5f, 0f);
+				startPos = new Vector3(-5f, 3.5f, 0f);
+			}
+			else
+			{
+				vector = new Vector3(5f, 3.5f, 0f);
+				startPos = new Vector3(5f, 3.5f, 0f);
+			}
+			if (GameManager.Instance.settingsParticleEffects)
+			{
+				GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesDustPoof);
+				gameObject.transform.position = vector + new Vector3(0f, 0.5f, 0f);
+				gameObject.transform.SetParent(UIManager.Instance.particlesParent.transform);
+				UnityEngine.Object.Destroy(gameObject, 1f);
+			}
+		}
+		enemy.startPos = startPos;
+		UnityEngine.Object.Instantiate<Enemy>(enemy, vector, Quaternion.identity);
+	}
+
+	private void Update()
+	{
+		if (PirateRaid.Instance.playingMiniGame)
+		{
+			if (this.hellWaitTimer > 0f)
+			{
+				this.hellWaitTimer -= Time.deltaTime;
+			}
+			else
+			{
+				this.refreshTimer += Time.deltaTime;
+				if (this.refreshTimer >= 0.5f)
+				{
+					this.refreshTimer = 0f;
+					if (this.enemyList.Count < 5)
+					{
+						PirateRaid.Instance.onWaveNum++;
+						int index = UnityEngine.Random.Range(0, this.pirateList.Count);
+						Enemy enemy = this.pirateList[index];
+						float num = UnityEngine.Random.Range(95f, 125f) / 10f;
+						float y = UnityEngine.Random.Range(20f, 50f) / 10f;
+						float num2 = -8f;
+						if (UnityEngine.Random.Range(0, 2) == 0)
+						{
+							num *= -1f;
+							num2 *= -1f;
+						}
+						Vector3 position = new Vector3(num, y, 0f);
+						Vector3 startPos = new Vector3(num + num2, y, 0f);
+						enemy.startPos = startPos;
+						UnityEngine.Object.Instantiate<Enemy>(enemy, position, Quaternion.identity);
+					}
+				}
+			}
+			return;
+		}
+		if (this.needNewWave)
+		{
+			this.spawnNewWave();
+		}
+		else if (this.needNewBoss)
+		{
+			if (this.hellWaitTimer > 0f)
+			{
+				this.hellWaitTimer -= Time.deltaTime;
+			}
+			else
+			{
+				this.spawnNewBoss();
+			}
+		}
+	}
+
+	public static EnemyManager Instance;
+
+	public GameObject enemyParent;
+
+	public bool needNewWave;
+
+	public bool needNewBoss;
+
+	public List<Enemy> enemyList;
+
+	public List<Enemy> orcSpawnList;
+
+	public List<Enemy> banditSpawnList;
+
+	public List<Enemy> crystalSpawnList;
+
+	public List<Enemy> cyclopsSpawnList;
+
+	public List<Enemy> eskimoSpawnList;
+
+	public List<Enemy> mayanSpawnList;
+
+	public List<Enemy> zombieSpawnList;
+
+	public List<Enemy> orcBossList;
+
+	public Enemy evilChest;
+
+	public Enemy hellBossMelee;
+
+	public Enemy hellBossRange;
+
+	public Enemy hellBossMage;
+
+	public float hellWaitTimer;
+
+	public List<Enemy> pirateList;
+
+	private float refreshTimer;
+}

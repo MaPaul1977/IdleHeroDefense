@@ -1,0 +1,28 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class SelectedHeroCircle : MonoBehaviour
+{
+	private void Update()
+	{
+		if (GameManager.Instance.selectedHero != null)
+		{
+			if (GameManager.Instance.selectedHero.currHp > 0.0)
+			{
+				base.transform.position = new Vector3(GameManager.Instance.selectedHero.transform.position.x, GameManager.Instance.selectedHero.transform.position.y + 0.1f, GameManager.Instance.selectedHero.transform.position.z);
+				base.transform.Rotate(0f, 0f, 6f * this.rotationsPerMinute * Time.deltaTime);
+			}
+			else
+			{
+				base.transform.position = new Vector3(0f, 25f, 0f);
+			}
+		}
+		else
+		{
+			base.transform.position = new Vector3(0f, 25f, 0f);
+		}
+	}
+
+	private float rotationsPerMinute = 5f;
+}

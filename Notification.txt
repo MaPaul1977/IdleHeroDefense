@@ -1,0 +1,30 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Notification : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void Update()
+	{
+		this.visibleTimer += Time.deltaTime;
+		if (this.visibleTimer >= 15f)
+		{
+			this.visibleTimer = 0f;
+			NotificationsMenu.Instance.notifList.Remove(base.gameObject);
+			UnityEngine.Object.Destroy(base.gameObject);
+		}
+	}
+
+	public Text descText;
+
+	public Text amtText;
+
+	public Image bonusIcon;
+
+	private float visibleTimer;
+}

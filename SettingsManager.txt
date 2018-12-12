@@ -1,0 +1,340 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class SettingsManager : MonoBehaviour
+{
+	private void Start()
+	{
+		this.updateTable();
+	}
+
+	private void OnEnable()
+	{
+		this.updateTable();
+	}
+
+	public void updateTable()
+	{
+		if (GameManager.Instance.iap2xGameSpeed || GameManager.Instance.iap2xGameSpeedTemp)
+		{
+			this.gameSpeedIapButtonKong.SetActive(false);
+			this.gameSpeedIapButtonMobile.SetActive(false);
+		}
+		else if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			this.gameSpeedIapButtonKong.SetActive(true);
+			this.gameSpeedIapButtonMobile.SetActive(false);
+		}
+		else
+		{
+			this.gameSpeedIapButtonKong.SetActive(false);
+			this.gameSpeedIapButtonMobile.SetActive(true);
+		}
+		if (GameManager.Instance.settings2xGameSpeed)
+		{
+			this.gameSpeedCheck.SetActive(true);
+		}
+		else
+		{
+			this.gameSpeedCheck.SetActive(false);
+		}
+		if (GameManager.Instance.iapRareSkins)
+		{
+			this.rareSkinsButton.SetActive(false);
+		}
+		else
+		{
+			this.rareSkinsButton.SetActive(true);
+		}
+		if (GameManager.Instance.iapEpicSkins)
+		{
+			this.epicSkinsButton.SetActive(false);
+		}
+		else
+		{
+			this.epicSkinsButton.SetActive(true);
+		}
+		if (GameManager.Instance.settingsRareSkins)
+		{
+			this.rareSkinsCheck.SetActive(true);
+		}
+		else
+		{
+			this.rareSkinsCheck.SetActive(false);
+		}
+		if (GameManager.Instance.settingsEpicSkins)
+		{
+			this.epicSkinsCheck.SetActive(true);
+		}
+		else
+		{
+			this.epicSkinsCheck.SetActive(false);
+		}
+		if (GameManager.Instance.settingsParticleEffects)
+		{
+			this.particlesCheck.SetActive(true);
+		}
+		else
+		{
+			this.particlesCheck.SetActive(false);
+		}
+		if (GameManager.Instance.settingsHpManaBars)
+		{
+			this.barsCheck.SetActive(true);
+		}
+		else
+		{
+			this.barsCheck.SetActive(false);
+		}
+		if (GameManager.Instance.settingsCombatTexts)
+		{
+			this.textCheck.SetActive(true);
+		}
+		else
+		{
+			this.textCheck.SetActive(false);
+		}
+		if (GameManager.Instance.settingScientificNotation)
+		{
+			this.scientificCheck.SetActive(true);
+		}
+		else
+		{
+			this.scientificCheck.SetActive(false);
+		}
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			this.soundCheck.SetActive(true);
+		}
+		else
+		{
+			this.soundCheck.SetActive(false);
+		}
+		if (GameManager.Instance.settingsBgMusic)
+		{
+			this.musicCheck.SetActive(true);
+			MusicManager.Instance.songNameText.text = "Currently playing:\n" + MusicManager.Instance.listNames[GameManager.Instance.settingsOnSongNum];
+		}
+		else
+		{
+			this.musicCheck.SetActive(false);
+			MusicManager.Instance.songNameText.text = "Currently playing:\nNothing...";
+		}
+		this.savedSetting2xSpeed = GameManager.Instance.iap2xGameSpeed;
+		this.savedRareSkins = GameManager.Instance.iapRareSkins;
+		this.savedEpicSkins = GameManager.Instance.iapEpicSkins;
+	}
+
+	public void clicked2xIap()
+	{
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			IAPManagerKong.Instance.buy2xGameSpeed();
+		}
+		else
+		{
+			IAPManagerMobile.Instance.clickedBuyProductButton("idlehd.2xspeed");
+		}
+		this.updateTable();
+	}
+
+	public void clickedPreviewButton()
+	{
+		UIManager.Instance.heroSkinsPanel.SetActive(true);
+	}
+
+	public void clickedSettingGameSpeed()
+	{
+		if (GameManager.Instance.settings2xGameSpeed)
+		{
+			GameManager.Instance.settings2xGameSpeed = false;
+		}
+		else
+		{
+			GameManager.Instance.settings2xGameSpeed = true;
+		}
+		this.updateTable();
+	}
+
+	public void clickedRareSkins()
+	{
+		if (GameManager.Instance.settingsRareSkins)
+		{
+			GameManager.Instance.settingsRareSkins = false;
+		}
+		else
+		{
+			GameManager.Instance.settingsRareSkins = true;
+			GameManager.Instance.settingsEpicSkins = false;
+		}
+		for (int i = 0; i < HeroManager.Instance.heroList.Count; i++)
+		{
+			HeroManager.Instance.heroList[i].setActualUnit();
+		}
+		this.updateTable();
+	}
+
+	public void clickedEpicSkins()
+	{
+		if (GameManager.Instance.settingsEpicSkins)
+		{
+			GameManager.Instance.settingsEpicSkins = false;
+		}
+		else
+		{
+			GameManager.Instance.settingsEpicSkins = true;
+			GameManager.Instance.settingsRareSkins = false;
+		}
+		for (int i = 0; i < HeroManager.Instance.heroList.Count; i++)
+		{
+			HeroManager.Instance.heroList[i].setActualUnit();
+		}
+		this.updateTable();
+	}
+
+	public void clickedFarm()
+	{
+		if (GameManager.Instance.isFarmingWave)
+		{
+			GameManager.Instance.isFarmingWave = false;
+		}
+		else
+		{
+			GameManager.Instance.isFarmingWave = true;
+		}
+		this.updateTable();
+	}
+
+	public void clickedSettingParticleEffects()
+	{
+		if (GameManager.Instance.settingsParticleEffects)
+		{
+			GameManager.Instance.settingsParticleEffects = false;
+		}
+		else
+		{
+			GameManager.Instance.settingsParticleEffects = true;
+		}
+		this.updateTable();
+	}
+
+	public void clickedHpManaBars()
+	{
+		if (GameManager.Instance.settingsHpManaBars)
+		{
+			GameManager.Instance.settingsHpManaBars = false;
+		}
+		else
+		{
+			GameManager.Instance.settingsHpManaBars = true;
+		}
+		this.updateTable();
+	}
+
+	public void clickedSettingCombatTexts()
+	{
+		if (GameManager.Instance.settingsCombatTexts)
+		{
+			GameManager.Instance.settingsCombatTexts = false;
+		}
+		else
+		{
+			GameManager.Instance.settingsCombatTexts = true;
+		}
+		this.updateTable();
+	}
+
+	public void clickedSettingScientific()
+	{
+		if (GameManager.Instance.settingScientificNotation)
+		{
+			GameManager.Instance.settingScientificNotation = false;
+		}
+		else
+		{
+			GameManager.Instance.settingScientificNotation = true;
+		}
+		this.updateTable();
+	}
+
+	public void clickedSettingBgMusic()
+	{
+		if (GameManager.Instance.settingsBgMusic)
+		{
+			GameManager.Instance.settingsBgMusic = false;
+			MusicManager.Instance.GetComponent<AudioSource>().enabled = false;
+		}
+		else
+		{
+			GameManager.Instance.settingsBgMusic = true;
+			MusicManager.Instance.GetComponent<AudioSource>().enabled = true;
+			MusicManager.Instance.playMusic();
+		}
+		this.updateTable();
+	}
+
+	public void clickedSettingSoundFx()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			GameManager.Instance.settingsSoundFx = false;
+			SoundManager.Instance.GetComponent<AudioSource>().enabled = false;
+		}
+		else
+		{
+			GameManager.Instance.settingsSoundFx = true;
+			SoundManager.Instance.GetComponent<AudioSource>().enabled = true;
+		}
+		this.updateTable();
+	}
+
+	public void clickedNextMusicButton()
+	{
+		GameManager.Instance.settingsBgMusic = true;
+		MusicManager.Instance.GetComponent<AudioSource>().enabled = true;
+		MusicManager.Instance.getNextSong();
+		MusicManager.Instance.playMusic();
+		this.updateTable();
+	}
+
+	private void Update()
+	{
+		if (this.savedSetting2xSpeed != GameManager.Instance.iap2xGameSpeed || this.savedRareSkins != GameManager.Instance.iapRareSkins || this.savedEpicSkins != GameManager.Instance.iapEpicSkins)
+		{
+			this.updateTable();
+		}
+	}
+
+	public GameObject gameSpeedIapButtonKong;
+
+	public GameObject gameSpeedIapButtonMobile;
+
+	public GameObject gameSpeedCheck;
+
+	public GameObject rareSkinsButton;
+
+	public GameObject rareSkinsCheck;
+
+	public GameObject epicSkinsButton;
+
+	public GameObject epicSkinsCheck;
+
+	public GameObject particlesCheck;
+
+	public GameObject barsCheck;
+
+	public GameObject textCheck;
+
+	public GameObject scientificCheck;
+
+	public GameObject soundCheck;
+
+	public GameObject musicCheck;
+
+	private bool savedSetting2xSpeed;
+
+	private bool savedRareSkins;
+
+	private bool savedEpicSkins;
+}

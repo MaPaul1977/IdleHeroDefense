@@ -1,0 +1,64 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ActiveHero : MonoBehaviour
+{
+	private void Start()
+	{
+		this.backgroundImage = base.gameObject.GetComponent<Image>();
+	}
+
+	private void OnEnable()
+	{
+		this.backgroundImage = base.gameObject.GetComponent<Image>();
+	}
+
+	public void updatePanel()
+	{
+	}
+
+	private void Update()
+	{
+		if (GameManager.Instance.activeHeroes.Count > this.activeID)
+		{
+			this.thisHero = GameManager.Instance.activeHeroes[this.activeID];
+			this.icon.sprite = this.thisHero.getHeroIcon();
+			if (this.thisHero == GameManager.Instance.selectedHero)
+			{
+				this.backgroundImage.sprite = UIManager.Instance.activeHeroSelected;
+			}
+			else
+			{
+				this.backgroundImage.sprite = UIManager.Instance.activeHeroBg;
+			}
+			if (this.thisHero.currHp > 0.0)
+			{
+				this.deadImg.SetActive(false);
+			}
+			else
+			{
+				this.deadImg.SetActive(true);
+			}
+		}
+	}
+
+	[Header("Manual")]
+	public int activeID;
+
+	[Header("Auto")]
+	public Hero thisHero;
+
+	public Image icon;
+
+	public GameObject deadImg;
+
+	private Hero savedHero;
+
+	private double savedHp;
+
+	private int savedMana;
+
+	private Image backgroundImage;
+}

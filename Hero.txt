@@ -1,0 +1,3676 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+[Serializable]
+public class Hero : MonoBehaviour
+{
+	private void Awake()
+	{
+	}
+
+	public string saveData()
+	{
+		return JsonUtility.ToJson(this);
+	}
+
+	public void loadData(string _loadData)
+	{
+		if (_loadData != string.Empty)
+		{
+			JsonUtility.FromJsonOverwrite(_loadData, this);
+		}
+		else
+		{
+			this.initHero(false);
+		}
+		switch (this.tier)
+		{
+		case 1:
+			this.baseAttSpeed = 1f;
+			this.baseMaxMana = 10;
+			this.baseRange = 1.25f;
+			break;
+		case 2:
+			this.baseAttSpeed = 1.25f;
+			this.baseMaxMana = 10;
+			this.baseRange = 3.75f;
+			break;
+		case 3:
+			this.baseAttSpeed = 1.5f;
+			this.baseMaxMana = 20;
+			this.baseRange = 2.75f;
+			break;
+		case 4:
+			this.baseAttSpeed = 0.5f;
+			this.baseMaxMana = 12;
+			this.baseRange = 1.25f;
+			break;
+		case 5:
+			this.baseAttSpeed = 2f;
+			this.baseMaxMana = 24;
+			this.baseRange = 2.8f;
+			break;
+		case 6:
+			this.baseAttSpeed = 1.75f;
+			this.baseMaxMana = 12;
+			this.baseRange = 3.8f;
+			break;
+		case 7:
+			this.baseAttSpeed = 2f;
+			this.baseMaxMana = 14;
+			this.baseRange = 1.25f;
+			break;
+		case 8:
+			this.baseAttSpeed = 1.25f;
+			this.baseMaxMana = 16;
+			this.baseRange = 1.25f;
+			break;
+		case 9:
+			this.baseAttSpeed = 0.8f;
+			this.baseMaxMana = 14;
+			this.baseRange = 3.85f;
+			break;
+		case 10:
+			this.baseAttSpeed = 1.25f;
+			this.baseMaxMana = 16;
+			this.baseRange = 3.9f;
+			break;
+		case 11:
+			this.baseAttSpeed = 0.6f;
+			this.baseMaxMana = 18;
+			this.baseRange = 1.25f;
+			break;
+		case 12:
+			this.baseAttSpeed = 1.25f;
+			this.baseMaxMana = 28;
+			this.baseRange = 2.85f;
+			break;
+		case 13:
+			this.baseAttSpeed = 1.5f;
+			this.baseMaxMana = 32;
+			this.baseRange = 2.9f;
+			break;
+		case 14:
+			this.baseAttSpeed = 1.6f;
+			this.baseMaxMana = 18;
+			this.baseRange = 3.95f;
+			break;
+		case 15:
+			this.baseAttSpeed = 1.9f;
+			this.baseMaxMana = 36;
+			this.baseRange = 2.95f;
+			break;
+		case 16:
+			this.baseAttSpeed = 1.1f;
+			this.baseMaxMana = 20;
+			this.baseRange = 4f;
+			break;
+		case 17:
+			this.baseAttSpeed = 0.9f;
+			this.baseMaxMana = 20;
+			this.baseRange = 1.25f;
+			break;
+		case 18:
+			this.baseAttSpeed = 1.75f;
+			this.baseMaxMana = 40;
+			this.baseRange = 3f;
+			break;
+		case 19:
+			this.baseAttSpeed = 1.75f;
+			this.baseMaxMana = 22;
+			this.baseRange = 4.05f;
+			break;
+		case 20:
+			this.baseAttSpeed = 1.5f;
+			this.baseMaxMana = 44;
+			this.baseRange = 3.05f;
+			break;
+		case 21:
+			this.baseAttSpeed = 1.5f;
+			this.baseMaxMana = 22;
+			this.baseRange = 1.25f;
+			break;
+		case 22:
+			this.baseAttSpeed = 2f;
+			this.baseMaxMana = 48;
+			this.baseRange = 3.1f;
+			break;
+		case 23:
+			this.baseAttSpeed = 1.7f;
+			this.baseMaxMana = 24;
+			this.baseRange = 4.1f;
+			break;
+		case 24:
+			this.baseAttSpeed = 1f;
+			this.baseMaxMana = 26;
+			this.baseRange = 4.15f;
+			break;
+		case 25:
+			this.baseAttSpeed = 1f;
+			this.baseMaxMana = 24;
+			this.baseRange = 1.25f;
+			break;
+		case 26:
+			this.baseAttSpeed = 2f;
+			this.baseMaxMana = 26;
+			this.baseRange = 1.25f;
+			break;
+		case 27:
+			this.baseAttSpeed = 1.25f;
+			this.baseMaxMana = 52;
+			this.baseRange = 3.15f;
+			break;
+		case 28:
+			this.baseAttSpeed = 1.5f;
+			this.baseMaxMana = 28;
+			this.baseRange = 4.2f;
+			break;
+		case 29:
+			this.baseAttSpeed = 1.5f;
+			this.baseMaxMana = 28;
+			this.baseRange = 1.25f;
+			break;
+		case 30:
+			this.baseAttSpeed = 1.75f;
+			this.baseMaxMana = 56;
+			this.baseRange = 3.2f;
+			break;
+		case 31:
+			this.baseAttSpeed = 1.25f;
+			this.baseMaxMana = 30;
+			this.baseRange = 1.25f;
+			break;
+		case 32:
+			this.baseAttSpeed = 0.85f;
+			this.baseMaxMana = 30;
+			this.baseRange = 4.25f;
+			break;
+		case 33:
+			this.baseAttSpeed = 0.9f;
+			this.baseMaxMana = 32;
+			this.baseRange = 1.25f;
+			break;
+		case 34:
+			this.baseAttSpeed = 1f;
+			this.baseMaxMana = 32;
+			this.baseRange = 4.3f;
+			break;
+		case 35:
+			this.baseAttSpeed = 1.1f;
+			this.baseMaxMana = 60;
+			this.baseRange = 3.25f;
+			break;
+		default:
+			this.baseAttSpeed = 1f;
+			this.baseMaxMana = 10;
+			this.baseRange = 1.25f;
+			break;
+		}
+		this.movementSpeed = 2f + (2f - this.baseAttSpeed);
+		this.currHp = this.getActMaxHp(this.baseDps);
+		if (!GameManager.Instance.hasV3)
+		{
+			this.lastPlayPosition = new Vector3(0f, 0f);
+		}
+		if (this.isActiveHero)
+		{
+			GameManager.Instance.activeHeroes.Add(this);
+			GameManager.Instance.numAliveHeroes++;
+			int count = GameManager.Instance.activeHeroes.Count;
+			if (count == 1)
+			{
+				base.transform.position = new Vector3(0f, 4f);
+			}
+			else if (count == 2)
+			{
+				base.transform.position = new Vector3(-1.5f, 5f);
+			}
+			else if (count == 3)
+			{
+				base.transform.position = new Vector3(1.5f, 5f);
+			}
+			else if (count == 4)
+			{
+				base.transform.position = new Vector3(-1.5f, 3f);
+			}
+			else if (count == 5)
+			{
+				base.transform.position = new Vector3(1.5f, 3f);
+			}
+			if (this.lastPlayPosition != new Vector3(0f, 0f))
+			{
+				base.transform.position = this.lastPlayPosition;
+			}
+			this.targetPosition = base.transform.position;
+		}
+	}
+
+	public void initHero(bool forPrestige)
+	{
+		if (this.tier > 1)
+		{
+			this.level = 0;
+			this.isActiveHero = false;
+		}
+		else
+		{
+			this.level = 1;
+			this.isActiveHero = true;
+		}
+		this.baseDps = 8.0;
+		this.lvlUpCost = 25.0;
+		float num = 0.57f;
+		for (int i = 2; i <= this.tier; i++)
+		{
+			float num2 = 0f;
+			switch (i)
+			{
+			case 2:
+				num2 = 8f;
+				break;
+			case 3:
+				num2 = 10f;
+				break;
+			case 4:
+				num2 = 12f;
+				break;
+			case 5:
+				num2 = 15f;
+				break;
+			case 6:
+				num2 = 25f;
+				break;
+			case 7:
+				num2 = 50f;
+				break;
+			case 8:
+				num2 = 80f;
+				break;
+			case 9:
+				num2 = 125f;
+				break;
+			case 10:
+				num2 = 200f;
+				break;
+			case 11:
+				num2 = 350f;
+				break;
+			case 12:
+				num2 = 600f;
+				break;
+			case 13:
+				num2 = 1000f;
+				break;
+			case 14:
+				num2 = 1750f;
+				break;
+			case 15:
+				num2 = 4000f;
+				break;
+			case 16:
+				num2 = 7500f;
+				break;
+			case 17:
+				num2 = 12500f;
+				break;
+			case 18:
+				num2 = 20000f;
+				break;
+			case 19:
+				num2 = 35000f;
+				break;
+			case 20:
+				num2 = 50000f;
+				break;
+			case 21:
+				num2 = 100000f;
+				break;
+			case 22:
+				num2 = 250000f;
+				break;
+			case 23:
+				num2 = 400000f;
+				break;
+			case 24:
+				num2 = 750000f;
+				break;
+			case 25:
+				num2 = 1250000f;
+				break;
+			case 26:
+				num2 = 2500000f;
+				break;
+			case 27:
+				num2 = 5000000f;
+				break;
+			case 28:
+				num2 = 1E+07f;
+				break;
+			case 29:
+				num2 = 2.5E+07f;
+				break;
+			case 30:
+				num2 = 5E+07f;
+				break;
+			case 31:
+				num2 = 1E+08f;
+				break;
+			case 32:
+				num2 = 5E+09f;
+				break;
+			case 33:
+				num2 = 1E+13f;
+				break;
+			}
+			if (i <= 33)
+			{
+				float num3 = num2 * num;
+				this.baseDps *= (double)num3;
+				this.baseDps = Math.Round(this.baseDps, 0);
+				this.lvlUpCost *= (double)num2;
+				this.lvlUpCost = Math.Round(this.lvlUpCost, 0);
+				num += 0.00675f;
+			}
+		}
+		this.addOnDps = this.baseDps;
+		this.numTraits = 0;
+		this.nextTraitLvl = 25;
+		this.nextTraitTitle = UnityEngine.Random.Range(0, 6);
+		this.numTraitDps = 0;
+		this.numTraitHp = 0;
+		this.numTraitMana = 0;
+		this.numTraitCritChance = 0;
+		this.numTraitCritDmg = 0;
+		this.numTraitAttSpeed = 0;
+		this.numMastery = 0;
+		this.nextMasteryLvl = 500;
+		this.equipOnTier = 1;
+		this.equipLastExp = 0;
+		this.equipCurrExp = 0;
+		this.equipNextExp = 75;
+		this.targetPosition = base.transform.position;
+		this.currHp = this.getActMaxHp(this.baseDps);
+		this.currMana = this.getActMaxMana();
+	}
+
+	private void Start()
+	{
+		this.setActualUnit();
+		GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.heroHpSliderPrefab);
+		gameObject.transform.SetParent(UIManager.Instance.heroBarsParent.transform, false);
+		gameObject.GetComponent<HeroHealthBar>().thisHero = this;
+		GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.heroManaSliderPrefab);
+		gameObject2.transform.SetParent(UIManager.Instance.heroBarsParent.transform, false);
+		gameObject2.GetComponent<HeroManaBar>().thisHero = this;
+		if (this.tier == 3 || this.tier == 13 || this.tier == 20 || this.tier == 30 || this.tier == 15 || this.tier == 27)
+		{
+			this.medicTimer = UnityEngine.Random.Range(15f, 25f);
+		}
+		if (this.evolveNextExp == 0)
+		{
+			this.evolveNextExp = 1500;
+		}
+		this.activeSkill1ActiveTimer = 0f;
+		this.activeSkill1CooldownTimer = 0f;
+		this.activeSkill2ActiveTimer = 0f;
+		this.activeSkill2CooldownTimer = 0f;
+	}
+
+	public void setActualUnit()
+	{
+		this.isSwitchingSkins = true;
+		if (this.actualUnit != null)
+		{
+			UnityEngine.Object.Destroy(this.actualUnit);
+		}
+		List<GameObject> list = new List<GameObject>();
+		if (GameManager.Instance.settingsRareSkins)
+		{
+			list = HeroManager.Instance.skinList2;
+		}
+		else if (GameManager.Instance.settingsEpicSkins)
+		{
+			list = HeroManager.Instance.skinList3;
+		}
+		else
+		{
+			list = HeroManager.Instance.skinList1;
+		}
+		this.actualUnit = UnityEngine.Object.Instantiate<GameObject>(list[this.tier - 1]);
+		this.actualUnit.transform.SetParent(base.gameObject.transform, false);
+		this.animator = this.actualUnit.GetComponent<Animator>();
+		this.loadSpriteRenderers();
+		this.isSwitchingSkins = false;
+	}
+
+	public void loadSpriteRenderers()
+	{
+		this.spriteRender1 = null;
+		this.spriteRender2 = null;
+		this.spriteRender3 = null;
+		this.spriteRender4 = null;
+		this.spriteRender5 = null;
+		this.spriteRender6 = null;
+		this.spriteRender7 = null;
+		this.spriteRender8 = null;
+		this.spriteRender9 = null;
+		for (int i = 0; i < this.actualUnit.transform.childCount; i++)
+		{
+			GameObject gameObject = this.actualUnit.transform.GetChild(i).gameObject;
+			this.addSpriteRenderer(gameObject.GetComponent<SpriteRenderer>());
+			for (int j = 0; j < gameObject.transform.childCount; j++)
+			{
+				this.addSpriteRenderer(gameObject.transform.GetChild(j).gameObject.GetComponent<SpriteRenderer>());
+			}
+		}
+	}
+
+	private void addSpriteRenderer(SpriteRenderer spriteRenderer)
+	{
+		if (this.spriteRender1 == null)
+		{
+			this.spriteRender1 = spriteRenderer;
+		}
+		else if (this.spriteRender2 == null)
+		{
+			this.spriteRender2 = spriteRenderer;
+		}
+		else if (this.spriteRender3 == null)
+		{
+			this.spriteRender3 = spriteRenderer;
+		}
+		else if (this.spriteRender4 == null)
+		{
+			this.spriteRender4 = spriteRenderer;
+		}
+		else if (this.spriteRender5 == null)
+		{
+			this.spriteRender5 = spriteRenderer;
+		}
+		else if (this.spriteRender6 == null)
+		{
+			this.spriteRender6 = spriteRenderer;
+		}
+		else if (this.spriteRender7 == null)
+		{
+			this.spriteRender7 = spriteRenderer;
+		}
+		else if (this.spriteRender8 == null)
+		{
+			this.spriteRender8 = spriteRenderer;
+		}
+		else if (this.spriteRender9 == null)
+		{
+			this.spriteRender9 = spriteRenderer;
+		}
+	}
+
+	private int getEquipRarityBonus(int _num)
+	{
+		if (_num == 1)
+		{
+			return 0;
+		}
+		if (_num == 2)
+		{
+			return 15;
+		}
+		if (_num == 3)
+		{
+			return 35;
+		}
+		if (_num == 4)
+		{
+			return 60;
+		}
+		if (_num == 5)
+		{
+			return 90;
+		}
+		if (_num == 6)
+		{
+			return 125;
+		}
+		return 0;
+	}
+
+	private void OnMouseUpAsButton()
+	{
+		if (!GameManager.Instance.doneTutorial)
+		{
+			return;
+		}
+		Vector3 origin = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		origin.z = Camera.main.transform.position.z;
+		Ray ray = new Ray(origin, new Vector3(0f, 0f, 1f));
+		if (Physics2D.GetRayIntersection(ray) != null && !this.IsPointerOverUIObject())
+		{
+			UnityEngine.Debug.Log("touched hero " + this.heroName);
+			GameManager.Instance.selectedHero = this;
+		}
+	}
+
+	private bool IsPointerOverUIObject()
+	{
+		PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
+		pointerEventData.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		List<RaycastResult> list = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(pointerEventData, list);
+		return list.Count > 0;
+	}
+
+	private void findClosestEnemy()
+	{
+		for (int i = 0; i < EnemyManager.Instance.enemyList.Count; i++)
+		{
+			Enemy enemy = EnemyManager.Instance.enemyList[i];
+			if (enemy.isInGameArea && enemy.currHp > 0.0)
+			{
+				if (this.targetEnemy == null)
+				{
+					this.targetEnemy = enemy;
+				}
+				else if ((enemy.transform.position - base.transform.position).magnitude < (this.targetEnemy.transform.position - base.transform.position).magnitude)
+				{
+					this.targetEnemy = enemy;
+				}
+			}
+		}
+	}
+
+	public void stopHeroAttStuff()
+	{
+		this.clickedToMove = false;
+		this.targetEnemy = null;
+		this.targetPosition = base.transform.position;
+		this.isInAttackAnim = false;
+		this.attackAnimTimer = 0f;
+		this.attackTimer = 0f;
+	}
+
+	public void takeDamage(double _dmgDealt)
+	{
+		if (this.tier == 31 && this.activeSkill1ActiveTimer > 0f)
+		{
+			_dmgDealt *= 0.25;
+			_dmgDealt = Math.Round(_dmgDealt, 0);
+		}
+		if (double.IsInfinity(_dmgDealt) || double.IsNaN(_dmgDealt))
+		{
+			_dmgDealt = 1.5E+308;
+		}
+		this.currHp -= _dmgDealt;
+		SoundManager.Instance.playHit();
+		if (GameManager.Instance.settingsParticleEffects)
+		{
+			GameObject poolObject = UIManager.Instance.getPoolObject(UIManager.Instance.poolBloodHit);
+			if (poolObject != null)
+			{
+				poolObject.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+				ParticleSystem component = poolObject.GetComponent<ParticleSystem>();
+				poolObject.SetActive(true);
+				component.Play();
+			}
+		}
+		if (GameManager.Instance.settingsCombatTexts)
+		{
+			GameObject poolObject2 = UIManager.Instance.getPoolObject(UIManager.Instance.poolDmgText);
+			if (poolObject2 != null)
+			{
+				Vector3 worldPosition = new Vector3(base.transform.position.x, base.transform.position.y + 0.5f, base.transform.position.z);
+				UtilityMethods.MoveUiElementToWorldPosition(poolObject2.GetComponent<RectTransform>(), worldPosition);
+				Text component2 = poolObject2.GetComponent<Text>();
+				component2.color = UIManager.colorRed;
+				component2.fontSize = 16;
+				component2.text = "-" + UIManager.Instance.convertNumberFormat(_dmgDealt.ToString("0"));
+				poolObject2.SetActive(true);
+			}
+		}
+		if (this.currHp <= 0.0)
+		{
+			this.currHp = 0.0;
+			this.stopHeroAttStuff();
+			if (!this.isSwitchingSkins)
+			{
+				this.animator.Play("Die");
+			}
+			SoundManager.Instance.playDeath();
+			this.updSortLayer(99);
+			if (!TheUnderground.Instance.playingMiniGame && !PirateRaid.Instance.playingMiniGame)
+			{
+				if (GameManager.Instance.m5Num == 4 && GameManager.Instance.m5CurrVal < GameManager.Instance.m5NeedVal)
+				{
+					GameManager.Instance.m5CurrVal = 0;
+					GameManager.Instance.checkMissionStatus();
+				}
+				if (GameManager.Instance.q1Num == 1 && GameManager.Instance.q1CurrVal < GameManager.Instance.q1NeedVal)
+				{
+					GameManager.Instance.q1CurrVal = 0;
+					GameManager.Instance.checkMissionStatus();
+				}
+			}
+			GameManager.Instance.numAliveHeroes--;
+			if (GameManager.Instance.numAliveHeroes <= 0)
+			{
+				GameManager.Instance.allHeroesDied();
+			}
+		}
+	}
+
+	private void Update()
+	{
+		if (GameManager.Instance.prestigePause || TheUnderground.Instance.loadingMiniGame || PirateRaid.Instance.loadingMiniGame || UIManager.Instance.tutv2Pause)
+		{
+			if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+			{
+				this.animator.Play("Idle");
+			}
+			return;
+		}
+		if (this.currMana < this.getActMaxMana())
+		{
+			this.manaRegenTimer += Time.deltaTime;
+			if (this.manaRegenTimer >= this.getActManaRegen(false))
+			{
+				this.manaRegenTimer = 0f;
+				this.currMana++;
+			}
+		}
+		else
+		{
+			this.manaRegenTimer = 0f;
+		}
+		if (this.activeSkill1ActiveTimer > 0f)
+		{
+			this.activeSkill1ActiveTimer -= Time.deltaTime;
+			if (this.activeSkill1ActiveTimer <= 0f)
+			{
+				this.activeSkill1ActiveTimer = 0f;
+			}
+		}
+		else if (this.activeSkill1CooldownTimer > 0f)
+		{
+			this.activeSkill1CooldownTimer -= Time.deltaTime;
+			if (this.activeSkill1CooldownTimer <= 0f)
+			{
+				this.activeSkill1CooldownTimer = 0f;
+			}
+		}
+		if (this.activeSkill2ActiveTimer > 0f)
+		{
+			this.activeSkill2ActiveTimer -= Time.deltaTime;
+			if (this.activeSkill2ActiveTimer <= 0f)
+			{
+				this.activeSkill2ActiveTimer = 0f;
+			}
+		}
+		else if (this.activeSkill2CooldownTimer > 0f)
+		{
+			this.activeSkill2CooldownTimer -= Time.deltaTime;
+			if (this.activeSkill2CooldownTimer <= 0f)
+			{
+				this.activeSkill2CooldownTimer = 0f;
+			}
+		}
+		if (GameManager.Instance.isGameOver)
+		{
+			if (!this.isSwitchingSkins && this.animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+			{
+				this.animator.Play("Idle");
+			}
+			return;
+		}
+		if (!this.isActiveHero)
+		{
+			this.activeSkill1ActiveTimer = 0f;
+			this.activeSkill2ActiveTimer = 0f;
+			this.lastPlayPosition = new Vector3(0f, 0f);
+			return;
+		}
+		if (!TheUnderground.Instance.playingMiniGame && !PirateRaid.Instance.playingMiniGame)
+		{
+			this.lastPlayPosition = base.transform.position;
+		}
+		if (this.currHp <= 0.0)
+		{
+			this.activeSkill1ActiveTimer = 0f;
+			this.activeSkill2ActiveTimer = 0f;
+			return;
+		}
+		if (this.activeSkillAutocastNum > 0)
+		{
+			if (this.activeSkillAutocastNum == 1 && this.activeSkill1ActiveTimer == 0f && this.activeSkill1CooldownTimer == 0f && this.currMana >= this.getActSkillCost(1))
+			{
+				this.useSkill(1);
+			}
+			else if (this.activeSkillAutocastNum == 2 && this.activeSkill2ActiveTimer == 0f && this.activeSkill2CooldownTimer == 0f && this.currMana >= this.getActSkillCost(2))
+			{
+				this.useSkill(2);
+			}
+		}
+		if (this.tier == 3 || this.tier == 13 || this.tier == 20 || this.tier == 30)
+		{
+			this.medicTimer -= Time.deltaTime;
+			if (this.medicTimer <= 0f)
+			{
+				float num = 0f;
+				if (this.tier == 3)
+				{
+					num = 0.1f;
+				}
+				else if (this.tier == 13)
+				{
+					num = 0.15f;
+				}
+				else if (this.tier == 20)
+				{
+					num = 0.2f;
+				}
+				else if (this.tier == 30)
+				{
+					num = 0.25f;
+				}
+				for (int i = 0; i < GameManager.Instance.activeHeroes.Count; i++)
+				{
+					Hero hero = GameManager.Instance.activeHeroes[i];
+					if (hero.currHp > 0.0)
+					{
+						hero.currHp += hero.getActMaxHp(hero.baseDps) * (double)num;
+						if (hero.currHp > hero.getActMaxHp(hero.baseDps))
+						{
+							hero.currHp = hero.getActMaxHp(hero.baseDps);
+						}
+						if (GameManager.Instance.settingsParticleEffects)
+						{
+							GameObject poolObject = UIManager.Instance.getPoolObject(UIManager.Instance.poolHealParticles);
+							if (poolObject != null)
+							{
+								poolObject.transform.position = hero.transform.position;
+								ParticleSystem component = poolObject.GetComponent<ParticleSystem>();
+								poolObject.SetActive(true);
+								component.Play();
+							}
+						}
+					}
+				}
+				this.medicTimer = UnityEngine.Random.Range(15f, 25f);
+			}
+		}
+		if (this.tier == 15 || this.tier == 27)
+		{
+			this.medicTimer -= Time.deltaTime;
+			if (this.medicTimer <= 0f)
+			{
+				float num2 = 0f;
+				if (this.tier == 15)
+				{
+					num2 = 0.5f;
+				}
+				else if (this.tier == 27)
+				{
+					num2 = 0.75f;
+				}
+				Hero hero2 = null;
+				for (int j = 0; j < GameManager.Instance.activeHeroes.Count; j++)
+				{
+					Hero hero3 = GameManager.Instance.activeHeroes[j];
+					if (hero3.currHp > 0.0)
+					{
+						if (hero2 == null)
+						{
+							hero2 = hero3;
+						}
+						else if (hero3.currHp < hero2.currHp)
+						{
+							hero2 = hero3;
+						}
+					}
+				}
+				hero2.currHp += hero2.getActMaxHp(hero2.baseDps) * (double)num2;
+				if (hero2.currHp > hero2.getActMaxHp(hero2.baseDps))
+				{
+					hero2.currHp = hero2.getActMaxHp(hero2.baseDps);
+				}
+				if (GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject poolObject2 = UIManager.Instance.getPoolObject(UIManager.Instance.poolHealParticles);
+					if (poolObject2 != null)
+					{
+						poolObject2.transform.position = hero2.transform.position;
+						ParticleSystem component2 = poolObject2.GetComponent<ParticleSystem>();
+						poolObject2.SetActive(true);
+						component2.Play();
+					}
+				}
+				this.medicTimer = UnityEngine.Random.Range(15f, 25f);
+			}
+		}
+		if (this.isInAttackAnim)
+		{
+			this.attackAnimTimer -= Time.deltaTime;
+			if (this.attackAnimTimer <= 0f)
+			{
+				this.attackAnimTimer = 0f;
+				this.isInAttackAnim = false;
+				if (this.targetEnemy.currHp > 0.0 && this.targetEnemy != null)
+				{
+					double num3 = this.getActDmg(false);
+					bool isCritHit = false;
+					float num4 = (float)UnityEngine.Random.Range(0, 1000) * 0.1f;
+					if (num4 < this.getCritChance(false))
+					{
+						isCritHit = true;
+						num3 = this.getCritDmg(false);
+						if (GameManager.Instance.settingsParticleEffects)
+						{
+							GameObject poolObject3 = UIManager.Instance.getPoolObject(UIManager.Instance.poolCritHit);
+							if (poolObject3 != null)
+							{
+								poolObject3.transform.position = this.targetEnemy.transform.position + new Vector3(0f, 0.75f, 0f);
+								ParticleSystem component3 = poolObject3.GetComponent<ParticleSystem>();
+								poolObject3.SetActive(true);
+								component3.Play();
+							}
+						}
+						AchievementManager.Instance.listAch[6].currAmt += 1.0;
+						AchievementManager.Instance.checkIfAchComplete(6);
+						if (GameManager.Instance.m2Num == 1)
+						{
+							GameManager.Instance.m2CurrVal++;
+							GameManager.Instance.checkMissionStatus();
+						}
+						if (GameManager.Instance.q4Num == 1)
+						{
+							GameManager.Instance.q4CurrVal++;
+							GameManager.Instance.checkQuestStatus();
+						}
+					}
+					float num5 = 1f;
+					if (this.type == 1 && this.targetEnemy.isBoss)
+					{
+						num5 += (float)GameManager.Instance.treeAll7Lvl * 0.02f;
+					}
+					num5 += (float)GameManager.Instance.tech5Lvl * 0.02f;
+					num3 *= (double)num5;
+					num3 = Math.Round(num3, 0);
+					double dmgDealtwTypeMult = GameManager.Instance.getDmgDealtwTypeMult(num3, this.type, this.targetEnemy.type);
+					float num6 = this.getReforgeBoosts(10);
+					if (this.type == 1)
+					{
+						num6 += (float)this.ringPower * 0.05f;
+					}
+					float num7 = UnityEngine.Random.Range(0f, 100f);
+					if (num7 < num6)
+					{
+						double num8 = dmgDealtwTypeMult * 0.10000000149011612;
+						num8 = Math.Round(num8, 0);
+						this.currHp += num8;
+						if (this.currHp > this.getActMaxHp(this.baseDps))
+						{
+							this.currHp = this.getActMaxHp(this.baseDps);
+						}
+					}
+					float num9 = 0f;
+					if (this.type == 1)
+					{
+						num9 += (float)this.necklacePower * 0.05f;
+					}
+					num9 += this.getReforgeBoosts(14);
+					if (GameManager.Instance.commIcon == 9)
+					{
+						num9 += 3f;
+					}
+					if (this.type == 1)
+					{
+						num9 += (float)GameManager.Instance.treeMelee4Lvl * 0.5f;
+					}
+					if (this == HeroManager.Instance.hero8 && this.activeSkill1ActiveTimer > 0f)
+					{
+						num9 += 25f;
+					}
+					if (HeroManager.Instance.hero11.isActiveHero && this.type == 1)
+					{
+						num9 += 3f;
+					}
+					if (this == HeroManager.Instance.hero26 && this.activeSkill1ActiveTimer > 0f)
+					{
+						num9 += 35f;
+					}
+					if (HeroManager.Instance.hero29.isActiveHero && this.type == 1)
+					{
+						num9 += 5f;
+					}
+					if (HeroManager.Instance.hero35.isActiveHero && this.type == 3)
+					{
+						num9 += 10f;
+					}
+					if (HeroManager.Instance.hero35.isActiveHero && HeroManager.Instance.hero35.activeSkill1ActiveTimer > 0f)
+					{
+						num9 += 100f;
+					}
+					float num10 = (float)UnityEngine.Random.Range(0, 1000) * 0.1f;
+					if (num10 < num9)
+					{
+						if (GameManager.Instance.settingsParticleEffects)
+						{
+							GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesSplashHit);
+							gameObject.transform.position = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+							gameObject.transform.SetParent(UIManager.Instance.particlesParent.transform);
+							UnityEngine.Object.Destroy(gameObject, 1f);
+						}
+						for (int k = EnemyManager.Instance.enemyList.Count - 1; k >= 0; k--)
+						{
+							Enemy enemy = EnemyManager.Instance.enemyList[k];
+							if (enemy != this.targetEnemy && enemy.isInGameArea && enemy.currHp > 0.0 && enemy != null && (enemy.transform.position - this.targetEnemy.transform.position).magnitude <= 2f)
+							{
+								double num11 = GameManager.Instance.getDmgDealtwTypeMult(num3, this.type, enemy.type);
+								num11 *= 0.5;
+								num11 = Math.Round(num11, 0);
+								enemy.takeDamage(num11, this, false);
+							}
+						}
+						if (GameManager.Instance.m2Num == 3)
+						{
+							GameManager.Instance.m2CurrVal++;
+							GameManager.Instance.checkMissionStatus();
+						}
+						if (GameManager.Instance.q6Num == 5)
+						{
+							GameManager.Instance.q6CurrVal++;
+							GameManager.Instance.checkQuestStatus();
+						}
+					}
+					else
+					{
+						float num12 = 0f;
+						if (this == HeroManager.Instance.hero7 && this.activeSkill2ActiveTimer > 0f)
+						{
+							num12 = 0.05f;
+						}
+						if (this == HeroManager.Instance.hero7 && this.activeSkill2ActiveTimer > 0f)
+						{
+							num12 = 0.1f;
+						}
+						if (num12 > 0f)
+						{
+							if (GameManager.Instance.settingsParticleEffects)
+							{
+								GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesSplashHit);
+								gameObject2.transform.position = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+								gameObject2.transform.SetParent(UIManager.Instance.particlesParent.transform);
+								UnityEngine.Object.Destroy(gameObject2, 1f);
+							}
+							for (int l = EnemyManager.Instance.enemyList.Count - 1; l >= 0; l--)
+							{
+								Enemy enemy2 = EnemyManager.Instance.enemyList[l];
+								if (enemy2 != this.targetEnemy && enemy2.isInGameArea && enemy2.currHp > 0.0 && enemy2 != null && (enemy2.transform.position - this.targetEnemy.transform.position).magnitude <= 2f)
+								{
+									double num13 = GameManager.Instance.getDmgDealtwTypeMult(num3, this.type, enemy2.type);
+									num13 *= (double)num12;
+									num13 = Math.Round(num13, 0);
+									enemy2.takeDamage(num13, this, false);
+								}
+							}
+							if (GameManager.Instance.m2Num == 3)
+							{
+								GameManager.Instance.m2CurrVal++;
+								GameManager.Instance.checkMissionStatus();
+							}
+							if (GameManager.Instance.q6Num == 5)
+							{
+								GameManager.Instance.q6CurrVal++;
+								GameManager.Instance.checkQuestStatus();
+							}
+						}
+					}
+					if ((this.type == 2 && GameManager.Instance.treeRange5Lvl > 0) || (this.type == 3 && GameManager.Instance.treeMage5Lvl > 0))
+					{
+						float num14 = 0f;
+						if (this.type == 2)
+						{
+							num14 = (float)GameManager.Instance.treeRange5Lvl * 0.2f;
+						}
+						else if (this.type == 3)
+						{
+							num14 = (float)GameManager.Instance.treeMage5Lvl * 0.2f;
+						}
+						float num15 = (float)UnityEngine.Random.Range(0, 1000) * 0.1f;
+						if (num15 < num14)
+						{
+							if (GameManager.Instance.settingsParticleEffects)
+							{
+								GameObject gameObject3 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesExplosiveArrow);
+								gameObject3.transform.position = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+								gameObject3.transform.SetParent(UIManager.Instance.particlesParent.transform);
+								UnityEngine.Object.Destroy(gameObject3, 1f);
+							}
+							for (int m = EnemyManager.Instance.enemyList.Count - 1; m >= 0; m--)
+							{
+								Enemy enemy3 = EnemyManager.Instance.enemyList[m];
+								if (enemy3 != this.targetEnemy && enemy3.isInGameArea && enemy3.currHp > 0.0 && enemy3 != null && (enemy3.transform.position - this.targetEnemy.transform.position).magnitude <= 2f)
+								{
+									double num16 = GameManager.Instance.getDmgDealtwTypeMult(num3, this.type, enemy3.type);
+									num16 *= 0.5;
+									num16 = Math.Round(num16, 0);
+									enemy3.takeDamage(num16, this, false);
+								}
+							}
+							if (GameManager.Instance.m2Num == 3)
+							{
+								GameManager.Instance.m2CurrVal++;
+								GameManager.Instance.checkMissionStatus();
+							}
+							if (GameManager.Instance.q6Num == 5)
+							{
+								GameManager.Instance.q6CurrVal++;
+								GameManager.Instance.checkQuestStatus();
+							}
+						}
+					}
+					int num17 = 0;
+					if (this.targetEnemy.type == 3)
+					{
+						if (this.targetEnemy.isBoss)
+						{
+							num17 = 5;
+						}
+						else
+						{
+							num17 = 3;
+						}
+					}
+					int num18 = UnityEngine.Random.Range(0, 101);
+					if (num18 < num17)
+					{
+						if (GameManager.Instance.settingsCombatTexts)
+						{
+							GameObject poolObject4 = UIManager.Instance.getPoolObject(UIManager.Instance.poolDmgText);
+							if (poolObject4 != null)
+							{
+								Vector3 worldPosition = new Vector3(this.targetEnemy.transform.position.x, this.targetEnemy.transform.position.y + 0.5f, this.targetEnemy.transform.position.z);
+								UtilityMethods.MoveUiElementToWorldPosition(poolObject4.GetComponent<RectTransform>(), worldPosition);
+								Text component4 = poolObject4.GetComponent<Text>();
+								component4.color = UIManager.colorWhite;
+								component4.fontSize = 16;
+								component4.text = "miss";
+								poolObject4.SetActive(true);
+							}
+						}
+					}
+					else
+					{
+						this.targetEnemy.takeDamage(dmgDealtwTypeMult, this, isCritHit);
+					}
+					if (HeroManager.Instance.hero5.isActiveHero)
+					{
+						double num19 = dmgDealtwTypeMult * 0.019999999552965164;
+						num19 = Math.Round(num19, 0);
+						this.currHp += num19;
+						if (this.currHp > this.getActMaxHp(this.baseDps))
+						{
+							this.currHp = this.getActMaxHp(this.baseDps);
+						}
+					}
+					if (this == HeroManager.Instance.hero11 && this.activeSkill1ActiveTimer > 0f)
+					{
+						double num20 = dmgDealtwTypeMult * 0.05000000074505806;
+						num20 = Math.Round(num20, 0);
+						this.currHp += num20;
+						if (this.currHp > this.getActMaxHp(this.baseDps))
+						{
+							this.currHp = this.getActMaxHp(this.baseDps);
+						}
+					}
+					if (HeroManager.Instance.hero18.isActiveHero)
+					{
+						double num21 = dmgDealtwTypeMult * 0.039999999105930328;
+						num21 = Math.Round(num21, 0);
+						this.currHp += num21;
+						if (this.currHp > this.getActMaxHp(this.baseDps))
+						{
+							this.currHp = this.getActMaxHp(this.baseDps);
+						}
+					}
+					if (this == HeroManager.Instance.hero29 && this.activeSkill1ActiveTimer > 0f)
+					{
+						double num22 = dmgDealtwTypeMult * 0.10000000149011612;
+						num22 = Math.Round(num22, 0);
+						this.currHp += num22;
+						if (this.currHp > this.getActMaxHp(this.baseDps))
+						{
+							this.currHp = this.getActMaxHp(this.baseDps);
+						}
+					}
+				}
+				else
+				{
+					this.targetEnemy = null;
+					this.findClosestEnemy();
+					if (!this.isSwitchingSkins)
+					{
+						this.animator.Play("Idle");
+					}
+				}
+			}
+			return;
+		}
+		float num23 = this.movementSpeed;
+		if (GameManager.Instance.settings2xGameSpeed || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 2) || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 3) || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 4))
+		{
+			num23 *= 1.75f;
+		}
+		if (GameManager.Instance.iapTournBoost && GameManager.Instance.tournamentActive)
+		{
+			num23 *= 1.6f;
+		}
+		float num24 = 1f;
+		if (HeroManager.Instance.hero32.activeSkill1ActiveTimer > 0f)
+		{
+			num24 += 0.2f;
+		}
+		num24 += (float)this.bootsPower * 0.001f;
+		num24 += (float)GameManager.Instance.badge16Lvl * 0.02f;
+		num23 *= num24;
+		if (!this.clickedToMove)
+		{
+			if (this.battleStyle == 3)
+			{
+				return;
+			}
+			if (this.targetEnemy == null)
+			{
+				if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+				{
+					this.animator.Play("Idle");
+				}
+				this.findClosestEnemy();
+			}
+			else if (this.targetEnemy.currHp <= 0.0)
+			{
+				this.targetEnemy = null;
+				this.findClosestEnemy();
+			}
+			else
+			{
+				if (base.transform.position.x < this.targetEnemy.transform.position.x)
+				{
+					base.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+				}
+				else
+				{
+					base.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+				}
+				if ((this.targetEnemy.transform.position - base.transform.position).magnitude > this.getActRange(false))
+				{
+					if (this.battleStyle == 0 || this.clickedAnEnemy)
+					{
+						float maxDistanceDelta = num23 * Time.deltaTime;
+						base.transform.position = Vector3.MoveTowards(base.transform.position, this.targetEnemy.transform.position, maxDistanceDelta);
+						if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+						{
+							this.animator.Play("Run");
+						}
+						this.findClosestEnemy();
+					}
+					else if (this.battleStyle == 1)
+					{
+						if ((this.targetEnemy.transform.position - this.targetPosition).magnitude <= 3.5f)
+						{
+							float maxDistanceDelta2 = num23 * Time.deltaTime;
+							base.transform.position = Vector3.MoveTowards(base.transform.position, this.targetEnemy.transform.position, maxDistanceDelta2);
+							if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+							{
+								this.animator.Play("Run");
+							}
+							this.findClosestEnemy();
+						}
+						else
+						{
+							if ((this.targetPosition - base.transform.position).magnitude > 0.35f)
+							{
+								float maxDistanceDelta3 = num23 * Time.deltaTime;
+								base.transform.position = Vector3.MoveTowards(base.transform.position, this.targetPosition, maxDistanceDelta3);
+								if (base.transform.position.x < this.targetPosition.x)
+								{
+									base.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+								}
+								else
+								{
+									base.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+								}
+								if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+								{
+									this.animator.Play("Run");
+								}
+							}
+							else if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+							{
+								this.animator.Play("Idle");
+							}
+							this.findClosestEnemy();
+						}
+					}
+					else if (this.battleStyle == 2)
+					{
+						this.findClosestEnemy();
+					}
+				}
+				else
+				{
+					this.clickedAnEnemy = false;
+					if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+					{
+						this.animator.Play("Idle");
+					}
+					float num25 = this.getActAttSpeed(false);
+					if (GameManager.Instance.settings2xGameSpeed || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 2) || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 3) || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 4))
+					{
+						num25 *= 0.625f;
+					}
+					if (GameManager.Instance.iapTournBoost && GameManager.Instance.tournamentActive)
+					{
+						num25 *= 0.675f;
+					}
+					if (HeroManager.Instance.hero32.activeSkill1ActiveTimer > 0f)
+					{
+						num25 *= 0.8f;
+					}
+					this.attackTimer += Time.deltaTime;
+					if (this.attackTimer >= num25)
+					{
+						this.attackTimer = 0f;
+						int num26 = UnityEngine.Random.Range(0, 2);
+						if (num26 == 0)
+						{
+							if (!this.isSwitchingSkins)
+							{
+								this.animator.Play("Attack1");
+							}
+						}
+						else if (num26 == 1 && !this.isSwitchingSkins)
+						{
+							this.animator.Play("Attack2");
+						}
+						if (this.type == 1)
+						{
+							if (HeroManager.Instance.hero33.isActiveHero)
+							{
+								GameObject poolObject5 = UIManager.Instance.getPoolObject(UIManager.Instance.poolRangeProjectiles);
+								if (poolObject5 != null)
+								{
+									poolObject5.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+									Projectile component5 = poolObject5.GetComponent<Projectile>();
+									component5.targetPos = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+									component5.isKnife = true;
+									poolObject5.SetActive(true);
+								}
+							}
+						}
+						else if (this.type == 2)
+						{
+							GameObject poolObject6 = UIManager.Instance.getPoolObject(UIManager.Instance.poolRangeProjectiles);
+							if (poolObject6 != null)
+							{
+								poolObject6.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+								Projectile component6 = poolObject6.GetComponent<Projectile>();
+								component6.targetPos = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+								component6.isKnife = false;
+								poolObject6.SetActive(true);
+							}
+						}
+						else
+						{
+							GameObject poolObject7 = UIManager.Instance.getPoolObject(UIManager.Instance.poolMageProjectiles);
+							if (poolObject7 != null)
+							{
+								poolObject7.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+								Projectile component7 = poolObject7.GetComponent<Projectile>();
+								component7.targetPos = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+								component7.isKnife = false;
+								poolObject7.SetActive(true);
+							}
+						}
+						float num27 = 0.35f;
+						this.attackAnimTimer = num27;
+						if (this.animator.GetCurrentAnimatorStateInfo(0).length > num25)
+						{
+							this.attackAnimTimer = num25 / this.animator.GetCurrentAnimatorStateInfo(0).length * num27;
+							float value = this.animator.GetCurrentAnimatorStateInfo(0).length / num25;
+							this.animator.SetFloat("AnimSpeed", value);
+						}
+						this.isInAttackAnim = true;
+					}
+				}
+			}
+		}
+		else
+		{
+			this.clickedAnEnemy = false;
+			if ((this.targetPosition - base.transform.position).magnitude > 0.55f)
+			{
+				float maxDistanceDelta4 = num23 * Time.deltaTime;
+				base.transform.position = Vector3.MoveTowards(base.transform.position, this.targetPosition, maxDistanceDelta4);
+				if (base.transform.position.x < this.targetPosition.x)
+				{
+					base.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+				}
+				else
+				{
+					base.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+				}
+				if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+				{
+					this.animator.Play("Run");
+				}
+			}
+			else
+			{
+				if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+				{
+					this.animator.Play("Idle");
+				}
+				this.clickedToMove = false;
+			}
+		}
+	}
+
+	public void setClickedAnEnemy()
+	{
+		this.clickedAnEnemy = true;
+	}
+
+	public Sprite getHeroIcon()
+	{
+		int index = this.tier - 1;
+		if (GameManager.Instance.settingsRareSkins)
+		{
+			return UIManager.Instance.heroIconsRare[index];
+		}
+		if (GameManager.Instance.settingsEpicSkins)
+		{
+			return UIManager.Instance.heroIconsEpic[index];
+		}
+		return UIManager.Instance.heroIconsNormal[index];
+	}
+
+	public Sprite getTypeIcon()
+	{
+		int index = this.type - 1;
+		return UIManager.Instance.typeIcons[index];
+	}
+
+	public double getActMaxHp(double _baseDps)
+	{
+		double num = _baseDps * 18.0;
+		if (this.type == 1)
+		{
+			num *= 1.5;
+		}
+		else if (this.type == 2)
+		{
+			num *= 1.0;
+		}
+		else if (this.type == 3)
+		{
+			num *= 1.0;
+		}
+		float num2 = 1f + (float)GameManager.Instance.commBonus * 0.01f;
+		num2 *= 1f + (float)GameManager.Instance.badge6Lvl * 0.25f;
+		num *= (double)num2;
+		if (GameManager.Instance.commIcon == 1)
+		{
+			num *= 1.0499999523162842;
+		}
+		else if (GameManager.Instance.commIcon == 2)
+		{
+			num *= 1.2000000476837158;
+		}
+		else if (GameManager.Instance.commIcon == 5)
+		{
+			num *= 1.75;
+		}
+		else if (GameManager.Instance.commIcon == 7)
+		{
+			num *= 5.0;
+		}
+		else if (GameManager.Instance.commIcon == 13)
+		{
+			num *= 15.0;
+		}
+		else if (GameManager.Instance.commIcon == 14)
+		{
+			num *= 25.0;
+		}
+		else if (GameManager.Instance.commIcon == 17)
+		{
+			num *= 35.0;
+		}
+		else if (GameManager.Instance.commIcon == 20)
+		{
+			num *= 75.0;
+		}
+		else if (GameManager.Instance.commIcon == 21)
+		{
+			num *= 150.0;
+		}
+		float num3 = 1f;
+		num3 += (float)GameManager.Instance.tournArtLvl2 * 7.5f;
+		if (this.type == 1)
+		{
+			num3 += (float)GameManager.Instance.tournArtLvl7 * 12.5f;
+		}
+		else if (this.type == 2)
+		{
+			num3 += (float)GameManager.Instance.tournArtLvl8 * 12.5f;
+		}
+		else if (this.type == 3)
+		{
+			num3 += (float)GameManager.Instance.tournArtLvl9 * 12.5f;
+		}
+		num *= (double)num3;
+		double num4 = GameManager.Instance.tournArtCollectionsBonus;
+		if (num4 < 1.0)
+		{
+			num4 = 1.0;
+		}
+		num *= num4;
+		num *= (double)Mathf.Pow(2.5f, (float)this.numTraitHp);
+		num *= Math.Pow(100.0, (double)this.numMastery);
+		float num5 = 1f + (float)GameManager.Instance.badge20Lvl * 0.1f;
+		num *= (double)(1f + (float)this.shieldPower * 0.25f * num5);
+		num *= (double)this.getReforgeBoosts(1);
+		float num6 = 1f + (float)GameManager.Instance.treeAll2Lvl * 0.25f;
+		if (this.type == 1)
+		{
+			num6 += (float)GameManager.Instance.treeMelee2Lvl * 0.75f;
+		}
+		else if (this.type == 2)
+		{
+			num6 += (float)GameManager.Instance.treeRange2Lvl * 0.5f;
+		}
+		else
+		{
+			num6 += (float)GameManager.Instance.treeMage2Lvl * 0.5f;
+		}
+		num *= (double)num6;
+		float num7 = 1f + (float)GameManager.Instance.auraHpLvl * 0.05f;
+		num *= (double)num7;
+		float num8 = 1f + (float)GameManager.Instance.artifact1Lvl * 0.05f;
+		num *= (double)num8;
+		float num9 = 1f;
+		float num10 = (float)GameManager.Instance.tech28Lvl * 0.01f;
+		num9 += (float)GameManager.Instance.tech2Lvl * 0.5f;
+		num9 += (float)GameManager.Instance.tech2Lvl * (0.05f + num10);
+		num9 += (float)GameManager.Instance.tech7Lvl * (0.1f + num10);
+		num9 += (float)GameManager.Instance.tech9Lvl * (0.15f + num10);
+		num9 += (float)GameManager.Instance.tech11Lvl * (0.05f + num10);
+		num9 += (float)GameManager.Instance.tech12Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech13Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech14Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech16Lvl * (0.05f + num10);
+		num9 += (float)GameManager.Instance.tech17Lvl * (0.05f + num10);
+		num9 += (float)GameManager.Instance.tech18Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech20Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech24Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech26Lvl * (0.1f + num10);
+		num9 += (float)GameManager.Instance.tech28Lvl * (0.05f + num10);
+		num9 += (float)GameManager.Instance.tech29Lvl * (0.1f + num10);
+		num *= (double)num9;
+		int num11 = this.tier;
+		if (num11 > 32)
+		{
+			num11 = 33;
+		}
+		num *= (double)(1f + (float)GameManager.Instance.tech30Lvl * ((float)((34 - num11) * 3) * 0.01f));
+		num *= (double)(1f + (float)AcademiaManager.Instance.listAcademia[1].totalBonus * 0.01f);
+		num *= (double)(1f + (float)GameManager.Instance.badge1Lvl * 2.5f);
+		float num12 = 1f;
+		if (this.evolveEffect > num12)
+		{
+			num12 = this.evolveEffect;
+		}
+		num *= (double)num12;
+		num *= (double)(1f + (float)GameManager.Instance.videoAdBoost * 0.25f);
+		num *= (double)GameManager.Instance.iap3xDpsHpBonus;
+		num *= (double)GameManager.Instance.iap3xComboBonus;
+		if (GameManager.Instance.iapTournBoost && GameManager.Instance.tournamentActive)
+		{
+			num *= 5.0;
+		}
+		if (GameManager.Instance.settingsRareSkins)
+		{
+			num *= 2.0;
+		}
+		if (GameManager.Instance.settingsEpicSkins)
+		{
+			num *= 3.5;
+		}
+		if (double.IsInfinity(num) || double.IsNaN(num))
+		{
+			num = 1E+308;
+		}
+		return Math.Round(num, 0);
+	}
+
+	public float getActAttSpeed(bool bypassSkills)
+	{
+		float num = 1f;
+		if (GameManager.Instance.commIcon == 8)
+		{
+			num -= 0.03f;
+		}
+		else if (GameManager.Instance.commIcon == 15)
+		{
+			num -= 0.05f;
+		}
+		num -= (float)this.numTraitAttSpeed * 0.025f;
+		num -= (float)this.gauntletsPower * 0.0005f;
+		num -= this.getReforgeBoosts(4);
+		num -= (float)GameManager.Instance.tech8Lvl * 0.005f;
+		num -= (float)GameManager.Instance.badge16Lvl * 0.02f;
+		if (!bypassSkills)
+		{
+			if (this == HeroManager.Instance.hero14 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num -= 0.35f;
+			}
+			if (HeroManager.Instance.hero14.isActiveHero)
+			{
+				num -= 0.03f;
+			}
+			if (this == HeroManager.Instance.hero28 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num -= 0.5f;
+			}
+			if (HeroManager.Instance.hero28.isActiveHero)
+			{
+				num -= 0.05f;
+			}
+		}
+		if (GameManager.Instance.settingsRareSkins)
+		{
+			num -= 0.05f;
+		}
+		if (GameManager.Instance.settingsEpicSkins)
+		{
+			num -= 0.1f;
+		}
+		float num2 = this.baseAttSpeed * num;
+		if (num2 < 0.15f)
+		{
+			num2 = 0.15f;
+		}
+		return num2;
+	}
+
+	public double getActDps(double _baseDps, bool bypassSkills)
+	{
+		double num = _baseDps;
+		if (this.type == 1)
+		{
+			num *= 1.0;
+		}
+		else if (this.type == 2)
+		{
+			num *= 1.5;
+		}
+		else if (this.type == 3)
+		{
+			num *= 1.0;
+		}
+		num *= (double)(1f / this.getActAttSpeed(bypassSkills));
+		float num2 = 1f + (float)GameManager.Instance.commBonus * 0.01f;
+		num2 *= 1f + (float)GameManager.Instance.badge6Lvl * 0.25f;
+		num *= (double)num2;
+		if (GameManager.Instance.commIcon == 1)
+		{
+			num *= 1.1000000238418579;
+		}
+		else if (GameManager.Instance.commIcon == 2)
+		{
+			num *= 1.1000000238418579;
+		}
+		else if (GameManager.Instance.commIcon == 4)
+		{
+			num *= 1.5;
+		}
+		else if (GameManager.Instance.commIcon == 6)
+		{
+			num *= 2.0;
+		}
+		else if (GameManager.Instance.commIcon == 7)
+		{
+			num *= 5.0;
+		}
+		else if (GameManager.Instance.commIcon == 9)
+		{
+			num *= 7.5;
+		}
+		else if (GameManager.Instance.commIcon == 11)
+		{
+			num *= 10.0;
+		}
+		else if (GameManager.Instance.commIcon == 14)
+		{
+			num *= 25.0;
+		}
+		else if (GameManager.Instance.commIcon == 19)
+		{
+			num *= 45.0;
+		}
+		else if (GameManager.Instance.commIcon == 20)
+		{
+			num *= 75.0;
+		}
+		else if (GameManager.Instance.commIcon == 21)
+		{
+			num *= 150.0;
+		}
+		float num3 = 1f;
+		num3 += (float)GameManager.Instance.tournArtLvl1 * 7.5f;
+		if (this.type == 1)
+		{
+			num3 += (float)GameManager.Instance.tournArtLvl7 * 12.5f;
+		}
+		else if (this.type == 2)
+		{
+			num3 += (float)GameManager.Instance.tournArtLvl8 * 12.5f;
+		}
+		else if (this.type == 3)
+		{
+			num3 += (float)GameManager.Instance.tournArtLvl9 * 12.5f;
+		}
+		num *= (double)num3;
+		double num4 = GameManager.Instance.tournArtCollectionsBonus;
+		if (num4 < 1.0)
+		{
+			num4 = 1.0;
+		}
+		num *= num4;
+		num *= (double)Mathf.Pow(2.5f, (float)this.numTraitDps);
+		num *= Math.Pow(100.0, (double)this.numMastery);
+		float num5 = 1f + (float)GameManager.Instance.badge20Lvl * 0.1f;
+		num *= (double)(1f + (float)this.wepPower * 0.25f * num5);
+		num *= (double)this.getReforgeBoosts(0);
+		float num6 = 1f + (float)GameManager.Instance.treeAll1Lvl * 0.25f;
+		if (this.type == 1)
+		{
+			num6 += (float)GameManager.Instance.treeMelee1Lvl * 0.5f;
+		}
+		else if (this.type == 2)
+		{
+			num6 += (float)GameManager.Instance.treeRange1Lvl * 0.75f;
+		}
+		else
+		{
+			num6 += (float)GameManager.Instance.treeMage1Lvl * 0.5f;
+		}
+		num *= (double)num6;
+		float num7 = 1f + (float)GameManager.Instance.auraDmgLvl * 0.05f;
+		num *= (double)num7;
+		float num8 = 1f + (float)GameManager.Instance.artifact1Lvl * 0.05f;
+		num *= (double)num8;
+		float num9 = 1f;
+		float num10 = (float)GameManager.Instance.tech27Lvl * 0.01f;
+		num9 += (float)GameManager.Instance.tech1Lvl * 0.5f;
+		num9 += (float)GameManager.Instance.tech1Lvl * (0.05f + num10);
+		num9 += (float)GameManager.Instance.tech3Lvl * (0.05f + num10);
+		num9 += (float)GameManager.Instance.tech4Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech5Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech6Lvl * (0.1f + num10);
+		num9 += (float)GameManager.Instance.tech8Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech10Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech15Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech19Lvl * (0.05f + num10);
+		num9 += (float)GameManager.Instance.tech21Lvl * (0.1f + num10);
+		num9 += (float)GameManager.Instance.tech22Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech23Lvl * (0.07f + num10);
+		num9 += (float)GameManager.Instance.tech25Lvl * (0.1f + num10);
+		num9 += (float)GameManager.Instance.tech27Lvl * (0.05f + num10);
+		num9 += (float)GameManager.Instance.tech30Lvl * (0.1f + num10);
+		num *= (double)num9;
+		int num11 = this.tier;
+		if (num11 > 32)
+		{
+			num11 = 33;
+		}
+		num *= (double)(1f + (float)GameManager.Instance.tech30Lvl * ((float)((34 - num11) * 3) * 0.01f));
+		num *= (double)(1f + (float)AcademiaManager.Instance.listAcademia[0].totalBonus * 0.01f);
+		num *= (double)(1f + (float)GameManager.Instance.badge1Lvl * 2.5f);
+		float num12 = 1f;
+		if (this.evolveEffect > num12)
+		{
+			num12 = this.evolveEffect;
+		}
+		num *= (double)num12;
+		num *= (double)(1f + (float)GameManager.Instance.videoAdBoost * 0.25f);
+		num *= (double)GameManager.Instance.iap3xDpsHpBonus;
+		num *= (double)GameManager.Instance.iap3xComboBonus;
+		if (GameManager.Instance.iapTournBoost && GameManager.Instance.tournamentActive)
+		{
+			num *= 5.0;
+		}
+		if (GameManager.Instance.settingsRareSkins)
+		{
+			num *= 2.0;
+		}
+		if (GameManager.Instance.settingsEpicSkins)
+		{
+			num *= 3.5;
+		}
+		if (double.IsInfinity(num) || double.IsNaN(num))
+		{
+			num = 1E+308;
+		}
+		return Math.Round(num, 0);
+	}
+
+	public double getActDmg(bool bypassSkills)
+	{
+		float num = 1f;
+		if (!bypassSkills)
+		{
+			if (HeroManager.Instance.hero2.isActiveHero)
+			{
+				num += 0.03f;
+			}
+			if (HeroManager.Instance.hero5.activeSkill1ActiveTimer > 0f)
+			{
+				num += 0.5f;
+			}
+			if (this == HeroManager.Instance.hero6 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num += 1f;
+			}
+			if (HeroManager.Instance.hero16.isActiveHero)
+			{
+				num += 0.05f;
+			}
+			if (this == HeroManager.Instance.hero19 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num += 1.5f;
+			}
+			if (HeroManager.Instance.hero20.activeSkill1ActiveTimer > 0f)
+			{
+				num += 0.75f;
+			}
+			if (HeroManager.Instance.hero34.activeSkill1ActiveTimer > 0f)
+			{
+				num += 15f;
+			}
+		}
+		double num2 = this.getActDps(this.baseDps, bypassSkills) * (double)this.getActAttSpeed(bypassSkills) * (double)num;
+		if (double.IsInfinity(num2) || double.IsNaN(num2))
+		{
+			num2 = 1E+308;
+		}
+		return Math.Round(num2, 0);
+	}
+
+	public float getCritChance(bool bypassSkills)
+	{
+		float num = 1f;
+		if (GameManager.Instance.commIcon == 4)
+		{
+			num += 2f;
+		}
+		else if (GameManager.Instance.commIcon == 11)
+		{
+			num += 3f;
+		}
+		else if (GameManager.Instance.commIcon == 19)
+		{
+			num += 5f;
+		}
+		num += (float)this.numTraitCritChance * 2.5f;
+		num += (float)this.bracersPower * 0.05f;
+		num += this.getReforgeBoosts(3);
+		if (this.type == 2)
+		{
+			num += (float)GameManager.Instance.treeRange3Lvl * 0.5f;
+		}
+		num += (float)GameManager.Instance.tech4Lvl * 0.5f;
+		if (!bypassSkills)
+		{
+			if (HeroManager.Instance.hero7.isActiveHero)
+			{
+				num += 3f;
+			}
+			if (this == HeroManager.Instance.hero10 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num += 25f;
+			}
+			if (this == HeroManager.Instance.hero14 && this.activeSkill2ActiveTimer > 0f)
+			{
+				num += 100f;
+			}
+			if (HeroManager.Instance.hero15.activeSkill1ActiveTimer > 0f)
+			{
+				num += 10f;
+			}
+			if (this == HeroManager.Instance.hero24 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num += 35f;
+			}
+			if (HeroManager.Instance.hero25.isActiveHero)
+			{
+				num += 5f;
+			}
+			if (this == HeroManager.Instance.hero28 && this.activeSkill2ActiveTimer > 0f)
+			{
+				num += 100f;
+			}
+			if (HeroManager.Instance.hero30.activeSkill1ActiveTimer > 0f)
+			{
+				num += 15f;
+			}
+			if (HeroManager.Instance.hero34.activeSkill2ActiveTimer > 0f)
+			{
+				num += 50f;
+			}
+		}
+		return num;
+	}
+
+	public double getCritDmg(bool bypassSkills)
+	{
+		double num = this.getActDmg(bypassSkills) * 2.0;
+		num *= (double)(1f + (float)GameManager.Instance.tournArtLvl3 * 3f);
+		num *= (double)(1f + (float)this.numTraitCritDmg * 1f);
+		num *= (double)(1f + (float)this.knifePower * 0.1f);
+		num *= (double)this.getReforgeBoosts(2);
+		num *= (double)(1f + (float)GameManager.Instance.treeAll5Lvl * 0.1f);
+		num *= (double)(1f + (float)GameManager.Instance.tech3Lvl * 0.1f);
+		num *= (double)(1f + (float)AcademiaManager.Instance.listAcademia[2].totalBonus * 0.01f);
+		if (!bypassSkills)
+		{
+			float num2 = 1f;
+			if (HeroManager.Instance.hero4.isActiveHero)
+			{
+				num2 += 0.1f;
+			}
+			if (this == HeroManager.Instance.hero9 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num2 += 2f;
+			}
+			if (HeroManager.Instance.hero13.activeSkill1ActiveTimer > 0f)
+			{
+				num2 += 0.75f;
+			}
+			if (HeroManager.Instance.hero21.isActiveHero)
+			{
+				num2 += 0.2f;
+			}
+			if (this == HeroManager.Instance.hero23 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num2 += 3f;
+			}
+			if (HeroManager.Instance.hero27.activeSkill1ActiveTimer > 0f)
+			{
+				num2 += 1f;
+			}
+			num *= (double)num2;
+		}
+		if (double.IsInfinity(num) || double.IsNaN(num))
+		{
+			num = 1E+308;
+		}
+		return Math.Round(num, 0);
+	}
+
+	public int getActMaxMana()
+	{
+		float num = 1f;
+		num += (float)this.numTraitMana * 0.25f;
+		num += (float)this.cloakPower * 0.01f;
+		num += this.getReforgeBoosts(9);
+		num += (float)GameManager.Instance.tech11Lvl * 0.01f;
+		if (this.tier == 16)
+		{
+			this.baseMaxMana = 20;
+		}
+		float num2 = (float)this.baseMaxMana * num;
+		return (int)num2;
+	}
+
+	public float getActManaRegen(bool bypassSkills)
+	{
+		float num = 1f;
+		if (this.type == 3)
+		{
+			num -= (float)this.ringPower * 0.001f;
+		}
+		num -= this.getReforgeBoosts(8);
+		if (this.type == 3)
+		{
+			num -= (float)GameManager.Instance.treeMage3Lvl * 0.005f;
+		}
+		num -= (float)GameManager.Instance.tech13Lvl * 0.01f;
+		if (!bypassSkills)
+		{
+			if (HeroManager.Instance.hero12.isActiveHero)
+			{
+				num -= 0.25f;
+			}
+			if (HeroManager.Instance.hero22.isActiveHero)
+			{
+				num -= 0.35f;
+			}
+		}
+		if (num < 0.1f)
+		{
+			num = 0.1f;
+		}
+		float num2 = 30f * num;
+		if (num2 < 5f)
+		{
+			num2 = 5f;
+		}
+		return num2;
+	}
+
+	public int getActSkillCost(int skillNum)
+	{
+		float num = 1f;
+		float skillNums = this.getSkillNums(skillNum, 1);
+		if (this.type == 3)
+		{
+			num -= (float)this.necklacePower * 0.001f;
+		}
+		num -= this.getReforgeBoosts(15);
+		num -= (float)GameManager.Instance.tech14Lvl * 0.01f;
+		if (num < 0.25f)
+		{
+			num = 0.25f;
+		}
+		float num2 = skillNums * num;
+		int num3 = (int)num2;
+		if (num3 < 1)
+		{
+			num3 = 1;
+		}
+		return num3;
+	}
+
+	public float getActSkillCooldown()
+	{
+		float num = 1f;
+		if (this.type == 3)
+		{
+			num -= (float)this.beltPower * 0.001f;
+		}
+		num -= this.getReforgeBoosts(11);
+		num -= (float)GameManager.Instance.tech12Lvl * 0.01f;
+		if (this.type == 3)
+		{
+			num -= (float)GameManager.Instance.treeMage4Lvl * 0.005f;
+		}
+		if (num < 0.15f)
+		{
+			num = 0.15f;
+		}
+		float num2 = 60f * num;
+		if (num2 < 5f)
+		{
+			num2 = 5f;
+		}
+		return num2;
+	}
+
+	public float getActRange(bool bypassSkills)
+	{
+		float num = 1f;
+		if (this.type == 2)
+		{
+			num += (float)this.beltPower * 0.002f;
+		}
+		if (this.type == 2 || this.type == 3)
+		{
+			num += (float)GameManager.Instance.tech10Lvl * 0.01f;
+		}
+		float result = this.baseRange * num;
+		if (!bypassSkills && HeroManager.Instance.hero33.isActiveHero && this.type == 1)
+		{
+			result = 4.5f;
+		}
+		return result;
+	}
+
+	public float getEvasionChance(bool bypassSkills)
+	{
+		float num = 0f;
+		if (GameManager.Instance.commIcon == 5)
+		{
+			num += 2f;
+		}
+		else if (GameManager.Instance.commIcon == 13)
+		{
+			num += 3f;
+		}
+		else if (GameManager.Instance.commIcon == 17)
+		{
+			num += 5f;
+		}
+		if (this.type == 1)
+		{
+			num += (float)this.beltPower * 0.05f;
+		}
+		num += this.getReforgeBoosts(13);
+		if (this.type == 1)
+		{
+			num += (float)GameManager.Instance.treeMelee3Lvl * 0.5f;
+		}
+		num += (float)GameManager.Instance.tech9Lvl;
+		if (!bypassSkills)
+		{
+			if (this == HeroManager.Instance.hero7 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num += 25f;
+			}
+			if (HeroManager.Instance.hero8.isActiveHero)
+			{
+				num += 3f;
+			}
+			if (this == HeroManager.Instance.hero25 && this.activeSkill1ActiveTimer > 0f)
+			{
+				num += 35f;
+			}
+			if (HeroManager.Instance.hero26.isActiveHero)
+			{
+				num += 5f;
+			}
+			if (HeroManager.Instance.hero34.activeSkill2ActiveTimer > 0f)
+			{
+				num += 50f;
+			}
+		}
+		return num;
+	}
+
+	public void evolveHero()
+	{
+		this.evolveLvl++;
+		float num = 2.5f;
+		for (int i = 1; i < this.evolveLvl; i++)
+		{
+			num += 0.5f;
+		}
+		this.evolveEffect += num;
+		this.evolveLastExp = this.evolveNextExp;
+		this.evolveNextExp += (this.evolveLvl + 1) * (1500 + this.evolveLvl * 25);
+		if (GameManager.Instance.m3Num == 5)
+		{
+			GameManager.Instance.m3CurrVal++;
+			GameManager.Instance.checkMissionStatus();
+		}
+		if (GameManager.Instance.q6Num == 4)
+		{
+			GameManager.Instance.q6CurrVal++;
+			GameManager.Instance.checkQuestStatus();
+		}
+		NotificationsMenu.Instance.createNotif(8, this.heroName, string.Empty, string.Empty, this.evolveLvl, string.Empty, (int)(num * 100f));
+	}
+
+	public string getTraitDesc()
+	{
+		string result = string.Empty;
+		switch (this.nextTraitTitle)
+		{
+		case 0:
+			result = "Vicious: +250% DPS";
+			break;
+		case 1:
+			result = "Vigorous: +250% HP";
+			break;
+		case 2:
+			result = "Educated: +25% Mana";
+			break;
+		case 3:
+			result = "Precision: +2.5% critical hit chance";
+			break;
+		case 4:
+			result = "Forceful: +100% critical hit damage";
+			break;
+		case 5:
+			result = "Agile: +2.5% attack speed";
+			break;
+		}
+		return result;
+	}
+
+	public string getTraitTitle()
+	{
+		string result = string.Empty;
+		switch (this.nextTraitTitle)
+		{
+		case 0:
+			result = "Vicious";
+			break;
+		case 1:
+			result = "Vigorous";
+			break;
+		case 2:
+			result = "Educated";
+			break;
+		case 3:
+			result = "Precision";
+			break;
+		case 4:
+			result = "Forceful";
+			break;
+		case 5:
+			result = "Agile";
+			break;
+		}
+		return result;
+	}
+
+	public string getTraitDesc2()
+	{
+		string result = string.Empty;
+		switch (this.nextTraitTitle)
+		{
+		case 0:
+			result = "DPS\n+250%";
+			break;
+		case 1:
+			result = "Max HP\n+250%";
+			break;
+		case 2:
+			result = "Max Mana\n+25%";
+			break;
+		case 3:
+			result = "Crit Chance\n+2.5%";
+			break;
+		case 4:
+			result = "Crit Damage\n+100%";
+			break;
+		case 5:
+			result = "Attack Speed\n+2.5%";
+			break;
+		}
+		return result;
+	}
+
+	public string getTraitDesc3()
+	{
+		string result = string.Empty;
+		switch (this.nextTraitTitle)
+		{
+		case 0:
+			result = "DPS: +250%";
+			break;
+		case 1:
+			result = "Max HP: +250%";
+			break;
+		case 2:
+			result = "Max Mana: +25%";
+			break;
+		case 3:
+			result = "Crit Chance: +2.5%";
+			break;
+		case 4:
+			result = "Crit Damage: +100%";
+			break;
+		case 5:
+			result = "Attack Speed: +2.5%";
+			break;
+		}
+		return result;
+	}
+
+	public float getReforgeBoosts(int refNum)
+	{
+		float num = 0f;
+		if (this.wepRefNum == refNum)
+		{
+			num += this.wepRefAmt;
+		}
+		if (this.knifeRefNum == refNum)
+		{
+			num += this.knifeRefAmt;
+		}
+		if (this.bracersRefNum == refNum)
+		{
+			num += this.bracersRefAmt;
+		}
+		if (this.gauntletsRefNum == refNum)
+		{
+			num += this.gauntletsRefAmt;
+		}
+		if (this.shieldRefNum == refNum)
+		{
+			num += this.shieldRefAmt;
+		}
+		if (this.cloakRefNum == refNum)
+		{
+			num += this.cloakRefAmt;
+		}
+		if (this.bootsRefNum == refNum)
+		{
+			num += this.bootsRefAmt;
+		}
+		if (this.beltRefNum == refNum)
+		{
+			num += this.beltRefAmt;
+		}
+		if (this.necklaceRefNum == refNum)
+		{
+			num += this.necklaceRefAmt;
+		}
+		if (this.ringRefNum == refNum)
+		{
+			num += this.ringRefAmt;
+		}
+		switch (refNum)
+		{
+		case 0:
+			num *= 0.01f;
+			if (num < 1f)
+			{
+				num = 1f;
+			}
+			break;
+		case 1:
+			num *= 0.01f;
+			if (num < 1f)
+			{
+				num = 1f;
+			}
+			break;
+		case 2:
+			num *= 0.01f;
+			if (num < 1f)
+			{
+				num = 1f;
+			}
+			break;
+		case 4:
+			num *= 0.01f;
+			break;
+		case 5:
+			num *= 0.01f;
+			break;
+		case 6:
+			num *= 0.01f;
+			break;
+		case 8:
+			num *= 0.01f;
+			break;
+		case 9:
+			num *= 0.01f;
+			break;
+		case 11:
+			num *= 0.01f;
+			break;
+		case 15:
+			num *= 0.01f;
+			break;
+		}
+		return num;
+	}
+
+	public string getSkillTexts(int skillNum, int textNum)
+	{
+		string text = string.Empty;
+		string text2 = string.Empty;
+		string text3 = string.Empty;
+		string text4 = string.Empty;
+		string text5 = string.Empty;
+		string text6 = string.Empty;
+		switch (this.tier)
+		{
+		case 1:
+			text = "Heal I";
+			text2 = "Instantly heal 50% of this hero's health.";
+			text3 = "Fire Bomb I";
+			text4 = "Instantly deal 3x this hero's damage to all nearby enemies.";
+			text5 = "Tank I";
+			text6 = "Reduces damage taken by all heroes by 3%.";
+			break;
+		case 2:
+			text = "Gold Lust I";
+			text2 = "Increase gold drops by 200%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Lightning Blast I";
+			text4 = "Instantly deal 3x this hero's damage to enemies near the blast.";
+			text5 = "Strength I";
+			text6 = "Increases damage dealt by all heroes by 3%.";
+			break;
+		case 3:
+			text = "Group Heal I";
+			text2 = "Instantly heal 35% of all heroes' health.";
+			text3 = "Inflicted I";
+			text4 = "Poison the target enemy, damaging it for 1% hp/sec. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Medic I";
+			text6 = "Heals all heroes 10% health every 15-25s.";
+			break;
+		case 4:
+			text = "Bulletproof I";
+			text2 = "Reduce damage taken by this hero by 35%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Reflect I";
+			text4 = "Enemy attacks to this hero will also hurt itself for 25% damage. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Savage I";
+			text6 = "Increase all heroes' critical hit damage by 10%.";
+			break;
+		case 5:
+			text = "Killer's Dance I";
+			text2 = "Increase damage dealt by all heroes by 50%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Morale I";
+			text4 = "All heroes receive 2x kill exp. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "HP Syphon I";
+			text6 = "All heroes' attacks heal themselves for 2% of damage dealt.";
+			break;
+		case 6:
+			text = "Hero's Might I";
+			text2 = "Increase damage dealt by this hero by 100%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Yielding Arrow I";
+			text4 = "Reduce hit enemies' movement speed by 50%. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Golden Touch I";
+			text6 = "Increases gold drops by 5%.";
+			break;
+		case 7:
+			text = "Haste I";
+			text2 = "Increase this hero's evasion chance by 25%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Heavy Lifting I";
+			text4 = "This hero's attacks deal 5% splash damage. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "True Sight I";
+			text6 = "Increases all heroes' critical hit chance by 3%.";
+			break;
+		case 8:
+			text = "Splash Rally I";
+			text2 = "Increase this hero's splash chance by 25%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Seeing Stars I";
+			text4 = "Instantly stun nearby enemies. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Nimble I";
+			text6 = "Increases all heroes' evasion chance by 3%.";
+			break;
+		case 9:
+			text = "Death Awaits I";
+			text2 = "Increase this hero's critical hit damage by 200%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Alchemist I";
+			text4 = "This hero's attacks spawn gold worth 35% the normal drop. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Looter I";
+			text6 = "Increases chest gold by 10%.";
+			break;
+		case 10:
+			text = "Sacred Aim I";
+			text2 = "Increase this hero's critical hit chance by 25%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Grip of Terror I";
+			text4 = "Reduce hit enemies' attack speed by 35%. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Treasure Hunter I";
+			text6 = "Increases chest drop chance by 3%.";
+			break;
+		case 11:
+			text = "Absorption I";
+			text2 = "This hero's attacks heal himself for 5% of the damage dealt. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Invulnerable I";
+			text4 = "This hero has 100% damage resistance. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Frenzy I";
+			text6 = "Increases all melee heroes' splash chance by 3%.";
+			break;
+		case 12:
+			text = "Divine Armor I";
+			text2 = "Reduce damage taken by all heroes by 15%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Toxic Fumes I";
+			text4 = "Gas an area, damaging nearby enemies for 1% hp/sec. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Mana Regen I";
+			text6 = "Increases all heroes' mana regeneration by 25%.";
+			break;
+		case 13:
+			text = "Unholy Fate I";
+			text2 = "Increase all heroes' critical hit damage by 75%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Life I";
+			text4 = "Instantly revive all fallen heroes to 35% health.";
+			text5 = "Medic II";
+			text6 = "Heals all heroes 15% health every 15-25s.";
+			break;
+		case 14:
+			text = "Beserker I";
+			text2 = "Increase this hero's attack speed by 35%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Hell's Weapons I";
+			text4 = "This hero has a 100% critical hit chance. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Full Ignition I";
+			text6 = "Increases all heroes' attack speed by 3%.";
+			break;
+		case 15:
+			text = "Godly Aim I";
+			text2 = "Increase all heroes' critical hit chance by 10%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Fire Aura I";
+			text4 = "Create a coat of fire, damaging nearby enemies for 1% hp/s. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Savior I";
+			text6 = "Heals the lowest HP hero by 50% health every 15-25s.";
+			break;
+		case 16:
+			text = "Gold Lust II";
+			text2 = "Increase gold drops by 300%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Lightning Blast II";
+			text4 = "Instantly deal 5x this hero's damage to enemies near the blast.";
+			text5 = "Strength II";
+			text6 = "Increases damage dealt by all heroes by 5%.";
+			break;
+		case 17:
+			text = "Heal II";
+			text2 = "Instantly heal 75% of this hero's health.";
+			text3 = "Fire Bomb II";
+			text4 = "Instantly deal 5x this hero's damage to all nearby enemies.";
+			text5 = "Tank II";
+			text6 = "Reduces damage taken by all heroes by 5%.";
+			break;
+		case 18:
+			text = "Group Heal II";
+			text2 = "Instantly heal 50% of all heroes' health.";
+			text3 = "Inflicted II";
+			text4 = "Poison the target enemy, damaging it for 1.5% hp/sec. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "HP Syphon II";
+			text6 = "All heros' attacks heal themselves for 4% of damage dealt.";
+			break;
+		case 19:
+			text = "Hero's Might II";
+			text2 = "Increase damage dealt by this hero by 150%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Yielding Arrow II";
+			text4 = "Reduce hit enemies' movement speed by 75%. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Golden Touch II";
+			text6 = "Increases gold drops by 10%.";
+			break;
+		case 20:
+			text = "Killer's Dance II";
+			text2 = "Increase damage dealt by all heroes by 75%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Morale II";
+			text4 = "All heroes receive 3x kill exp. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Medic III";
+			text6 = "Heals all heroes 20% health every 15-25s.";
+			break;
+		case 21:
+			text = "Bulletproof II";
+			text2 = "Reduce damage taken by this hero by 50%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Reflect II";
+			text4 = "Enemy attacks to this hero will also hurt itself for 35% damage. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Savage II";
+			text6 = "Increase all heroes' critical hit damage by 20%.";
+			break;
+		case 22:
+			text = "Divine Armor II";
+			text2 = "Reduce damage taken by all heroes by 25%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Toxic Fumes II";
+			text4 = "Gas an area, damaging nearby enemies for 1.5% hp/sec. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Mana Regen II";
+			text6 = "Increases all heroes' mana regeneration by 35%.";
+			break;
+		case 23:
+			text = "Death Awaits II";
+			text2 = "Increase this hero's critical hit damage by 300%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Alchemist II";
+			text4 = "This hero's attacks spawn gold worth 50% the normal drop. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Looter II";
+			text6 = "Increases chest gold by 20%.";
+			break;
+		case 24:
+			text = "Sacred Aim II";
+			text2 = "Increase this hero's critical hit chance by 35%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Grip of Terror II";
+			text4 = "Reduce hit enemies' attack speed by 50%. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Treasure Hunter II";
+			text6 = "Increases chest drop chance by 5%.";
+			break;
+		case 25:
+			text = "Haste II";
+			text2 = "Increase this hero's evasion chance by 35%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Heavy Lifting II";
+			text4 = "This hero's attacks deal 10% splash damage. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "True Sight II";
+			text6 = "Increases all heroes' critical hit chance by 5%.";
+			break;
+		case 26:
+			text = "Splash Rally II";
+			text2 = "Increase this hero's splash chance by 35%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Seeing Stars II";
+			text4 = "Instantly stun nearby enemies. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Nimble II";
+			text6 = "Increases all heroes' evasion chance by 5%.";
+			break;
+		case 27:
+			text = "Unholy Fate II";
+			text2 = "Increase all heroes' critical hit damage by 100%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Life II";
+			text4 = "Instantly revive all fallen heroes to 50% health.";
+			text5 = "Savior II";
+			text6 = "Heals the lowest HP hero by 75% health every 15-25s.";
+			break;
+		case 28:
+			text = "Beserker II";
+			text2 = "Increase this hero's attack speed by 50%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Hell's Weapons II";
+			text4 = "This hero has a 100% critical hit chance. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Full Ignition II";
+			text6 = "Increases all heroes' attack speed by 5%.";
+			break;
+		case 29:
+			text = "Absorption II";
+			text2 = "This hero's attacks heal himself for 10% of the damage dealt. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Invulnerable II";
+			text4 = "This hero has 100% damage resistance. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Frenzy II";
+			text6 = "Increases all melee heroes' splash chance by 5%.";
+			break;
+		case 30:
+			text = "Godly Aim II";
+			text2 = "Increase all heroes' critical hit chance by 15%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Fire Aura II";
+			text4 = "Create a coat of fire, damaging nearby enemies for 1.5% hp/s. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Medic IV";
+			text6 = "Heals all heroes 25% health every 15-25s.";
+			break;
+		case 31:
+			text = "Target I";
+			text2 = "All enemies focus this hero, and he only takes 25% damage. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Gas I";
+			text4 = "All enemies lose 1% hp/s. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Leadership I";
+			text6 = "Earn 2x commander exp per wave.";
+			break;
+		case 32:
+			text = "Agile I";
+			text2 = "All heroes movement and attack speed are increased by 25%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Refresh I";
+			text4 = "Instantly refill 50% of all other heroes' mana.";
+			text5 = "Sluggish I";
+			text6 = "Slow all enemy attack speed by 25%.";
+			break;
+		case 33:
+			text = "Commander's Best I";
+			text2 = "Every enemy killed rewards +1 commander exp. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Protector I";
+			text4 = "All heroes have 100% damage resistance. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Knife Thrower I";
+			text6 = "All melee heroes are capable of ranged attacks.";
+			break;
+		case 34:
+			text = "Battle Master I";
+			text2 = "Increase damage dealt and gold drops by +1500%. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Nimble III";
+			text4 = "Increase all heroes' evasion and critical hit chance by 50%. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Boss Hunter I";
+			text6 = "Bosses killed by range heroes have a 20% chance to drop two additional chests.";
+			break;
+		case 35:
+			text = "Hammer Time I";
+			text2 = "All heroes have a 100% splash hit chance. Lasts " + this.getSkillNums(1, 2).ToString("f1") + "s.";
+			text3 = "Seeing Stars III";
+			text4 = "Instantly stun all enemies. Lasts " + this.getSkillNums(2, 2).ToString("f1") + "s.";
+			text5 = "Magic Blast I";
+			text6 = "All mage heroes have a 10% chance to deal splash damage.";
+			break;
+		}
+		string result = string.Empty;
+		if (skillNum == 1)
+		{
+			if (textNum == 1)
+			{
+				result = text;
+			}
+			else
+			{
+				result = text2;
+			}
+		}
+		else if (skillNum == 2)
+		{
+			if (textNum == 1)
+			{
+				result = text3;
+			}
+			else
+			{
+				result = text4;
+			}
+		}
+		else if (skillNum == 3)
+		{
+			if (textNum == 1)
+			{
+				result = text5;
+			}
+			else
+			{
+				result = text6;
+			}
+		}
+		return result;
+	}
+
+	public float getSkillNums(int skillNum, int typeNum)
+	{
+		float num = 0f;
+		float num2 = 0f;
+		float num3 = 0f;
+		float num4 = 0f;
+		switch (this.tier)
+		{
+		case 1:
+			num = 6f;
+			num2 = 0f;
+			num3 = 6f;
+			num4 = 0f;
+			break;
+		case 2:
+			num = 5f;
+			num2 = 15f;
+			num3 = 6f;
+			num4 = 0f;
+			break;
+		case 3:
+			num = 7f;
+			num2 = 0f;
+			num3 = 12f;
+			num4 = 10f;
+			break;
+		case 4:
+			num = 6f;
+			num2 = 15f;
+			num3 = 8f;
+			num4 = 15f;
+			break;
+		case 5:
+			num = 6f;
+			num2 = 20f;
+			num3 = 5f;
+			num4 = 20f;
+			break;
+		case 6:
+			num = 7f;
+			num2 = 15f;
+			num3 = 4f;
+			num4 = 15f;
+			break;
+		case 7:
+			num = 7f;
+			num2 = 15f;
+			num3 = 7f;
+			num4 = 15f;
+			break;
+		case 8:
+			num = 6f;
+			num2 = 15f;
+			num3 = 9f;
+			num4 = 3f;
+			break;
+		case 9:
+			num = 8f;
+			num2 = 15f;
+			num3 = 6f;
+			num4 = 15f;
+			break;
+		case 10:
+			num = 10f;
+			num2 = 15f;
+			num3 = 8f;
+			num4 = 15f;
+			break;
+		case 11:
+			num = 12f;
+			num2 = 15f;
+			num3 = 15f;
+			num4 = 15f;
+			break;
+		case 12:
+			num = 8f;
+			num2 = 20f;
+			num3 = 14f;
+			num4 = 10f;
+			break;
+		case 13:
+			num = 8f;
+			num2 = 20f;
+			num3 = 15f;
+			num4 = 0f;
+			break;
+		case 14:
+			num = 12f;
+			num2 = 15f;
+			num3 = 18f;
+			num4 = 15f;
+			break;
+		case 15:
+			num = 12f;
+			num2 = 20f;
+			num3 = 16f;
+			num4 = 10f;
+			break;
+		case 16:
+			num = 8f;
+			num2 = 20f;
+			num3 = 8f;
+			num4 = 0f;
+			break;
+		case 17:
+			num = 8f;
+			num2 = 0f;
+			num3 = 10f;
+			num4 = 0f;
+			break;
+		case 18:
+			num = 12f;
+			num2 = 0f;
+			num3 = 15f;
+			num4 = 15f;
+			break;
+		case 19:
+			num = 9f;
+			num2 = 20f;
+			num3 = 6f;
+			num4 = 20f;
+			break;
+		case 20:
+			num = 10f;
+			num2 = 25f;
+			num3 = 10f;
+			num4 = 25f;
+			break;
+		case 21:
+			num = 10f;
+			num2 = 20f;
+			num3 = 12f;
+			num4 = 20f;
+			break;
+		case 22:
+			num = 14f;
+			num2 = 25f;
+			num3 = 17f;
+			num4 = 15f;
+			break;
+		case 23:
+			num = 12f;
+			num2 = 20f;
+			num3 = 12f;
+			num4 = 20f;
+			break;
+		case 24:
+			num = 16f;
+			num2 = 20f;
+			num3 = 16f;
+			num4 = 20f;
+			break;
+		case 25:
+			num = 12f;
+			num2 = 20f;
+			num3 = 15f;
+			num4 = 20f;
+			break;
+		case 26:
+			num = 12f;
+			num2 = 20f;
+			num3 = 15f;
+			num4 = 5f;
+			break;
+		case 27:
+			num = 12f;
+			num2 = 25f;
+			num3 = 18f;
+			num4 = 0f;
+			break;
+		case 28:
+			num = 15f;
+			num2 = 20f;
+			num3 = 20f;
+			num4 = 20f;
+			break;
+		case 29:
+			num = 15f;
+			num2 = 20f;
+			num3 = 20f;
+			num4 = 20f;
+			break;
+		case 30:
+			num = 16f;
+			num2 = 25f;
+			num3 = 20f;
+			num4 = 15f;
+			break;
+		case 31:
+			num = 20f;
+			num2 = 25f;
+			num3 = 20f;
+			num4 = 25f;
+			break;
+		case 32:
+			num = 20f;
+			num2 = 25f;
+			num3 = 30f;
+			num4 = 0f;
+			break;
+		case 33:
+			num = 25f;
+			num2 = 25f;
+			num3 = 30f;
+			num4 = 20f;
+			break;
+		case 34:
+			num = 25f;
+			num2 = 25f;
+			num3 = 25f;
+			num4 = 25f;
+			break;
+		case 35:
+			num = 35f;
+			num2 = 25f;
+			num3 = 45f;
+			num4 = 8f;
+			break;
+		}
+		float num5 = 1f + (float)GameManager.Instance.tech26Lvl * 0.01f + (float)GameManager.Instance.badge13Lvl * 0.03f;
+		if (num2 > 0f)
+		{
+			num2 *= num5;
+		}
+		if (num4 > 0f)
+		{
+			num4 *= num5;
+		}
+		if (GameManager.Instance.commIcon == 6)
+		{
+			if (num2 > 0f)
+			{
+				num2 += 2f;
+			}
+			if (num4 > 0f)
+			{
+				num4 += 2f;
+			}
+		}
+		else if (GameManager.Instance.commIcon == 12)
+		{
+			if (num2 > 0f)
+			{
+				num2 += 4f;
+			}
+			if (num4 > 0f)
+			{
+				num4 += 4f;
+			}
+		}
+		float reforgeBoosts = this.getReforgeBoosts(12);
+		if (num2 > 0f)
+		{
+			num2 += reforgeBoosts;
+		}
+		if (num4 > 0f)
+		{
+			num4 += reforgeBoosts;
+		}
+		float result = 0f;
+		if (skillNum == 1)
+		{
+			if (typeNum == 1)
+			{
+				result = num;
+			}
+			else
+			{
+				result = num2;
+			}
+		}
+		else if (skillNum == 2)
+		{
+			if (typeNum == 1)
+			{
+				result = num3;
+			}
+			else
+			{
+				result = num4;
+			}
+		}
+		return result;
+	}
+
+	public void useSkill(int skillNum)
+	{
+		if (this.currHp <= 0.0)
+		{
+			return;
+		}
+		if (UIManager.Instance.onTutNum == 9)
+		{
+			UIManager.Instance.doTutorialScreensV2();
+		}
+		if (skillNum == 1)
+		{
+			this.currMana -= this.getActSkillCost(1);
+			this.activeSkill1ActiveTimer = this.getSkillNums(1, 2);
+			this.activeSkill1CooldownTimer = this.getActSkillCooldown();
+			if (GameManager.Instance.settingsParticleEffects)
+			{
+				GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesSkill1);
+				gameObject.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+				gameObject.transform.SetParent(UIManager.Instance.particlesParent.transform);
+				gameObject.GetComponent<SkillParticlesFollow>().heroToFollow = this;
+				UnityEngine.Object.Destroy(gameObject, 1f);
+			}
+			SoundManager.Instance.playSkill1();
+		}
+		else if (skillNum == 2)
+		{
+			this.currMana -= this.getActSkillCost(2);
+			this.activeSkill2ActiveTimer = this.getSkillNums(2, 2);
+			this.activeSkill2CooldownTimer = this.getActSkillCooldown();
+			if (GameManager.Instance.settingsParticleEffects)
+			{
+				GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesSkill2);
+				gameObject2.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+				gameObject2.transform.SetParent(UIManager.Instance.particlesParent.transform);
+				gameObject2.GetComponent<SkillParticlesFollow>().heroToFollow = this;
+				UnityEngine.Object.Destroy(gameObject2, 1f);
+			}
+			SoundManager.Instance.playSkill2();
+		}
+		AchievementManager.Instance.listAch[12].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(12);
+		if (GameManager.Instance.m1Num == 2)
+		{
+			GameManager.Instance.m1CurrVal++;
+			GameManager.Instance.checkMissionStatus();
+		}
+		if (GameManager.Instance.q5Num == 2)
+		{
+			GameManager.Instance.q5CurrVal++;
+			GameManager.Instance.checkQuestStatus();
+		}
+		if (this.tier == 1)
+		{
+			if (skillNum == 1)
+			{
+				this.currHp += this.getActMaxHp(this.baseDps) * 0.5;
+				if (this.currHp > this.getActMaxHp(this.baseDps))
+				{
+					this.currHp = this.getActMaxHp(this.baseDps);
+				}
+				if (GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject poolObject = UIManager.Instance.getPoolObject(UIManager.Instance.poolHealParticles);
+					if (poolObject != null)
+					{
+						poolObject.transform.position = base.transform.position;
+						ParticleSystem component = poolObject.GetComponent<ParticleSystem>();
+						poolObject.SetActive(true);
+						component.Play();
+					}
+				}
+			}
+			else if (skillNum == 2)
+			{
+				if (GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject gameObject3 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesFireBomb);
+					gameObject3.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+					gameObject3.transform.SetParent(UIManager.Instance.particlesParent.transform);
+					UnityEngine.Object.Destroy(gameObject3, 1f);
+				}
+				for (int i = EnemyManager.Instance.enemyList.Count - 1; i >= 0; i--)
+				{
+					Enemy enemy = EnemyManager.Instance.enemyList[i];
+					if (enemy.isInGameArea && enemy.currHp > 0.0 && enemy != null && (enemy.transform.position - base.transform.position).magnitude <= 2f)
+					{
+						double num = GameManager.Instance.getDmgDealtwTypeMult(this.getActDmg(false) * 3.0, this.type, enemy.type);
+						num = Math.Round(num, 0);
+						enemy.takeDamage(num, this, false);
+					}
+				}
+			}
+		}
+		else if (this.tier == 2)
+		{
+			if (skillNum == 2)
+			{
+				if (this.targetEnemy != null && GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject gameObject4 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesLightningBlast);
+					gameObject4.transform.position = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+					gameObject4.transform.SetParent(UIManager.Instance.particlesParent.transform);
+					UnityEngine.Object.Destroy(gameObject4, 1f);
+				}
+				for (int j = EnemyManager.Instance.enemyList.Count - 1; j >= 0; j--)
+				{
+					Enemy enemy2 = EnemyManager.Instance.enemyList[j];
+					if (enemy2.isInGameArea && enemy2.currHp > 0.0 && enemy2 != null && this.targetEnemy != null && (enemy2.transform.position - this.targetEnemy.transform.position).magnitude <= 2f)
+					{
+						double num2 = GameManager.Instance.getDmgDealtwTypeMult(this.getActDmg(false) * 3.0, this.type, enemy2.type);
+						num2 = Math.Round(num2, 0);
+						enemy2.takeDamage(num2, this, false);
+					}
+				}
+			}
+		}
+		else if (this.tier == 3)
+		{
+			if (skillNum == 1)
+			{
+				for (int k = 0; k < GameManager.Instance.activeHeroes.Count; k++)
+				{
+					Hero hero = GameManager.Instance.activeHeroes[k];
+					if (hero.currHp > 0.0)
+					{
+						hero.currHp += hero.getActMaxHp(hero.baseDps) * 0.35;
+						if (hero.currHp > hero.getActMaxHp(hero.baseDps))
+						{
+							hero.currHp = hero.getActMaxHp(hero.baseDps);
+						}
+						if (GameManager.Instance.settingsParticleEffects)
+						{
+							GameObject poolObject2 = UIManager.Instance.getPoolObject(UIManager.Instance.poolHealParticles);
+							if (poolObject2 != null)
+							{
+								poolObject2.transform.position = hero.transform.position;
+								ParticleSystem component2 = poolObject2.GetComponent<ParticleSystem>();
+								poolObject2.SetActive(true);
+								component2.Play();
+							}
+						}
+					}
+				}
+			}
+			else if (skillNum == 2 && this.targetEnemy != null && this.targetEnemy.currHp > 0.0)
+			{
+				this.targetEnemy.isPoisoned = true;
+			}
+		}
+		else if (this.tier == 8)
+		{
+			if (skillNum == 2)
+			{
+				for (int l = EnemyManager.Instance.enemyList.Count - 1; l >= 0; l--)
+				{
+					Enemy enemy3 = EnemyManager.Instance.enemyList[l];
+					if (enemy3.isInGameArea && enemy3.currHp > 0.0 && enemy3 != null && (enemy3.transform.position - base.transform.position).magnitude <= 2f)
+					{
+						enemy3.isStunned = true;
+						if (GameManager.Instance.settingsParticleEffects)
+						{
+							GameObject gameObject5 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesStunSeeingStars);
+							gameObject5.transform.position = enemy3.transform.position + new Vector3(0f, 1.75f, 0f);
+							gameObject5.transform.SetParent(UIManager.Instance.particlesParent.transform);
+							UnityEngine.Object.Destroy(gameObject5, 3f);
+						}
+						if (GameManager.Instance.q6Num == 3)
+						{
+							GameManager.Instance.q6CurrVal++;
+							GameManager.Instance.checkQuestStatus();
+						}
+					}
+				}
+				if (GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject gameObject6 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesStunExplode);
+					gameObject6.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+					gameObject6.transform.SetParent(UIManager.Instance.particlesParent.transform);
+					UnityEngine.Object.Destroy(gameObject6, 1f);
+				}
+			}
+		}
+		else if (this.tier == 12)
+		{
+			if (skillNum == 2 && this.targetEnemy != null && this.targetEnemy.currHp > 0.0)
+			{
+				GameObject gameObject7 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesToxicFumes);
+				gameObject7.transform.position = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+				gameObject7.transform.SetParent(UIManager.Instance.particlesParent.transform);
+				gameObject7.GetComponent<SkillToxicFumes>().thisHero = this;
+			}
+		}
+		else if (this.tier == 13)
+		{
+			if (skillNum == 2)
+			{
+				GameManager.Instance.reviveActiveHeroes(0.35f);
+			}
+		}
+		else if (this.tier == 15)
+		{
+			if (skillNum == 2)
+			{
+				GameObject gameObject8 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesFireCoat);
+				gameObject8.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+				gameObject8.transform.SetParent(UIManager.Instance.particlesParent.transform);
+				gameObject8.GetComponent<SkillFireCoat>().thisHero = this;
+			}
+		}
+		else if (this.tier == 16)
+		{
+			if (skillNum == 2)
+			{
+				if (this.targetEnemy != null && GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject gameObject9 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesLightningBlast);
+					gameObject9.transform.position = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+					gameObject9.transform.SetParent(UIManager.Instance.particlesParent.transform);
+					UnityEngine.Object.Destroy(gameObject9, 1f);
+				}
+				for (int m = EnemyManager.Instance.enemyList.Count - 1; m >= 0; m--)
+				{
+					Enemy enemy4 = EnemyManager.Instance.enemyList[m];
+					if (enemy4.isInGameArea && enemy4.currHp > 0.0 && enemy4 != null && this.targetEnemy != null && (enemy4.transform.position - this.targetEnemy.transform.position).magnitude <= 2f)
+					{
+						double num3 = GameManager.Instance.getDmgDealtwTypeMult(this.getActDmg(false) * 5.0, this.type, enemy4.type);
+						num3 = Math.Round(num3, 0);
+						enemy4.takeDamage(num3, this, false);
+					}
+				}
+			}
+		}
+		else if (this.tier == 17)
+		{
+			if (skillNum == 1)
+			{
+				this.currHp += this.getActMaxHp(this.baseDps) * 0.75;
+				if (this.currHp > this.getActMaxHp(this.baseDps))
+				{
+					this.currHp = this.getActMaxHp(this.baseDps);
+				}
+				if (GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject poolObject3 = UIManager.Instance.getPoolObject(UIManager.Instance.poolHealParticles);
+					if (poolObject3 != null)
+					{
+						poolObject3.transform.position = base.transform.position;
+						ParticleSystem component3 = poolObject3.GetComponent<ParticleSystem>();
+						poolObject3.SetActive(true);
+						component3.Play();
+					}
+				}
+			}
+			else if (skillNum == 2)
+			{
+				if (GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject gameObject10 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesFireBomb);
+					gameObject10.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+					gameObject10.transform.SetParent(UIManager.Instance.particlesParent.transform);
+					UnityEngine.Object.Destroy(gameObject10, 1f);
+				}
+				for (int n = EnemyManager.Instance.enemyList.Count - 1; n >= 0; n--)
+				{
+					Enemy enemy5 = EnemyManager.Instance.enemyList[n];
+					if (enemy5.isInGameArea && enemy5.currHp > 0.0 && enemy5 != null && (enemy5.transform.position - base.transform.position).magnitude <= 2f)
+					{
+						double num4 = GameManager.Instance.getDmgDealtwTypeMult(this.getActDmg(false) * 5.0, this.type, enemy5.type);
+						num4 = Math.Round(num4, 0);
+						enemy5.takeDamage(num4, this, false);
+					}
+				}
+			}
+		}
+		else if (this.tier == 18)
+		{
+			if (skillNum == 1)
+			{
+				for (int num5 = 0; num5 < GameManager.Instance.activeHeroes.Count; num5++)
+				{
+					Hero hero2 = GameManager.Instance.activeHeroes[num5];
+					if (hero2.currHp > 0.0)
+					{
+						hero2.currHp += hero2.getActMaxHp(hero2.baseDps) * 0.5;
+						if (hero2.currHp > hero2.getActMaxHp(hero2.baseDps))
+						{
+							hero2.currHp = hero2.getActMaxHp(hero2.baseDps);
+						}
+						if (GameManager.Instance.settingsParticleEffects)
+						{
+							GameObject poolObject4 = UIManager.Instance.getPoolObject(UIManager.Instance.poolHealParticles);
+							if (poolObject4 != null)
+							{
+								poolObject4.transform.position = hero2.transform.position;
+								ParticleSystem component4 = poolObject4.GetComponent<ParticleSystem>();
+								poolObject4.SetActive(true);
+								component4.Play();
+							}
+						}
+					}
+				}
+			}
+			else if (skillNum == 2 && this.targetEnemy != null && this.targetEnemy.currHp > 0.0)
+			{
+				this.targetEnemy.isPoisoned = true;
+			}
+		}
+		else if (this.tier == 22)
+		{
+			if (skillNum == 2 && this.targetEnemy != null && this.targetEnemy.currHp > 0.0)
+			{
+				GameObject gameObject11 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesToxicFumes);
+				gameObject11.transform.position = this.targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
+				gameObject11.transform.SetParent(UIManager.Instance.particlesParent.transform);
+				gameObject11.GetComponent<SkillToxicFumes>().thisHero = this;
+			}
+		}
+		else if (this.tier == 26)
+		{
+			if (skillNum == 2)
+			{
+				for (int num6 = EnemyManager.Instance.enemyList.Count - 1; num6 >= 0; num6--)
+				{
+					Enemy enemy6 = EnemyManager.Instance.enemyList[num6];
+					if (enemy6.isInGameArea && enemy6.currHp > 0.0 && enemy6 != null && (enemy6.transform.position - base.transform.position).magnitude <= 2f)
+					{
+						enemy6.isStunned = true;
+						if (GameManager.Instance.settingsParticleEffects)
+						{
+							GameObject gameObject12 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesStunSeeingStars);
+							gameObject12.transform.position = enemy6.transform.position + new Vector3(0f, 1.75f, 0f);
+							gameObject12.transform.SetParent(UIManager.Instance.particlesParent.transform);
+							UnityEngine.Object.Destroy(gameObject12, 3f);
+						}
+						if (GameManager.Instance.q6Num == 3)
+						{
+							GameManager.Instance.q6CurrVal++;
+							GameManager.Instance.checkQuestStatus();
+						}
+					}
+				}
+				if (GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject gameObject13 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesStunExplode);
+					gameObject13.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+					gameObject13.transform.SetParent(UIManager.Instance.particlesParent.transform);
+					UnityEngine.Object.Destroy(gameObject13, 1f);
+				}
+			}
+		}
+		else if (this.tier == 27)
+		{
+			if (skillNum == 2)
+			{
+				GameManager.Instance.reviveActiveHeroes(0.5f);
+			}
+		}
+		else if (this.tier == 30)
+		{
+			if (skillNum == 2)
+			{
+				GameObject gameObject14 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesFireCoat);
+				gameObject14.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+				gameObject14.transform.SetParent(UIManager.Instance.particlesParent.transform);
+				gameObject14.GetComponent<SkillFireCoat>().thisHero = this;
+			}
+		}
+		else if (this.tier == 32)
+		{
+			if (skillNum == 2)
+			{
+				for (int num7 = 0; num7 < HeroManager.Instance.heroList.Count; num7++)
+				{
+					Hero hero3 = HeroManager.Instance.heroList[num7];
+					if (hero3 != this)
+					{
+						hero3.currMana += hero3.getActMaxMana() / 2;
+						if (hero3.currMana > hero3.getActMaxMana())
+						{
+							hero3.currMana = hero3.getActMaxMana();
+						}
+					}
+				}
+			}
+		}
+		else if (this.tier == 35 && skillNum == 2)
+		{
+			for (int num8 = EnemyManager.Instance.enemyList.Count - 1; num8 >= 0; num8--)
+			{
+				Enemy enemy7 = EnemyManager.Instance.enemyList[num8];
+				if (enemy7.isInGameArea && enemy7.currHp > 0.0 && enemy7 != null)
+				{
+					enemy7.isStunned = true;
+					if (GameManager.Instance.settingsParticleEffects)
+					{
+						GameObject gameObject15 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesStunSeeingStars);
+						gameObject15.transform.position = enemy7.transform.position + new Vector3(0f, 1.75f, 0f);
+						gameObject15.transform.SetParent(UIManager.Instance.particlesParent.transform);
+						UnityEngine.Object.Destroy(gameObject15, 3f);
+					}
+					if (GameManager.Instance.q6Num == 3)
+					{
+						GameManager.Instance.q6CurrVal++;
+						GameManager.Instance.checkQuestStatus();
+					}
+				}
+			}
+			if (GameManager.Instance.settingsParticleEffects)
+			{
+				GameObject gameObject16 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesStunExplode);
+				gameObject16.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+				gameObject16.transform.SetParent(UIManager.Instance.particlesParent.transform);
+				UnityEngine.Object.Destroy(gameObject16, 1f);
+			}
+		}
+	}
+
+	public void playIdleAnim()
+	{
+		if (!this.isSwitchingSkins && !this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+		{
+			this.animator.Play("Idle");
+		}
+	}
+
+	public void updSortLayer(int layerNum)
+	{
+		string sortingLayerName = "Unit" + layerNum;
+		if (this.currHp <= 0.0)
+		{
+			sortingLayerName = "Actors";
+		}
+		if (this.spriteRender1 != null)
+		{
+			this.spriteRender1.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender2 != null)
+		{
+			this.spriteRender2.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender3 != null)
+		{
+			this.spriteRender3.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender4 != null)
+		{
+			this.spriteRender4.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender5 != null)
+		{
+			this.spriteRender5.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender6 != null)
+		{
+			this.spriteRender6.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender7 != null)
+		{
+			this.spriteRender7.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender8 != null)
+		{
+			this.spriteRender8.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender9 != null)
+		{
+			this.spriteRender9.sortingLayerName = sortingLayerName;
+		}
+	}
+
+	[Header("Manually Set Attributes")]
+	public string heroName;
+
+	public int tier;
+
+	public int type;
+
+	public float baseAttSpeed;
+
+	public int baseMaxMana;
+
+	public float baseRange;
+
+	[Header("Automatically Set Attributes")]
+	public bool isActiveHero;
+
+	[NonSerialized]
+	public Enemy targetEnemy;
+
+	[NonSerialized]
+	public bool clickedToMove;
+
+	[NonSerialized]
+	public Vector3 targetPosition;
+
+	[NonSerialized]
+	public Vector3 preMiniGamePosition;
+
+	public Vector3 lastPlayPosition;
+
+	public int level;
+
+	public double lvlUpCost;
+
+	public double baseDps;
+
+	public double addOnDps;
+
+	public double currHp;
+
+	public int currMana;
+
+	public int activeSkillAutocastNum;
+
+	public float activeSkill1ActiveTimer;
+
+	public float activeSkill1CooldownTimer;
+
+	public float activeSkill2ActiveTimer;
+
+	public float activeSkill2CooldownTimer;
+
+	public int numTraits;
+
+	public int nextTraitLvl;
+
+	public int nextTraitTitle;
+
+	public int numTraitDps;
+
+	public int numTraitHp;
+
+	public int numTraitMana;
+
+	public int numTraitCritChance;
+
+	public int numTraitCritDmg;
+
+	public int numTraitAttSpeed;
+
+	public int numMastery;
+
+	public int nextMasteryLvl;
+
+	public int evolveLvl;
+
+	public float evolveEffect;
+
+	public int evolveCurrExp;
+
+	public int evolveLastExp;
+
+	public int evolveNextExp;
+
+	public int equipOnTier;
+
+	public int equipLastExp;
+
+	public int equipCurrExp;
+
+	public int equipNextExp;
+
+	public int wepNum;
+
+	public int wepRarity;
+
+	public int wepLevel;
+
+	public int wepPower;
+
+	public int wepRefLvl;
+
+	public int wepRefNum;
+
+	public float wepRefAmt;
+
+	public int knifeNum;
+
+	public int knifeRarity;
+
+	public int knifeLevel;
+
+	public int knifePower;
+
+	public int knifeRefLvl;
+
+	public int knifeRefNum;
+
+	public float knifeRefAmt;
+
+	public int bracersNum;
+
+	public int bracersRarity;
+
+	public int bracersLevel;
+
+	public int bracersPower;
+
+	public int bracersRefLvl;
+
+	public int bracersRefNum;
+
+	public float bracersRefAmt;
+
+	public int gauntletsNum;
+
+	public int gauntletsRarity;
+
+	public int gauntletsLevel;
+
+	public int gauntletsPower;
+
+	public int gauntletsRefLvl;
+
+	public int gauntletsRefNum;
+
+	public float gauntletsRefAmt;
+
+	public int shieldNum;
+
+	public int shieldRarity;
+
+	public int shieldLevel;
+
+	public int shieldPower;
+
+	public int shieldRefLvl;
+
+	public int shieldRefNum;
+
+	public float shieldRefAmt;
+
+	public int cloakNum;
+
+	public int cloakRarity;
+
+	public int cloakLevel;
+
+	public int cloakPower;
+
+	public int cloakRefLvl;
+
+	public int cloakRefNum;
+
+	public float cloakRefAmt;
+
+	public int bootsNum;
+
+	public int bootsRarity;
+
+	public int bootsLevel;
+
+	public int bootsPower;
+
+	public int bootsRefLvl;
+
+	public int bootsRefNum;
+
+	public float bootsRefAmt;
+
+	public int beltNum;
+
+	public int beltRarity;
+
+	public int beltLevel;
+
+	public int beltPower;
+
+	public int beltRefLvl;
+
+	public int beltRefNum;
+
+	public float beltRefAmt;
+
+	public int necklaceNum;
+
+	public int necklaceRarity;
+
+	public int necklaceLevel;
+
+	public int necklacePower;
+
+	public int necklaceRefLvl;
+
+	public int necklaceRefNum;
+
+	public float necklaceRefAmt;
+
+	public int ringNum;
+
+	public int ringRarity;
+
+	public int ringLevel;
+
+	public int ringPower;
+
+	public int ringRefLvl;
+
+	public int ringRefNum;
+
+	public float ringRefAmt;
+
+	public int battleStyle;
+
+	private bool clickedAnEnemy;
+
+	private Animator animator;
+
+	private float movementSpeed;
+
+	private Vector3 lastPosition;
+
+	private bool isSwitchingSkins;
+
+	private float attackTimer;
+
+	private bool isInAttackAnim;
+
+	private float attackAnimTimer;
+
+	private float stuckTimer;
+
+	private float manaRegenTimer;
+
+	private float medicTimer;
+
+	private GameObject actualUnit;
+
+	private SpriteRenderer spriteRender1;
+
+	private SpriteRenderer spriteRender2;
+
+	private SpriteRenderer spriteRender3;
+
+	private SpriteRenderer spriteRender4;
+
+	private SpriteRenderer spriteRender5;
+
+	private SpriteRenderer spriteRender6;
+
+	private SpriteRenderer spriteRender7;
+
+	private SpriteRenderer spriteRender8;
+
+	private SpriteRenderer spriteRender9;
+}

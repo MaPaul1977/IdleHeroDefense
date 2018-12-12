@@ -1,0 +1,21 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class CloudLoadManager : MonoBehaviour
+{
+	private void Start()
+	{
+		string @string = PlayerPrefs.GetString("LoadCloudAccount");
+		if (@string == "X")
+		{
+			UnityEngine.Debug.Log("reloading IntroScene with Cloud login");
+			LoginManager.Instance.startLoginStuff();
+			PlayerPrefs.SetString("LoadCloudAccount", string.Empty);
+		}
+	}
+
+	private void Update()
+	{
+	}
+}

@@ -1,0 +1,88 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class CommUpdateMenu : MonoBehaviour
+{
+	private void Awake()
+	{
+		CommUpdateMenu.Instance = this;
+	}
+
+	private void Start()
+	{
+		this.commNameField.text = GameManager.Instance.commName;
+		this.updatePanel();
+	}
+
+	private void OnEnable()
+	{
+		this.commNameField.text = GameManager.Instance.commName;
+		this.updatePanel();
+	}
+
+	private void updatePanel()
+	{
+		this.commLevelText.text = "Level " + GameManager.Instance.commLevel;
+		this.commExpSlider.value = (float)(GameManager.Instance.commCurrExp - GameManager.Instance.commLastExp) / (float)(GameManager.Instance.commNextExp - GameManager.Instance.commLastExp);
+		if (this.commExpSlider.value >= 1f)
+		{
+			this.commExpSlider.value = 1f;
+		}
+		this.commExpText.text = string.Concat(new object[]
+		{
+			GameManager.Instance.commCurrExp - GameManager.Instance.commLastExp,
+			" / ",
+			GameManager.Instance.commNextExp - GameManager.Instance.commLastExp,
+			" exp"
+		});
+		float num = (float)GameManager.Instance.commBonus;
+		num *= 1f + (float)GameManager.Instance.badge6Lvl * 0.25f;
+		this.commBonusText.text = "+" + UIManager.Instance.convertNumberFormat(num.ToString("0")) + "%";
+		this.savedExp = GameManager.Instance.commCurrExp;
+	}
+
+	public void clickedExitButton()
+	{
+		GameManager.Instance.commName = this.commNameField.text;
+		if (GameManager.Instance.commName == string.Empty)
+		{
+			GameManager.Instance.commName = "Nobody";
+		}
+		if (LoginManager.Instance.isConnectedPlayfab)
+		{
+			if (Application.platform != RuntimePlatform.WebGLPlayer)
+			{
+				DataManager.Instance.updatePlayfabDisplayName(GameManager.Instance.commName);
+			}
+			DataManager.Instance.updatePlayfabAvatarUrl(GameManager.Instance.commIcon.ToString());
+		}
+		DataManager.Instance.saveData(false);
+		UIManager.Instance.closeBlackBg();
+	}
+
+	private void Update()
+	{
+		if (this.savedExp != GameManager.Instance.commCurrExp)
+		{
+			this.updatePanel();
+		}
+	}
+
+	public static CommUpdateMenu Instance;
+
+	public InputField commNameField;
+
+	public Text commLevelText;
+
+	public Slider commExpSlider;
+
+	public Text commExpText;
+
+	public Text commBonusText;
+
+	public GameObject selectedCellBg;
+
+	private int savedExp;
+}

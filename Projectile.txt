@@ -1,0 +1,35 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class Projectile : MonoBehaviour
+{
+	private void Update()
+	{
+		if (base.transform.position.x < this.targetPos.x)
+		{
+			base.transform.rotation = Quaternion.Euler(0f, 0f, 90f);
+		}
+		else
+		{
+			base.transform.rotation = Quaternion.Euler(0f, 0f, -90f);
+		}
+		if ((this.targetPos - base.transform.position).magnitude > 0.35f)
+		{
+			this.moveAmt = this.moveSpeed * Time.deltaTime;
+			base.transform.position = Vector3.MoveTowards(base.transform.position, this.targetPos, this.moveAmt);
+		}
+		else
+		{
+			base.gameObject.SetActive(false);
+		}
+	}
+
+	public Vector3 targetPos;
+
+	public bool isKnife;
+
+	private float moveSpeed = 8f;
+
+	private float moveAmt;
+}

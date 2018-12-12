@@ -1,0 +1,74 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class SkillTreeSkill : MonoBehaviour
+{
+	private void Start()
+	{
+		this.levelPanel = base.gameObject.transform.GetChild(1).gameObject;
+		this.levelText = this.levelPanel.transform.GetChild(0).gameObject.GetComponent<Text>();
+		this.iconSprite = base.gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite;
+		this.updateSkill();
+	}
+
+	public void updateSkill()
+	{
+		this.levelText.text = this.level.ToString("n0");
+		if (this.level > 0)
+		{
+			this.levelPanel.SetActive(true);
+		}
+		else if (this.previousSkill == this || this.previousSkill.level > 0)
+		{
+			this.levelPanel.SetActive(true);
+		}
+		else
+		{
+			this.levelPanel.SetActive(false);
+		}
+		this.savedThisSkillLevel = this.level;
+		this.savedPrevSkillLevel = this.previousSkill.level;
+	}
+
+	private void Update()
+	{
+		if (this.level != this.savedThisSkillLevel || this.previousSkill.level != this.savedPrevSkillLevel)
+		{
+			this.updateSkill();
+		}
+	}
+
+	[Header("Manually Set Attributes")]
+	public SkillTreeSkill previousSkill;
+
+	[Header("Automatically Set Attributes")]
+	public int level;
+
+	public string title;
+
+	public float amount;
+
+	public string description;
+
+	public string typeDesc;
+
+	public Sprite iconSprite;
+
+	public int maxLevel;
+
+	private int savedThisSkillLevel;
+
+	private int savedPrevSkillLevel;
+
+	private bool savedIsSelected;
+
+	private Image borderImage;
+
+	private Image skillImage;
+
+	private GameObject levelPanel;
+
+	private Text levelText;
+}

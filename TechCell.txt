@@ -1,0 +1,278 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class TechCell : MonoBehaviour
+{
+	private void Start()
+	{
+		this.updateCell();
+	}
+
+	private void OnEnable()
+	{
+		this.updateCell();
+	}
+
+	public void clickedThis()
+	{
+		if (TechManager.Instance.selectedTech != this)
+		{
+			TechManager.Instance.selectedTech = this;
+		}
+		else
+		{
+			TechManager.Instance.selectedTech = null;
+		}
+		TechManager.Instance.updateTable();
+	}
+
+	public void updateCell()
+	{
+		this.initStats();
+		this.levelText.text = "Level " + this.currLevel;
+		this.icon.sprite = TechManager.Instance.listTechSprites[this.techId - 1];
+		float num = this.stat1Amt * (float)this.currLevel;
+		string str = num.ToString("f2");
+		if (this.stat1Amt % 1f == 0f)
+		{
+			str = num.ToString("n0");
+		}
+		if (this.techId != 30)
+		{
+			this.stat1Text.text = this.stat1PlusMinus + str + "% " + this.stat1Desc;
+		}
+		else
+		{
+			int num2 = 99 * this.currLevel;
+			int num3 = 9 * this.currLevel;
+			this.stat1Text.text = string.Concat(new object[]
+			{
+				"+DPS/HP scaled by hero tier\n(t1: +",
+				num2,
+				"%  /  t30: +",
+				num3,
+				"%)"
+			});
+		}
+		int num4;
+		if (this.stat2Desc == "all heroes DPS")
+		{
+			num4 = (this.stat2Amt + GameManager.Instance.tech27Lvl) * this.currLevel;
+		}
+		else
+		{
+			num4 = (this.stat2Amt + GameManager.Instance.tech28Lvl) * this.currLevel;
+		}
+		this.stat2Text.text = string.Concat(new object[]
+		{
+			"+",
+			num4,
+			"% ",
+			this.stat2Desc
+		});
+		if (this.currLevel < this.maxLevel)
+		{
+			this.actualCost = this.initialCost;
+			for (int i = 1; i < this.currLevel; i++)
+			{
+				this.actualCost *= (double)this.costMult;
+			}
+			this.actualCost *= (double)(1f - (float)GameManager.Instance.badge12Lvl * 0.03f);
+			this.actualCost = Math.Round(this.actualCost, 0);
+			if (GameManager.Instance.bpAmt >= this.actualCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.upgButton, "green", false);
+				this.upgButton.GetComponent<Button>().interactable = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.upgButton, "grey", false);
+				this.upgButton.GetComponent<Button>().interactable = false;
+			}
+			this.upgButtonTitle.text = "Lvl +1";
+			this.upgCostText.text = UIManager.Instance.convertNumberFormat(this.actualCost.ToString("0"));
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.upgButton, "grey", false);
+			this.upgButton.GetComponent<Button>().interactable = false;
+			this.upgButtonTitle.text = "Max Level";
+			this.upgCostText.text = "N/A";
+		}
+	}
+
+	public void initStats()
+	{
+		switch (this.techId)
+		{
+		case 1:
+			this.currLevel = GameManager.Instance.tech1Lvl;
+			this.paidForAmt = GameManager.Instance.tech1PaidFor;
+			break;
+		case 2:
+			this.currLevel = GameManager.Instance.tech2Lvl;
+			this.paidForAmt = GameManager.Instance.tech2PaidFor;
+			break;
+		case 3:
+			this.currLevel = GameManager.Instance.tech3Lvl;
+			this.paidForAmt = GameManager.Instance.tech3PaidFor;
+			break;
+		case 4:
+			this.currLevel = GameManager.Instance.tech4Lvl;
+			this.paidForAmt = GameManager.Instance.tech4PaidFor;
+			break;
+		case 5:
+			this.currLevel = GameManager.Instance.tech5Lvl;
+			this.paidForAmt = GameManager.Instance.tech5PaidFor;
+			break;
+		case 6:
+			this.currLevel = GameManager.Instance.tech6Lvl;
+			this.paidForAmt = GameManager.Instance.tech6PaidFor;
+			break;
+		case 7:
+			this.currLevel = GameManager.Instance.tech7Lvl;
+			this.paidForAmt = GameManager.Instance.tech7PaidFor;
+			break;
+		case 8:
+			this.currLevel = GameManager.Instance.tech8Lvl;
+			this.paidForAmt = GameManager.Instance.tech8PaidFor;
+			break;
+		case 9:
+			this.currLevel = GameManager.Instance.tech9Lvl;
+			this.paidForAmt = GameManager.Instance.tech9PaidFor;
+			break;
+		case 10:
+			this.currLevel = GameManager.Instance.tech10Lvl;
+			this.paidForAmt = GameManager.Instance.tech10PaidFor;
+			break;
+		case 11:
+			this.currLevel = GameManager.Instance.tech11Lvl;
+			this.paidForAmt = GameManager.Instance.tech11PaidFor;
+			break;
+		case 12:
+			this.currLevel = GameManager.Instance.tech12Lvl;
+			this.paidForAmt = GameManager.Instance.tech12PaidFor;
+			break;
+		case 13:
+			this.currLevel = GameManager.Instance.tech13Lvl;
+			this.paidForAmt = GameManager.Instance.tech13PaidFor;
+			break;
+		case 14:
+			this.currLevel = GameManager.Instance.tech14Lvl;
+			this.paidForAmt = GameManager.Instance.tech14PaidFor;
+			break;
+		case 15:
+			this.currLevel = GameManager.Instance.tech15Lvl;
+			this.paidForAmt = GameManager.Instance.tech15PaidFor;
+			break;
+		case 16:
+			this.currLevel = GameManager.Instance.tech16Lvl;
+			this.paidForAmt = GameManager.Instance.tech16PaidFor;
+			break;
+		case 17:
+			this.currLevel = GameManager.Instance.tech17Lvl;
+			this.paidForAmt = GameManager.Instance.tech17PaidFor;
+			break;
+		case 18:
+			this.currLevel = GameManager.Instance.tech18Lvl;
+			this.paidForAmt = GameManager.Instance.tech18PaidFor;
+			break;
+		case 19:
+			this.currLevel = GameManager.Instance.tech19Lvl;
+			this.paidForAmt = GameManager.Instance.tech19PaidFor;
+			break;
+		case 20:
+			this.currLevel = GameManager.Instance.tech20Lvl;
+			this.paidForAmt = GameManager.Instance.tech20PaidFor;
+			break;
+		case 21:
+			this.currLevel = GameManager.Instance.tech21Lvl;
+			this.paidForAmt = GameManager.Instance.tech21PaidFor;
+			break;
+		case 22:
+			this.currLevel = GameManager.Instance.tech22Lvl;
+			this.paidForAmt = GameManager.Instance.tech22PaidFor;
+			break;
+		case 23:
+			this.currLevel = GameManager.Instance.tech23Lvl;
+			this.paidForAmt = GameManager.Instance.tech23PaidFor;
+			break;
+		case 24:
+			this.currLevel = GameManager.Instance.tech24Lvl;
+			this.paidForAmt = GameManager.Instance.tech24PaidFor;
+			break;
+		case 25:
+			this.currLevel = GameManager.Instance.tech25Lvl;
+			this.paidForAmt = GameManager.Instance.tech25PaidFor;
+			break;
+		case 26:
+			this.currLevel = GameManager.Instance.tech26Lvl;
+			this.paidForAmt = GameManager.Instance.tech26PaidFor;
+			break;
+		case 27:
+			this.currLevel = GameManager.Instance.tech27Lvl;
+			this.paidForAmt = GameManager.Instance.tech27PaidFor;
+			break;
+		case 28:
+			this.currLevel = GameManager.Instance.tech28Lvl;
+			this.paidForAmt = GameManager.Instance.tech28PaidFor;
+			break;
+		case 29:
+			this.currLevel = GameManager.Instance.tech29Lvl;
+			this.paidForAmt = GameManager.Instance.tech29PaidFor;
+			break;
+		case 30:
+			this.currLevel = GameManager.Instance.tech30Lvl;
+			this.paidForAmt = GameManager.Instance.tech30PaidFor;
+			break;
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	[Header("Manually Set Attributes")]
+	public int techId;
+
+	public int maxLevel;
+
+	public double initialCost;
+
+	public float costMult;
+
+	public string stat1PlusMinus;
+
+	public float stat1Amt;
+
+	public string stat1Desc;
+
+	public int stat2Amt;
+
+	public string stat2Desc;
+
+	[Header("Automatically Set Attributes")]
+	public Text titleText;
+
+	public Image icon;
+
+	public Text levelText;
+
+	public Text stat1Text;
+
+	public Text stat2Text;
+
+	public GameObject upgButton;
+
+	public Text upgButtonTitle;
+
+	public Text upgCostText;
+
+	public double actualCost;
+
+	public int currLevel;
+
+	public double paidForAmt;
+}

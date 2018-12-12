@@ -1,0 +1,22 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class ObjPoolParticles : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void Update()
+	{
+		this.spawnCounter += Time.deltaTime;
+		if (this.spawnCounter >= 1f)
+		{
+			this.spawnCounter = 0f;
+			base.gameObject.SetActive(false);
+		}
+	}
+
+	private float spawnCounter;
+}

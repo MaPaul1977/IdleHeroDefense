@@ -1,0 +1,547 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using System.Text;
+using PlayFab;
+using PlayFab.ClientModels;
+using UnityEngine;
+
+[Serializable]
+public class DataManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		if (DataManager.Instance == null)
+		{
+			DataManager.Instance = this;
+		}
+		else if (DataManager.Instance != this)
+		{
+			UnityEngine.Object.Destroy(base.gameObject);
+			return;
+		}
+		UnityEngine.Object.DontDestroyOnLoad(base.gameObject);
+		base.gameObject.name = "DataManager";
+		Application.targetFrameRate = 30;
+		Screen.sleepTimeout = -1;
+	}
+
+	private void Start()
+	{
+	}
+
+	public void loadData()
+	{
+		UnityEngine.Debug.Log("try to load user data");
+		if (Application.platform == RuntimePlatform.WebGLPlayer && LoginManager.Instance.isConnectedPlayfab)
+		{
+			string userData1 = string.Empty;
+			string userData2 = string.Empty;
+			PlayFabClientAPI.GetUserData(new GetUserDataRequest
+			{
+				PlayFabId = LoginManager.Instance.playFabID,
+				Keys = null
+			}, delegate(GetUserDataResult result)
+			{
+				UnityEngine.Debug.Log("successfully loaded user data from server");
+				foreach (KeyValuePair<string, UserDataRecord> keyValuePair in result.Data)
+				{
+					if (keyValuePair.Key == "UserData1")
+					{
+						userData1 = keyValuePair.Value.Value;
+					}
+					else if (keyValuePair.Key == "UserData2")
+					{
+						userData2 = keyValuePair.Value.Value;
+					}
+				}
+				int length = userData1.Length;
+				int length2 = userData2.Length;
+				string text = string.Empty;
+				if (length - length2 > 500)
+				{
+					text = userData1;
+				}
+				else
+				{
+					text = userData1 + userData2;
+				}
+				string json = string.Empty;
+				if (text != string.Empty)
+				{
+					byte[] inputBytes = Convert.FromBase64String(text);
+					byte[] bytes = CLZF2.Decompress(inputBytes);
+					json = Encoding.ASCII.GetString(bytes);
+				}
+				JsonUtility.FromJsonOverwrite(json, this);
+				IntroManager.Instance.startLoadingScene();
+			}, delegate(PlayFabError error)
+			{
+				UnityEngine.Debug.Log("failed to load user data from server");
+				LoginManager.Instance.playfabPanel.SetActive(true);
+			}, null, null);
+		}
+		else if (LoginManager.Instance.isConnectedPlayfab)
+		{
+			int timePlayedLocal = PlayerPrefs.GetInt("TimePlayed");
+			int timePlayedCloud = 0;
+			string userData = string.Empty;
+			PlayFabClientAPI.GetUserData(new GetUserDataRequest
+			{
+				PlayFabId = LoginManager.Instance.playFabID,
+				Keys = null
+			}, delegate(GetUserDataResult result)
+			{
+				foreach (KeyValuePair<string, UserDataRecord> keyValuePair in result.Data)
+				{
+					if (keyValuePair.Key == "TimePlayed")
+					{
+						timePlayedCloud = int.Parse(keyValuePair.Value.Value);
+					}
+					else if (keyValuePair.Key == "UserData1")
+					{
+						userData = keyValuePair.Value.Value;
+					}
+				}
+				UnityEngine.Debug.Log(string.Concat(new object[]
+				{
+					"Cloud TimePlayed = ",
+					timePlayedCloud,
+					" // Local TimePlayed = ",
+					timePlayedLocal
+				}));
+				if (timePlayedCloud > timePlayedLocal)
+				{
+					string json = string.Empty;
+					if (userData != string.Empty)
+					{
+						byte[] inputBytes = Convert.FromBase64String(userData);
+						byte[] bytes = CLZF2.Decompress(inputBytes);
+						json = Encoding.ASCII.GetString(bytes);
+					}
+					JsonUtility.FromJsonOverwrite(json, this);
+					IntroManager.Instance.startLoadingScene();
+				}
+				else
+				{
+					this.loadMobileLocal();
+				}
+			}, delegate(PlayFabError error)
+			{
+				UnityEngine.Debug.Log("failed to load user data from server");
+				this.loadMobileLocal();
+			}, null, null);
+		}
+		else
+		{
+			this.loadMobileLocal();
+		}
+	}
+
+	private void loadMobileLocal()
+	{
+		UnityEngine.Debug.Log("successfully loaded user data locally");
+		string @string = PlayerPrefs.GetString("UserData1", string.Empty);
+		string json = string.Empty;
+		if (@string != string.Empty)
+		{
+			byte[] inputBytes = Convert.FromBase64String(@string);
+			byte[] bytes = CLZF2.Decompress(inputBytes);
+			json = Encoding.ASCII.GetString(bytes);
+		}
+		JsonUtility.FromJsonOverwrite(json, this);
+		IntroManager.Instance.startLoadingScene();
+	}
+
+	public void saveData(bool forceSave)
+	{
+		if (!GameManager.Instance.doneTutorial)
+		{
+			return;
+		}
+		if (!LoginManager.Instance.gameIsLoaded)
+		{
+			this.waitSaveTimer = 10f;
+			return;
+		}
+		if (this.waitSaveTimer > 0f && !forceSave)
+		{
+			UnityEngine.Debug.Log("saving too often... waiting... " + this.waitSaveTimer.ToString("f2"));
+			return;
+		}
+		this.waitSaveTimer = 10f;
+		UnityEngine.Debug.Log("try to save user data");
+		this.GameManagerData = GameManager.Instance.saveData();
+		this.Hero1Data = HeroManager.Instance.heroList[0].saveData();
+		this.Hero2Data = HeroManager.Instance.heroList[1].saveData();
+		this.Hero3Data = HeroManager.Instance.heroList[2].saveData();
+		this.Hero4Data = HeroManager.Instance.heroList[3].saveData();
+		this.Hero5Data = HeroManager.Instance.heroList[4].saveData();
+		this.Hero6Data = HeroManager.Instance.heroList[5].saveData();
+		this.Hero7Data = HeroManager.Instance.heroList[6].saveData();
+		this.Hero8Data = HeroManager.Instance.heroList[7].saveData();
+		this.Hero9Data = HeroManager.Instance.heroList[8].saveData();
+		this.Hero10Data = HeroManager.Instance.heroList[9].saveData();
+		this.Hero11Data = HeroManager.Instance.heroList[10].saveData();
+		this.Hero12Data = HeroManager.Instance.heroList[11].saveData();
+		this.Hero13Data = HeroManager.Instance.heroList[12].saveData();
+		this.Hero14Data = HeroManager.Instance.heroList[13].saveData();
+		this.Hero15Data = HeroManager.Instance.heroList[14].saveData();
+		this.Hero16Data = HeroManager.Instance.heroList[15].saveData();
+		this.Hero17Data = HeroManager.Instance.heroList[16].saveData();
+		this.Hero18Data = HeroManager.Instance.heroList[17].saveData();
+		this.Hero19Data = HeroManager.Instance.heroList[18].saveData();
+		this.Hero20Data = HeroManager.Instance.heroList[19].saveData();
+		this.Hero21Data = HeroManager.Instance.heroList[20].saveData();
+		this.Hero22Data = HeroManager.Instance.heroList[21].saveData();
+		this.Hero23Data = HeroManager.Instance.heroList[22].saveData();
+		this.Hero24Data = HeroManager.Instance.heroList[23].saveData();
+		this.Hero25Data = HeroManager.Instance.heroList[24].saveData();
+		this.Hero26Data = HeroManager.Instance.heroList[25].saveData();
+		this.Hero27Data = HeroManager.Instance.heroList[26].saveData();
+		this.Hero28Data = HeroManager.Instance.heroList[27].saveData();
+		this.Hero29Data = HeroManager.Instance.heroList[28].saveData();
+		this.Hero30Data = HeroManager.Instance.heroList[29].saveData();
+		this.Hero31Data = HeroManager.Instance.heroList[30].saveData();
+		this.Hero32Data = HeroManager.Instance.heroList[31].saveData();
+		this.Hero33Data = HeroManager.Instance.heroList[32].saveData();
+		this.Hero34Data = HeroManager.Instance.heroList[33].saveData();
+		this.Hero35Data = HeroManager.Instance.heroList[34].saveData();
+		this.Academia1Data = AcademiaManager.Instance.listAcademia[0].saveData();
+		this.Academia2Data = AcademiaManager.Instance.listAcademia[1].saveData();
+		this.Academia3Data = AcademiaManager.Instance.listAcademia[2].saveData();
+		this.Academia4Data = AcademiaManager.Instance.listAcademia[3].saveData();
+		this.Academia5Data = AcademiaManager.Instance.listAcademia[4].saveData();
+		this.Academia6Data = AcademiaManager.Instance.listAcademia[5].saveData();
+		this.Achievement1Data = AchievementManager.Instance.listAch[0].saveData();
+		this.Achievement2Data = AchievementManager.Instance.listAch[1].saveData();
+		this.Achievement3Data = AchievementManager.Instance.listAch[2].saveData();
+		this.Achievement4Data = AchievementManager.Instance.listAch[3].saveData();
+		this.Achievement5Data = AchievementManager.Instance.listAch[4].saveData();
+		this.Achievement6Data = AchievementManager.Instance.listAch[5].saveData();
+		this.Achievement7Data = AchievementManager.Instance.listAch[6].saveData();
+		this.Achievement8Data = AchievementManager.Instance.listAch[7].saveData();
+		this.Achievement9Data = AchievementManager.Instance.listAch[8].saveData();
+		this.Achievement10Data = AchievementManager.Instance.listAch[9].saveData();
+		this.Achievement11Data = AchievementManager.Instance.listAch[10].saveData();
+		this.Achievement12Data = AchievementManager.Instance.listAch[11].saveData();
+		this.Achievement13Data = AchievementManager.Instance.listAch[12].saveData();
+		this.Achievement14Data = AchievementManager.Instance.listAch[13].saveData();
+		this.Achievement15Data = AchievementManager.Instance.listAch[14].saveData();
+		this.Achievement16Data = AchievementManager.Instance.listAch[15].saveData();
+		this.Achievement17Data = AchievementManager.Instance.listAch[16].saveData();
+		this.Achievement18Data = AchievementManager.Instance.listAch[17].saveData();
+		this.Achievement19Data = AchievementManager.Instance.listAch[18].saveData();
+		this.Achievement20Data = AchievementManager.Instance.listAch[19].saveData();
+		this.Achievement21Data = AchievementManager.Instance.listAch[20].saveData();
+		this.Achievement22Data = AchievementManager.Instance.listAch[21].saveData();
+		this.Achievement23Data = AchievementManager.Instance.listAch[22].saveData();
+		this.Achievement24Data = AchievementManager.Instance.listAch[23].saveData();
+		this.Achievement25Data = AchievementManager.Instance.listAch[24].saveData();
+		this.Achievement26Data = AchievementManager.Instance.listAch[25].saveData();
+		string s = JsonUtility.ToJson(this);
+		byte[] bytes = Encoding.ASCII.GetBytes(s);
+		byte[] inArray = CLZF2.Compress(bytes);
+		string text = Convert.ToBase64String(inArray);
+		int length = text.Length;
+		string value = string.Concat(new object[]
+		{
+			"TimePlayed:",
+			AchievementManager.Instance.listAch[0].currAmt,
+			"//IAPGems:",
+			GameManager.Instance.amtBoughtFromIAPs,
+			"//CurrGems:",
+			GameManager.Instance.gemsAmt,
+			"//2xSpeed:",
+			GameManager.Instance.iap2xGameSpeed,
+			"//ComboBoost:",
+			GameManager.Instance.iap3xComboBonus,
+			"//DpsHpBoost:",
+			GameManager.Instance.iap3xDpsHpBonus,
+			"//NumPrestiges:",
+			AchievementManager.Instance.listAch[2].currAmt,
+			"//isAutoBanned:",
+			GameManager.Instance.isBanned
+		});
+		if (Application.platform == RuntimePlatform.WebGLPlayer && LoginManager.Instance.isConnectedPlayfab)
+		{
+			PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest
+			{
+				Permission = new UserDataPermission?(UserDataPermission.Public),
+				Data = new Dictionary<string, string>
+				{
+					{
+						"UserData1",
+						text
+					},
+					{
+						"UserData2",
+						string.Empty
+					},
+					{
+						"AntiBan_Data",
+						value
+					}
+				}
+			}, delegate(UpdateUserDataResult result)
+			{
+				UnityEngine.Debug.Log("successfully saved user data to server");
+			}, delegate(PlayFabError error)
+			{
+				UnityEngine.Debug.Log("failed to save user data to server / code = " + error.Error);
+				if (error.Error == PlayFabErrorCode.AuthTokenExpired || error.Error == PlayFabErrorCode.NotAuthenticated || error.Error == PlayFabErrorCode.InvalidSessionTicket)
+				{
+					LoginManager.Instance.tryLogInPlayFab();
+				}
+			}, null, null);
+		}
+		else if (LoginManager.Instance.isConnectedPlayfab)
+		{
+			PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest
+			{
+				Permission = new UserDataPermission?(UserDataPermission.Public),
+				Data = new Dictionary<string, string>
+				{
+					{
+						"UserData1",
+						text
+					},
+					{
+						"UserData2",
+						string.Empty
+					},
+					{
+						"TimePlayed",
+						AchievementManager.Instance.listAch[0].currAmt.ToString("0")
+					},
+					{
+						"AntiBan_Data",
+						value
+					}
+				}
+			}, delegate(UpdateUserDataResult result)
+			{
+				UnityEngine.Debug.Log("successfully saved user data to server");
+			}, delegate(PlayFabError error)
+			{
+				UnityEngine.Debug.Log("failed to save user data to server / code = " + error.Error);
+				if (error.Error == PlayFabErrorCode.AuthTokenExpired || error.Error == PlayFabErrorCode.NotAuthenticated || error.Error == PlayFabErrorCode.InvalidSessionTicket)
+				{
+					LoginManager.Instance.tryLogInPlayFab();
+				}
+			}, null, null);
+		}
+		UnityEngine.Debug.Log("successfully saved user data locally");
+		PlayerPrefs.SetString("UserData1", text);
+		PlayerPrefs.SetString("UserData2", string.Empty);
+		PlayerPrefs.SetInt("TimePlayed", (int)AchievementManager.Instance.listAch[0].currAmt);
+		PlayerPrefs.Save();
+		if (Application.platform == RuntimePlatform.WebGLPlayer && LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Highest Wave",
+				GameManager.Instance.statHighestWave
+			});
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Total Score",
+				GameManager.Instance.statTotalScore
+			});
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Enemies Killed",
+				GameManager.Instance.statEnemiesKilled
+			});
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Total Waves",
+				GameManager.Instance.statTotalWaves
+			});
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Total Prestiges",
+				GameManager.Instance.statPrestiges
+			});
+		}
+	}
+
+	public void updatePlayfabDisplayName(string _name)
+	{
+		PlayFabClientAPI.UpdateUserTitleDisplayName(new UpdateUserTitleDisplayNameRequest
+		{
+			DisplayName = _name
+		}, delegate(UpdateUserTitleDisplayNameResult result)
+		{
+			UnityEngine.Debug.Log("successfully updated comm name");
+		}, delegate(PlayFabError error)
+		{
+			UnityEngine.Debug.Log("failed to update comm name");
+		}, null, null);
+	}
+
+	public void updatePlayfabAvatarUrl(string _id)
+	{
+		PlayFabClientAPI.UpdateAvatarUrl(new UpdateAvatarUrlRequest
+		{
+			ImageUrl = _id
+		}, delegate(EmptyResponse result)
+		{
+		}, delegate(PlayFabError error)
+		{
+		}, null, null);
+	}
+
+	private void Update()
+	{
+		if (this.waitSaveTimer > 0f)
+		{
+			this.waitSaveTimer -= Time.deltaTime;
+			if (this.waitSaveTimer <= 0f)
+			{
+				this.waitSaveTimer = 0f;
+				this.saveData(true);
+			}
+		}
+	}
+
+	public static DataManager Instance;
+
+	public string GameManagerData;
+
+	public string Hero1Data;
+
+	public string Hero2Data;
+
+	public string Hero3Data;
+
+	public string Hero4Data;
+
+	public string Hero5Data;
+
+	public string Hero6Data;
+
+	public string Hero7Data;
+
+	public string Hero8Data;
+
+	public string Hero9Data;
+
+	public string Hero10Data;
+
+	public string Hero11Data;
+
+	public string Hero12Data;
+
+	public string Hero13Data;
+
+	public string Hero14Data;
+
+	public string Hero15Data;
+
+	public string Hero16Data;
+
+	public string Hero17Data;
+
+	public string Hero18Data;
+
+	public string Hero19Data;
+
+	public string Hero20Data;
+
+	public string Hero21Data;
+
+	public string Hero22Data;
+
+	public string Hero23Data;
+
+	public string Hero24Data;
+
+	public string Hero25Data;
+
+	public string Hero26Data;
+
+	public string Hero27Data;
+
+	public string Hero28Data;
+
+	public string Hero29Data;
+
+	public string Hero30Data;
+
+	public string Hero31Data;
+
+	public string Hero32Data;
+
+	public string Hero33Data;
+
+	public string Hero34Data;
+
+	public string Hero35Data;
+
+	public string Academia1Data;
+
+	public string Academia2Data;
+
+	public string Academia3Data;
+
+	public string Academia4Data;
+
+	public string Academia5Data;
+
+	public string Academia6Data;
+
+	public string Achievement1Data;
+
+	public string Achievement2Data;
+
+	public string Achievement3Data;
+
+	public string Achievement4Data;
+
+	public string Achievement5Data;
+
+	public string Achievement6Data;
+
+	public string Achievement7Data;
+
+	public string Achievement8Data;
+
+	public string Achievement9Data;
+
+	public string Achievement10Data;
+
+	public string Achievement11Data;
+
+	public string Achievement12Data;
+
+	public string Achievement13Data;
+
+	public string Achievement14Data;
+
+	public string Achievement15Data;
+
+	public string Achievement16Data;
+
+	public string Achievement17Data;
+
+	public string Achievement18Data;
+
+	public string Achievement19Data;
+
+	public string Achievement20Data;
+
+	public string Achievement21Data;
+
+	public string Achievement22Data;
+
+	public string Achievement23Data;
+
+	public string Achievement24Data;
+
+	public string Achievement25Data;
+
+	public string Achievement26Data;
+
+	private float waitSaveTimer;
+}

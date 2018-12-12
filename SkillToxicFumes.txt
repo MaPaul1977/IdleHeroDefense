@@ -1,0 +1,47 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class SkillToxicFumes : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void Update()
+	{
+		if (this.thisHero.activeSkill2ActiveTimer <= 0f)
+		{
+			UnityEngine.Object.Destroy(base.gameObject);
+			return;
+		}
+		this.dmgTimer += Time.deltaTime;
+		if (this.dmgTimer >= 1f)
+		{
+			this.dmgTimer = 0f;
+			for (int i = EnemyManager.Instance.enemyList.Count - 1; i >= 0; i--)
+			{
+				Enemy enemy = EnemyManager.Instance.enemyList[i];
+				if (enemy.isInGameArea && enemy.currHp > 0.0 && enemy != null && (enemy.transform.position - base.transform.position).magnitude <= 2f)
+				{
+					float num;
+					if (this.thisHero = HeroManager.Instance.hero12)
+					{
+						num = 0.01f;
+					}
+					else
+					{
+						num = 0.015f;
+					}
+					double num2 = enemy.maxHp * (double)num;
+					num2 = Math.Round(num2, 0);
+					enemy.takeDamage(num2, this.thisHero, false);
+				}
+			}
+		}
+	}
+
+	public Hero thisHero;
+
+	private float dmgTimer;
+}

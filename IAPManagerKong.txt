@@ -1,0 +1,302 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class IAPManagerKong : MonoBehaviour
+{
+	private void Awake()
+	{
+		IAPManagerKong.Instance = this;
+	}
+
+	private void Start()
+	{
+		base.gameObject.name = "IAPManagerKong";
+	}
+
+	public void OnKongregatePurchaseResultSuccess(string notUsed)
+	{
+		UnityEngine.Debug.Log("purchase success");
+		UIManager.Instance.iapBlackBg.SetActive(true);
+		UIManager.Instance.iapPurchasing.SetActive(false);
+		UIManager.Instance.iapSuccessful.SetActive(true);
+		if (this.savePurchaseId == "idlehd.250gems")
+		{
+			GameManager.Instance.gemsAmt += 250;
+			GameManager.Instance.amtBoughtFromIAPs += 250;
+			GameManager.Instance.statMoneySpent += 2;
+			GameManager.Instance.leadMoneySpent += 2;
+		}
+		else if (this.savePurchaseId == "idlehd.600gems")
+		{
+			GameManager.Instance.gemsAmt += 600;
+			GameManager.Instance.amtBoughtFromIAPs += 600;
+			GameManager.Instance.statMoneySpent += 4;
+			GameManager.Instance.leadMoneySpent += 4;
+		}
+		else if (this.savePurchaseId == "idlehd.1750gems")
+		{
+			GameManager.Instance.gemsAmt += 1750;
+			GameManager.Instance.amtBoughtFromIAPs += 1750;
+			GameManager.Instance.statMoneySpent += 10;
+			GameManager.Instance.leadMoneySpent += 10;
+		}
+		else if (this.savePurchaseId == "idlehd.4000gems")
+		{
+			GameManager.Instance.gemsAmt += 4000;
+			GameManager.Instance.amtBoughtFromIAPs += 4000;
+			GameManager.Instance.statMoneySpent += 20;
+			GameManager.Instance.leadMoneySpent += 20;
+		}
+		else if (this.savePurchaseId == "idlehd.12500gems")
+		{
+			GameManager.Instance.gemsAmt += 12500;
+			GameManager.Instance.amtBoughtFromIAPs += 12500;
+			GameManager.Instance.statMoneySpent += 50;
+			GameManager.Instance.leadMoneySpent += 50;
+		}
+		else if (this.savePurchaseId == "idlehd.2xspeed")
+		{
+			GameManager.Instance.iap2xGameSpeed = true;
+			GameManager.Instance.settings2xGameSpeed = true;
+			GameManager.Instance.statMoneySpent += 10;
+			GameManager.Instance.leadMoneySpent += 10;
+		}
+		else if (this.savePurchaseId == "idlehd.tournboost")
+		{
+			GameManager.Instance.iapTournBoost = true;
+			GameManager.Instance.statMoneySpent += 3;
+			GameManager.Instance.leadMoneySpent += 3;
+			TournamentManager.Instance.openPvpMenu();
+		}
+		else if (this.savePurchaseId == "idlehd.commclass1")
+		{
+			GameManager.Instance.iapCommClass1 = true;
+			GameManager.Instance.statMoneySpent += 12;
+			GameManager.Instance.leadMoneySpent += 12;
+			UIManager.Instance.iapCommClass1.updateCell();
+		}
+		else if (this.savePurchaseId == "idlehd.commclass2")
+		{
+			GameManager.Instance.iapCommClass2 = true;
+			GameManager.Instance.statMoneySpent += 6;
+			GameManager.Instance.leadMoneySpent += 6;
+			UIManager.Instance.iapCommClass2.updateCell();
+		}
+		else if (this.savePurchaseId == "idlehd.commclass3")
+		{
+			GameManager.Instance.iapCommClass3 = true;
+			GameManager.Instance.statMoneySpent += 9;
+			GameManager.Instance.leadMoneySpent += 9;
+			UIManager.Instance.iapCommClass3.updateCell();
+		}
+		else if (this.savePurchaseId == "idlehd.3xemeralds")
+		{
+			GameManager.Instance.iap3xEmeralds = true;
+			GameManager.Instance.gemsAmt += 750;
+			GameManager.Instance.amtBoughtFromIAPs += 750;
+			GameManager.Instance.statMoneySpent += 15;
+			GameManager.Instance.leadMoneySpent += 15;
+			GameManager.Instance.q1Reward *= 3;
+			GameManager.Instance.q2Reward *= 3;
+			GameManager.Instance.q3Reward *= 3;
+			GameManager.Instance.q4Reward *= 3;
+			GameManager.Instance.q5Reward *= 3;
+			GameManager.Instance.q6Reward *= 3;
+		}
+		DataManager.Instance.saveData(true);
+		Application.ExternalEval("\n            kongregate.mtx.requestUserItemList(null, function(result){\n                console.log('requestUserItemList result:');\n                console.log(result);\n                if(result.success){\n                    for(var i = 0; i < result.data.length; i++ ){\n                        var item = result.data[i];\n                        console.log('consuming '+item.identifier+' id: '+item.id);\n                        kongregate.mtx.useItemInstance(item.id, function(result){\n                            console.log('consume item '+result.id+' result: '+result.success);\n                        });\n                     }\n                }else{\n                    console.log('request user items failed');\n                }\n            });");
+		this.savePurchaseId = string.Empty;
+	}
+
+	public void OnKongregatePurchaseResultFailed(string notUsed)
+	{
+		UnityEngine.Debug.Log("purchase failed");
+		UIManager.Instance.iapBlackBg.SetActive(true);
+		UIManager.Instance.iapPurchasing.SetActive(false);
+		UIManager.Instance.iapFailed.SetActive(true);
+		this.savePurchaseId = string.Empty;
+	}
+
+	public void getKongKreds()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			UnityEngine.Debug.Log("open kong offers");
+			Application.ExternalCall("kongregate.mtx.showKredPurchaseDialog", new object[]
+			{
+				"offers"
+			});
+		}
+	}
+
+	public void buy2xGameSpeed()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.2xspeed";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.2xspeed'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buy3xEmeralds()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.3xemeralds";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.3xemeralds'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buyTournBoost()
+	{
+		UIManager.Instance.closeTournBoostPanel();
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.tournboost";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.tournboost'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buyCommClass1()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.commclass1";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.commclass1'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buyCommClass2()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.commclass2";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.commclass2'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buyCommClass3()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.commclass3";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.commclass3'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buy250Gems()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.250gems";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.250gems'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buy600Gems()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.600gems";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.600gems'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buy1750Gems()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.1750gems";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.1750gems'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buy4000Gems()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.4000gems";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.4000gems'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void buy12500Gems()
+	{
+		if (!LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			Application.ExternalEval("\n                kongregate.services.showRegistrationBox();\n            ");
+		}
+		else
+		{
+			this.initiatePurchase();
+			this.savePurchaseId = "idlehd.12500gems";
+			Application.ExternalEval("\n\t            kongregate.mtx.purchaseItems(['idlehd.12500gems'], function(result){\n\t                var unityObject = kongregateUnitySupport.getUnityObject();\n\t                if(result.success){\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultSuccess', '');\n\t                }else{\n\t                    unityObject.SendMessage('IAPManagerKong', 'OnKongregatePurchaseResultFailed', '');\n\t                }\n\t            });");
+		}
+	}
+
+	public void initiatePurchase()
+	{
+		UnityEngine.Debug.Log("purchase initiated");
+		UIManager.Instance.iapBlackBg.SetActive(true);
+		UIManager.Instance.iapPurchasing.SetActive(true);
+	}
+
+	public static IAPManagerKong Instance;
+
+	private string savePurchaseId;
+}

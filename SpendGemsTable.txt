@@ -1,0 +1,577 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class SpendGemsTable : MonoBehaviour
+{
+	private void Start()
+	{
+		this.updateTable();
+	}
+
+	private void OnEnable()
+	{
+		this.updateTable();
+	}
+
+	public void clicked2xTempButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 750;
+		GameManager.Instance.iap2xGameSpeedTemp = true;
+		GameManager.Instance.iap2xGameSpeedTimer = 43200;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked3xComboButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= this.comboCost;
+		GameManager.Instance.iap3xComboBonus *= 3;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked3xDpsHpButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= this.dpsHpCost;
+		GameManager.Instance.iap3xDpsHpBonus *= 3;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked3xGoldButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= this.goldCost;
+		GameManager.Instance.iap3xGoldBonus *= 3;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked3xBlueprintButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= this.blueprintCost;
+		GameManager.Instance.iap3xBlueprintBonusDouble *= 3.0;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked5kGoldButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 150;
+		GameManager.Instance.goldAmt += this.get5kGoldAmt;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked25kGoldButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 500;
+		GameManager.Instance.goldAmt += this.get25kGoldAmt;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked3xBlueprintsButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 225;
+		GameManager.Instance.bpAmt += this.get3xBpAmt;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked15xBlueprintsButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 750;
+		GameManager.Instance.bpAmt += this.get15xBpAmt;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked15kScrapsButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 225;
+		GameManager.Instance.scrapsAmt += 15000;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked75kScrapsButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 750;
+		GameManager.Instance.scrapsAmt += 75000;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked3xSkillpointsButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 225;
+		GameManager.Instance.spAmt += this.get3xSpAmt;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked15xSkillpointsButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 750;
+		GameManager.Instance.spAmt += this.get15xSpAmt;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked25xEmeraldsButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 450;
+		if (!GameManager.Instance.iap3xEmeralds)
+		{
+			GameManager.Instance.medAmt += 25;
+		}
+		else
+		{
+			GameManager.Instance.medAmt += 75;
+		}
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked125xEmeraldsButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= 1500;
+		if (!GameManager.Instance.iap3xEmeralds)
+		{
+			GameManager.Instance.medAmt += 125;
+		}
+		else
+		{
+			GameManager.Instance.medAmt += 375;
+		}
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	private void updateTable()
+	{
+		int num = 0;
+		this.comboCost = 1250;
+		for (int i = 3; i <= GameManager.Instance.iap3xComboBonus; i *= 3)
+		{
+			num++;
+			this.comboCost += 125;
+		}
+		int num2 = 0;
+		this.dpsHpCost = 500;
+		for (int j = 3; j <= GameManager.Instance.iap3xDpsHpBonus; j *= 3)
+		{
+			num2++;
+			this.dpsHpCost += 50;
+		}
+		int num3 = 0;
+		this.goldCost = 500;
+		for (int k = 3; k <= GameManager.Instance.iap3xGoldBonus; k *= 3)
+		{
+			num3++;
+			this.goldCost += 50;
+		}
+		int num4 = 0;
+		this.blueprintCost = 500;
+		for (double num5 = 3.0; num5 <= GameManager.Instance.iap3xBlueprintBonusDouble; num5 *= 3.0)
+		{
+			num4++;
+			this.blueprintCost += 50;
+		}
+		int num6 = this.dpsHpCost + this.goldCost + this.blueprintCost;
+		float num7 = (1f - (float)this.comboCost / (float)num6) * 100f;
+		this.x3ComboSaveAmt.text = "Save " + num7.ToString("f0") + "%!";
+		if (num < 18)
+		{
+			if (GameManager.Instance.gemsAmt >= this.comboCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3ComboButton, "green", true);
+				this.x3ComboButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3ComboButton, "grey", true);
+				this.x3ComboButton.GetComponent<Button>().enabled = false;
+			}
+			this.x3ComboButtonCost.text = this.comboCost.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.x3ComboButton, "grey", true);
+			this.x3ComboButton.GetComponent<Button>().enabled = false;
+			this.x3ComboButtonCost.text = "Maxed";
+		}
+		double num8 = 1.0;
+		if (GameManager.Instance.iap3xComboBonus > 1)
+		{
+			num8 = (double)GameManager.Instance.iap3xComboBonus;
+		}
+		double num9 = 1.0;
+		if (GameManager.Instance.iap3xDpsHpBonus > 1)
+		{
+			num9 = (double)GameManager.Instance.iap3xDpsHpBonus;
+		}
+		double num10 = 1.0;
+		if (GameManager.Instance.iap3xGoldBonus > 1)
+		{
+			num10 = (double)GameManager.Instance.iap3xGoldBonus;
+		}
+		double num11 = 1.0;
+		if (GameManager.Instance.iap3xBlueprintBonusDouble > 1.0)
+		{
+			num11 = GameManager.Instance.iap3xBlueprintBonusDouble;
+		}
+		int num12 = num2 + num;
+		double num13 = num9 * num8;
+		if (num13 == 1.0)
+		{
+			num13 = 0.0;
+		}
+		this.x3DpsHpTotals.text = string.Concat(new object[]
+		{
+			"Boosts: ",
+			num12,
+			" / Bonus: x",
+			UIManager.Instance.convertNumberFormat(num13.ToString("0"))
+		});
+		if (num2 < 17)
+		{
+			if (GameManager.Instance.gemsAmt >= this.dpsHpCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3DpsHpButton, "green", true);
+				this.x3DpsHpButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3DpsHpButton, "grey", true);
+				this.x3DpsHpButton.GetComponent<Button>().enabled = false;
+			}
+			this.x3DpsHpButtonCost.text = this.dpsHpCost.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.x3DpsHpButton, "grey", true);
+			this.x3DpsHpButton.GetComponent<Button>().enabled = false;
+			this.x3DpsHpButtonCost.text = "Maxed";
+		}
+		int num14 = num3 + num;
+		double num15 = num10 * num8;
+		if (num15 == 1.0)
+		{
+			num15 = 0.0;
+		}
+		this.x3GoldTotals.text = string.Concat(new object[]
+		{
+			"Boosts: ",
+			num14,
+			" / Bonus: x",
+			UIManager.Instance.convertNumberFormat(num15.ToString("0"))
+		});
+		if (num3 < 17)
+		{
+			if (GameManager.Instance.gemsAmt >= this.goldCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3GoldButton, "green", true);
+				this.x3GoldButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3GoldButton, "grey", true);
+				this.x3GoldButton.GetComponent<Button>().enabled = false;
+			}
+			this.x3GoldButtonCost.text = this.goldCost.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.x3GoldButton, "grey", true);
+			this.x3GoldButton.GetComponent<Button>().enabled = false;
+			this.x3GoldButtonCost.text = "Maxed";
+		}
+		int num16 = num4 + num;
+		double num17 = num11 * num8;
+		if (num17 == 1.0)
+		{
+			num17 = 0.0;
+		}
+		this.x3BlueprintTotals.text = string.Concat(new object[]
+		{
+			"Boosts: ",
+			num16,
+			" / Bonus: x",
+			UIManager.Instance.convertNumberFormat(num17.ToString("0"))
+		});
+		if (num4 < 82)
+		{
+			if (GameManager.Instance.gemsAmt >= this.blueprintCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3BlueprintButton, "green", true);
+				this.x3BlueprintButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3BlueprintButton, "grey", true);
+				this.x3BlueprintButton.GetComponent<Button>().enabled = false;
+			}
+			this.x3BlueprintButtonCost.text = this.blueprintCost.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.x3BlueprintButton, "grey", true);
+			this.x3BlueprintButton.GetComponent<Button>().enabled = false;
+			this.x3BlueprintButtonCost.text = "Maxed";
+		}
+		this.get5kGoldAmt = this.getGoldAmt(5000);
+		this.gold5kAmt.text = "+" + UIManager.Instance.convertNumberFormat(this.get5kGoldAmt.ToString("0"));
+		if (GameManager.Instance.gemsAmt >= 150)
+		{
+			UIManager.Instance.changeButtonColorV2(this.gold5kButton, "green", true);
+			this.gold5kButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.gold5kButton, "grey", true);
+			this.gold5kButton.GetComponent<Button>().enabled = false;
+		}
+		this.get25kGoldAmt = this.getGoldAmt(25000);
+		this.gold25kAmt.text = "+" + UIManager.Instance.convertNumberFormat(this.get25kGoldAmt.ToString("0"));
+		if (GameManager.Instance.gemsAmt >= 500)
+		{
+			UIManager.Instance.changeButtonColorV2(this.gold25kButton, "green", true);
+			this.gold25kButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.gold25kButton, "grey", true);
+			this.gold25kButton.GetComponent<Button>().enabled = false;
+		}
+		int num18 = 50;
+		if (GameManager.Instance.statHighestWave > 50)
+		{
+			num18 = GameManager.Instance.statHighestWave;
+		}
+		this.get3xBpAmt = GameManager.Instance.getPrestigeGems(num18 + 1) * 3.0;
+		this.blueprint3xAmt.text = "+" + UIManager.Instance.convertNumberFormat(this.get3xBpAmt.ToString("0"));
+		if (GameManager.Instance.gemsAmt >= 225)
+		{
+			UIManager.Instance.changeButtonColorV2(this.blueprint3xButton, "green", true);
+			this.blueprint3xButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.blueprint3xButton, "grey", true);
+			this.blueprint3xButton.GetComponent<Button>().enabled = false;
+		}
+		this.get15xBpAmt = GameManager.Instance.getPrestigeGems(num18 + 1) * 15.0;
+		this.blueprint15xAmt.text = "+" + UIManager.Instance.convertNumberFormat(this.get15xBpAmt.ToString("0"));
+		if (GameManager.Instance.gemsAmt >= 750)
+		{
+			UIManager.Instance.changeButtonColorV2(this.blueprint15xButton, "green", true);
+			this.blueprint15xButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.blueprint15xButton, "grey", true);
+			this.blueprint15xButton.GetComponent<Button>().enabled = false;
+		}
+		if (GameManager.Instance.gemsAmt >= 225)
+		{
+			UIManager.Instance.changeButtonColorV2(this.scraps15kButton, "green", true);
+			this.scraps15kButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.scraps15kButton, "grey", true);
+			this.scraps15kButton.GetComponent<Button>().enabled = false;
+		}
+		if (GameManager.Instance.gemsAmt >= 750)
+		{
+			UIManager.Instance.changeButtonColorV2(this.scraps75kButton, "green", true);
+			this.scraps75kButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.scraps75kButton, "grey", true);
+			this.scraps75kButton.GetComponent<Button>().enabled = false;
+		}
+		this.get3xSpAmt = GameManager.Instance.getPrestigeSkillpointAmt(num18) * 3;
+		this.skillpoint3xAmt.text = "+" + UIManager.Instance.convertNumberFormat(this.get3xSpAmt.ToString("0"));
+		if (GameManager.Instance.gemsAmt >= 225)
+		{
+			UIManager.Instance.changeButtonColorV2(this.skillpoint3xButton, "green", true);
+			this.skillpoint3xButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.skillpoint3xButton, "grey", true);
+			this.skillpoint3xButton.GetComponent<Button>().enabled = false;
+		}
+		this.get15xSpAmt = GameManager.Instance.getPrestigeSkillpointAmt(num18) * 15;
+		this.skillpoint15xAmt.text = "+" + UIManager.Instance.convertNumberFormat(this.get15xSpAmt.ToString("0"));
+		if (GameManager.Instance.gemsAmt >= 750)
+		{
+			UIManager.Instance.changeButtonColorV2(this.skillpoint15xButton, "green", true);
+			this.skillpoint15xButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.skillpoint15xButton, "grey", true);
+			this.skillpoint15xButton.GetComponent<Button>().enabled = false;
+		}
+		if (!GameManager.Instance.iap3xEmeralds)
+		{
+			this.emerald25xText.text = "+25";
+		}
+		else
+		{
+			this.emerald25xText.text = "+75";
+		}
+		if (GameManager.Instance.gemsAmt >= 450)
+		{
+			UIManager.Instance.changeButtonColorV2(this.emerald25xButton, "green", true);
+			this.emerald25xButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.emerald25xButton, "grey", true);
+			this.emerald25xButton.GetComponent<Button>().enabled = false;
+		}
+		if (!GameManager.Instance.iap3xEmeralds)
+		{
+			this.emerald125xText.text = "+125";
+		}
+		else
+		{
+			this.emerald125xText.text = "+375";
+		}
+		if (GameManager.Instance.gemsAmt >= 1500)
+		{
+			UIManager.Instance.changeButtonColorV2(this.emerald125xButton, "green", true);
+			this.emerald125xButton.GetComponent<Button>().enabled = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.emerald125xButton, "grey", true);
+			this.emerald125xButton.GetComponent<Button>().enabled = false;
+		}
+		this.savedGems = (double)GameManager.Instance.gemsAmt;
+	}
+
+	private double getGoldAmt(int numKills)
+	{
+		double num = GameManager.Instance.getActGoldDrop(false, true) * (double)numKills;
+		float num2 = (float)numKills * (GameManager.Instance.getChestChance(true) * 0.01f);
+		int num3 = (int)num2;
+		double num4 = GameManager.Instance.getActChestGold(false, true) * (double)num3;
+		float num5 = (float)numKills * ((float)GameManager.Instance.tech25Lvl * 0.25f * 0.01f);
+		int num6 = (int)num5 * 5;
+		double num7 = GameManager.Instance.getActChestGold(false, true) * (double)num6;
+		return num + num4 + num7;
+	}
+
+	private void Update()
+	{
+		if (this.savedGems != (double)GameManager.Instance.gemsAmt)
+		{
+			this.updateTable();
+		}
+	}
+
+	public Text x3ComboSaveAmt;
+
+	public GameObject x3ComboButton;
+
+	public Text x3ComboButtonCost;
+
+	public Text x3DpsHpTotals;
+
+	public GameObject x3DpsHpButton;
+
+	public Text x3DpsHpButtonCost;
+
+	public Text x3GoldTotals;
+
+	public GameObject x3GoldButton;
+
+	public Text x3GoldButtonCost;
+
+	public Text x3BlueprintTotals;
+
+	public GameObject x3BlueprintButton;
+
+	public Text x3BlueprintButtonCost;
+
+	public Text gold5kAmt;
+
+	public GameObject gold5kButton;
+
+	public Text gold25kAmt;
+
+	public GameObject gold25kButton;
+
+	public Text blueprint3xAmt;
+
+	public GameObject blueprint3xButton;
+
+	public Text blueprint15xAmt;
+
+	public GameObject blueprint15xButton;
+
+	public GameObject scraps15kButton;
+
+	public GameObject scraps75kButton;
+
+	public Text skillpoint3xAmt;
+
+	public GameObject skillpoint3xButton;
+
+	public Text skillpoint15xAmt;
+
+	public GameObject skillpoint15xButton;
+
+	public Text emerald25xText;
+
+	public GameObject emerald25xButton;
+
+	public Text emerald125xText;
+
+	public GameObject emerald125xButton;
+
+	private int comboCost;
+
+	private int dpsHpCost;
+
+	private int goldCost;
+
+	private int blueprintCost;
+
+	private double get5kGoldAmt;
+
+	private double get25kGoldAmt;
+
+	private double get3xBpAmt;
+
+	private double get15xBpAmt;
+
+	private int get3xSpAmt;
+
+	private int get15xSpAmt;
+
+	private double savedGems;
+}

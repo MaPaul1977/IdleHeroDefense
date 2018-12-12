@@ -1,0 +1,317 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class IAPPanelBoosts : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void OnEnable()
+	{
+		this.updateTable();
+	}
+
+	public void clicked3xComboButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= this.comboCost;
+		GameManager.Instance.iap3xComboBonus *= 3;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked3xDpsHpButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= this.dpsHpCost;
+		GameManager.Instance.iap3xDpsHpBonus *= 3;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked3xGoldButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= this.goldCost;
+		GameManager.Instance.iap3xGoldBonus *= 3;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clicked3xBlueprintButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= this.blueprintCost;
+		GameManager.Instance.iap3xBlueprintBonusDouble *= 3.0;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void clickedCelestEquipButton()
+	{
+		SoundManager.Instance.playReward();
+		GameManager.Instance.gemsAmt -= this.celestEquipCost;
+		GameManager.Instance.iapCelestEquipChance++;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void updateTable()
+	{
+		int num = 0;
+		this.comboCost = 1250;
+		for (int i = 3; i <= GameManager.Instance.iap3xComboBonus; i *= 3)
+		{
+			num++;
+			this.comboCost += 125;
+		}
+		int num2 = 0;
+		this.dpsHpCost = 500;
+		for (int j = 3; j <= GameManager.Instance.iap3xDpsHpBonus; j *= 3)
+		{
+			num2++;
+			this.dpsHpCost += 50;
+		}
+		int num3 = 0;
+		this.goldCost = 500;
+		for (int k = 3; k <= GameManager.Instance.iap3xGoldBonus; k *= 3)
+		{
+			num3++;
+			this.goldCost += 50;
+		}
+		int num4 = 0;
+		this.blueprintCost = 500;
+		for (double num5 = 3.0; num5 <= GameManager.Instance.iap3xBlueprintBonusDouble; num5 *= 3.0)
+		{
+			num4++;
+			this.blueprintCost += 50;
+		}
+		int iapCelestEquipChance = GameManager.Instance.iapCelestEquipChance;
+		this.celestEquipCost = 500 + 75 * iapCelestEquipChance;
+		int num6 = this.dpsHpCost + this.goldCost + this.blueprintCost;
+		float num7 = (1f - (float)this.comboCost / (float)num6) * 100f;
+		this.x3ComboSaveAmt.text = "Save " + num7.ToString("f0") + "%!";
+		if (num < 18)
+		{
+			if (GameManager.Instance.gemsAmt >= this.comboCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3ComboButton, "green", true);
+				this.x3ComboButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3ComboButton, "grey", true);
+				this.x3ComboButton.GetComponent<Button>().enabled = false;
+			}
+			this.x3ComboButtonCost.text = this.comboCost.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.x3ComboButton, "grey", true);
+			this.x3ComboButton.GetComponent<Button>().enabled = false;
+			this.x3ComboButtonCost.text = "Maxed";
+		}
+		double num8 = 1.0;
+		if (GameManager.Instance.iap3xComboBonus > 1)
+		{
+			num8 = (double)GameManager.Instance.iap3xComboBonus;
+		}
+		double num9 = 1.0;
+		if (GameManager.Instance.iap3xDpsHpBonus > 1)
+		{
+			num9 = (double)GameManager.Instance.iap3xDpsHpBonus;
+		}
+		double num10 = 1.0;
+		if (GameManager.Instance.iap3xGoldBonus > 1)
+		{
+			num10 = (double)GameManager.Instance.iap3xGoldBonus;
+		}
+		double num11 = 1.0;
+		if (GameManager.Instance.iap3xBlueprintBonusDouble > 1.0)
+		{
+			num11 = GameManager.Instance.iap3xBlueprintBonusDouble;
+		}
+		int num12 = num2 + num;
+		double num13 = num9 * num8;
+		if (num13 == 1.0)
+		{
+			num13 = 0.0;
+		}
+		this.x3DpsHpTotals.text = string.Concat(new object[]
+		{
+			"Boosts: ",
+			num12,
+			" / Bonus: x",
+			UIManager.Instance.convertNumberFormat(num13.ToString("0"))
+		});
+		if (num2 < 17)
+		{
+			if (GameManager.Instance.gemsAmt >= this.dpsHpCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3DpsHpButton, "green", true);
+				this.x3DpsHpButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3DpsHpButton, "grey", true);
+				this.x3DpsHpButton.GetComponent<Button>().enabled = false;
+			}
+			this.x3DpsHpButtonCost.text = this.dpsHpCost.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.x3DpsHpButton, "grey", true);
+			this.x3DpsHpButton.GetComponent<Button>().enabled = false;
+			this.x3DpsHpButtonCost.text = "Maxed";
+		}
+		int num14 = num3 + num;
+		double num15 = num10 * num8;
+		if (num15 == 1.0)
+		{
+			num15 = 0.0;
+		}
+		this.x3GoldTotals.text = string.Concat(new object[]
+		{
+			"Boosts: ",
+			num14,
+			" / Bonus: x",
+			UIManager.Instance.convertNumberFormat(num15.ToString("0"))
+		});
+		if (num3 < 17)
+		{
+			if (GameManager.Instance.gemsAmt >= this.goldCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3GoldButton, "green", true);
+				this.x3GoldButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3GoldButton, "grey", true);
+				this.x3GoldButton.GetComponent<Button>().enabled = false;
+			}
+			this.x3GoldButtonCost.text = this.goldCost.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.x3GoldButton, "grey", true);
+			this.x3GoldButton.GetComponent<Button>().enabled = false;
+			this.x3GoldButtonCost.text = "Maxed";
+		}
+		int num16 = num4 + num;
+		double num17 = num11 * num8;
+		if (num17 == 1.0)
+		{
+			num17 = 0.0;
+		}
+		this.x3BlueprintTotals.text = string.Concat(new object[]
+		{
+			"Boosts: ",
+			num16,
+			" / Bonus: x",
+			UIManager.Instance.convertNumberFormat(num17.ToString("0"))
+		});
+		if (num4 < 82)
+		{
+			if (GameManager.Instance.gemsAmt >= this.blueprintCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3BlueprintButton, "green", true);
+				this.x3BlueprintButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.x3BlueprintButton, "grey", true);
+				this.x3BlueprintButton.GetComponent<Button>().enabled = false;
+			}
+			this.x3BlueprintButtonCost.text = this.blueprintCost.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.x3BlueprintButton, "grey", true);
+			this.x3BlueprintButton.GetComponent<Button>().enabled = false;
+			this.x3BlueprintButtonCost.text = "Maxed";
+		}
+		float num18 = (float)iapCelestEquipChance * 0.5f;
+		this.celestEquipTotals.text = string.Concat(new object[]
+		{
+			"Boosts: ",
+			iapCelestEquipChance,
+			" / Chance: ",
+			num18.ToString("f1"),
+			"%"
+		});
+		if (iapCelestEquipChance < 100)
+		{
+			if (GameManager.Instance.gemsAmt >= this.celestEquipCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.celestEquipButton, "green", true);
+				this.celestEquipButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.celestEquipButton, "grey", true);
+				this.celestEquipButton.GetComponent<Button>().enabled = false;
+			}
+			this.celestEquipButtonCost.text = this.celestEquipCost.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.celestEquipButton, "grey", true);
+			this.celestEquipButton.GetComponent<Button>().enabled = false;
+			this.celestEquipButtonCost.text = "Maxed";
+		}
+		this.savedGems = (double)GameManager.Instance.gemsAmt;
+	}
+
+	private void Update()
+	{
+		if (this.savedGems != (double)GameManager.Instance.gemsAmt)
+		{
+			this.updateTable();
+		}
+	}
+
+	public Text x3ComboSaveAmt;
+
+	public GameObject x3ComboButton;
+
+	public Text x3ComboButtonCost;
+
+	public Text x3DpsHpTotals;
+
+	public GameObject x3DpsHpButton;
+
+	public Text x3DpsHpButtonCost;
+
+	public Text x3GoldTotals;
+
+	public GameObject x3GoldButton;
+
+	public Text x3GoldButtonCost;
+
+	public Text x3BlueprintTotals;
+
+	public GameObject x3BlueprintButton;
+
+	public Text x3BlueprintButtonCost;
+
+	public Text celestEquipTotals;
+
+	public GameObject celestEquipButton;
+
+	public Text celestEquipButtonCost;
+
+	private int comboCost;
+
+	private int dpsHpCost;
+
+	private int goldCost;
+
+	private int blueprintCost;
+
+	private int celestEquipCost;
+
+	private double savedGems;
+}

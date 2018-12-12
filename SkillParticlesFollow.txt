@@ -1,0 +1,17 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class SkillParticlesFollow : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void Update()
+	{
+		base.transform.position = this.heroToFollow.transform.position + new Vector3(0f, 0.5f, 0f);
+	}
+
+	public Hero heroToFollow;
+}

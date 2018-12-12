@@ -1,0 +1,1321 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class StatsTable : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void OnEnable()
+	{
+		for (int i = 0; i < this.listStatsCells.Count; i++)
+		{
+			float baseAmt = this.getBaseAmt(i);
+			this.listStatsCells[i].transform.GetChild(1).gameObject.GetComponent<Text>().text = this.getBaseString(i);
+			float commAmt = this.getCommAmt(i);
+			this.listStatsCells[i].transform.GetChild(2).gameObject.GetComponent<Text>().text = this.getCommString(i, commAmt);
+			float techAmt = this.getTechAmt(i);
+			this.listStatsCells[i].transform.GetChild(3).gameObject.GetComponent<Text>().text = this.getTechString(i, techAmt);
+			float academiaAmt = this.getAcademiaAmt(i);
+			this.listStatsCells[i].transform.GetChild(4).gameObject.GetComponent<Text>().text = this.getAcademiaString(i, academiaAmt);
+			float skillTreeAmt = this.getSkillTreeAmt(i);
+			this.listStatsCells[i].transform.GetChild(5).gameObject.GetComponent<Text>().text = this.getSkillTreeString(i, skillTreeAmt);
+			float aurasAmt = this.getAurasAmt(i);
+			this.listStatsCells[i].transform.GetChild(6).gameObject.GetComponent<Text>().text = this.getAurasString(i, aurasAmt);
+			double num = this.get3xBoostAmt(i);
+			this.listStatsCells[i].transform.GetChild(7).gameObject.GetComponent<Text>().text = this.get3xBoostString(i, num);
+			this.listStatsCells[i].transform.GetChild(8).gameObject.GetComponent<Text>().text = this.getTotalsString(i, baseAmt, commAmt, techAmt, academiaAmt, skillTreeAmt, aurasAmt, num);
+		}
+	}
+
+	private float getBaseAmt(int rowNum)
+	{
+		float result = 0f;
+		if (rowNum == 0)
+		{
+			result = 1f;
+		}
+		else if (rowNum == 1)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 2)
+		{
+			result = 2f;
+		}
+		else if (rowNum == 3)
+		{
+			result = 1f;
+		}
+		else if (rowNum == 4)
+		{
+			result = 1f;
+		}
+		else if (rowNum == 5)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 6)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 7)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 8)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 9)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 10)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 11)
+		{
+			result = 1f;
+		}
+		else if (rowNum == 12)
+		{
+			result = 10f;
+		}
+		else if (rowNum == 13)
+		{
+			result = 1f;
+		}
+		else if (rowNum == 14)
+		{
+			result = 1f;
+		}
+		return result;
+	}
+
+	private string getBaseString(int rowNum)
+	{
+		string result = string.Empty;
+		if (rowNum == 0)
+		{
+			result = "-";
+		}
+		else if (rowNum == 1)
+		{
+			result = "-";
+		}
+		else if (rowNum == 2)
+		{
+			result = "200%";
+		}
+		else if (rowNum == 3)
+		{
+			result = "1%";
+		}
+		else if (rowNum == 4)
+		{
+			result = "-";
+		}
+		else if (rowNum == 5)
+		{
+			result = "-";
+		}
+		else if (rowNum == 6)
+		{
+			result = "30s";
+		}
+		else if (rowNum == 7)
+		{
+			result = "60s";
+		}
+		else if (rowNum == 8)
+		{
+			result = "-";
+		}
+		else if (rowNum == 9)
+		{
+			result = "-";
+		}
+		else if (rowNum == 10)
+		{
+			result = "0%";
+		}
+		else if (rowNum == 11)
+		{
+			result = "-";
+		}
+		else if (rowNum == 12)
+		{
+			result = "1000%";
+		}
+		else if (rowNum == 13)
+		{
+			result = "1%";
+		}
+		else if (rowNum == 14)
+		{
+			result = "-";
+		}
+		return result;
+	}
+
+	private float getCommAmt(int rowNum)
+	{
+		float num = 0f;
+		if (rowNum == 0)
+		{
+			num = 1f + (float)GameManager.Instance.commBonus * 0.01f;
+		}
+		else if (rowNum == 1)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 2)
+		{
+			num = 1f;
+		}
+		else if (rowNum == 3)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 4)
+		{
+			num = 1f + (float)GameManager.Instance.commBonus * 0.01f;
+		}
+		else if (rowNum == 5)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 6)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 7)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 8)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 9)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 10)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 11)
+		{
+			num = 1f + (float)GameManager.Instance.commBonus * 0.01f;
+		}
+		else if (rowNum == 12)
+		{
+			num = 1f;
+		}
+		else if (rowNum == 13)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 14)
+		{
+			num = 1f;
+		}
+		return num * (1f + (float)GameManager.Instance.badge6Lvl * 0.25f);
+	}
+
+	private string getCommString(int rowNum, float amt)
+	{
+		string result = string.Empty;
+		if (amt > 1f)
+		{
+			amt -= 1f;
+			amt *= 100f;
+		}
+		if (rowNum == 0)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 1)
+		{
+			result = "-";
+		}
+		else if (rowNum == 2)
+		{
+			result = "-";
+		}
+		else if (rowNum == 3)
+		{
+			result = "-";
+		}
+		else if (rowNum == 4)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 5)
+		{
+			result = "-";
+		}
+		else if (rowNum == 6)
+		{
+			result = "-";
+		}
+		else if (rowNum == 7)
+		{
+			result = "-";
+		}
+		else if (rowNum == 8)
+		{
+			result = "-";
+		}
+		else if (rowNum == 9)
+		{
+			result = "-";
+		}
+		else if (rowNum == 10)
+		{
+			result = "-";
+		}
+		else if (rowNum == 11)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 12)
+		{
+			result = "-";
+		}
+		else if (rowNum == 13)
+		{
+			result = "-";
+		}
+		else if (rowNum == 14)
+		{
+			result = "-";
+		}
+		return result;
+	}
+
+	private float getTechAmt(int rowNum)
+	{
+		float num = 0f;
+		if (rowNum == 0)
+		{
+			num = 1f;
+			float num2 = (float)GameManager.Instance.tech27Lvl * 0.01f;
+			num += (float)GameManager.Instance.tech1Lvl * 0.5f;
+			num += (float)GameManager.Instance.tech1Lvl * (0.05f + num2);
+			num += (float)GameManager.Instance.tech3Lvl * (0.05f + num2);
+			num += (float)GameManager.Instance.tech4Lvl * (0.07f + num2);
+			num += (float)GameManager.Instance.tech5Lvl * (0.07f + num2);
+			num += (float)GameManager.Instance.tech6Lvl * (0.1f + num2);
+			num += (float)GameManager.Instance.tech8Lvl * (0.07f + num2);
+			num += (float)GameManager.Instance.tech10Lvl * (0.07f + num2);
+			num += (float)GameManager.Instance.tech15Lvl * (0.07f + num2);
+			num += (float)GameManager.Instance.tech19Lvl * (0.05f + num2);
+			num += (float)GameManager.Instance.tech21Lvl * (0.1f + num2);
+			num += (float)GameManager.Instance.tech22Lvl * (0.07f + num2);
+			num += (float)GameManager.Instance.tech23Lvl * (0.07f + num2);
+			num += (float)GameManager.Instance.tech25Lvl * (0.1f + num2);
+			num += (float)GameManager.Instance.tech27Lvl * (0.05f + num2);
+			num += (float)GameManager.Instance.tech30Lvl * (0.1f + num2);
+			num += (float)GameManager.Instance.tech30Lvl * 1.05f;
+		}
+		else if (rowNum == 1)
+		{
+			num = (float)GameManager.Instance.tech8Lvl * 0.005f;
+		}
+		else if (rowNum == 2)
+		{
+			num = 1f + (float)GameManager.Instance.tech3Lvl * 0.1f;
+		}
+		else if (rowNum == 3)
+		{
+			num = (float)GameManager.Instance.tech4Lvl * 0.5f;
+		}
+		else if (rowNum == 4)
+		{
+			num = 1f;
+			float num3 = (float)GameManager.Instance.tech28Lvl * 0.01f;
+			num += (float)GameManager.Instance.tech2Lvl * 0.5f;
+			num += (float)GameManager.Instance.tech2Lvl * (0.05f + num3);
+			num += (float)GameManager.Instance.tech7Lvl * (0.1f + num3);
+			num += (float)GameManager.Instance.tech9Lvl * (0.15f + num3);
+			num += (float)GameManager.Instance.tech11Lvl * (0.05f + num3);
+			num += (float)GameManager.Instance.tech12Lvl * (0.07f + num3);
+			num += (float)GameManager.Instance.tech13Lvl * (0.07f + num3);
+			num += (float)GameManager.Instance.tech14Lvl * (0.07f + num3);
+			num += (float)GameManager.Instance.tech16Lvl * (0.05f + num3);
+			num += (float)GameManager.Instance.tech17Lvl * (0.05f + num3);
+			num += (float)GameManager.Instance.tech18Lvl * (0.07f + num3);
+			num += (float)GameManager.Instance.tech20Lvl * (0.07f + num3);
+			num += (float)GameManager.Instance.tech24Lvl * (0.07f + num3);
+			num += (float)GameManager.Instance.tech26Lvl * (0.1f + num3);
+			num += (float)GameManager.Instance.tech28Lvl * (0.05f + num3);
+			num += (float)GameManager.Instance.tech29Lvl * (0.1f + num3);
+			num += (float)GameManager.Instance.tech30Lvl * 1.05f;
+		}
+		else if (rowNum == 5)
+		{
+			num = (float)GameManager.Instance.tech11Lvl * 0.01f;
+		}
+		else if (rowNum == 6)
+		{
+			num = (float)GameManager.Instance.tech13Lvl * 0.01f;
+		}
+		else if (rowNum == 7)
+		{
+			num = (float)GameManager.Instance.tech12Lvl * 0.01f;
+		}
+		else if (rowNum == 8)
+		{
+			num = (float)GameManager.Instance.tech14Lvl * 0.01f;
+		}
+		else if (rowNum == 9)
+		{
+			num = (float)GameManager.Instance.tech10Lvl * 0.01f;
+		}
+		else if (rowNum == 10)
+		{
+			num = (float)GameManager.Instance.tech9Lvl;
+		}
+		else if (rowNum == 11)
+		{
+			num = 1f + (float)GameManager.Instance.tech16Lvl * 0.25f;
+		}
+		else if (rowNum == 12)
+		{
+			num = 1f + (float)GameManager.Instance.tech17Lvl * 0.1f;
+		}
+		else if (rowNum == 13)
+		{
+			num = (float)GameManager.Instance.tech18Lvl * 0.5f;
+		}
+		else if (rowNum == 14)
+		{
+			num = 1f + (float)GameManager.Instance.tech15Lvl * 0.05f;
+		}
+		return num;
+	}
+
+	private string getTechString(int rowNum, float amt)
+	{
+		string result = string.Empty;
+		if (rowNum == 0)
+		{
+			if (amt > 1f)
+			{
+				amt -= 1f;
+				amt *= 100f;
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 1)
+		{
+			amt *= 100f;
+			result = "+" + amt.ToString("0") + "%";
+		}
+		else if (rowNum == 2)
+		{
+			if (amt > 1f)
+			{
+				amt -= 1f;
+				amt *= 100f;
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 3)
+		{
+			result = "+" + amt.ToString("f1") + "%";
+		}
+		else if (rowNum == 4)
+		{
+			if (amt > 1f)
+			{
+				amt -= 1f;
+				amt *= 100f;
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 5)
+		{
+			amt *= 100f;
+			result = "+" + amt.ToString("0") + "%";
+		}
+		else if (rowNum == 6)
+		{
+			amt *= 100f;
+			result = "+" + amt.ToString("0") + "%";
+		}
+		else if (rowNum == 7)
+		{
+			amt *= 100f;
+			result = "-" + amt.ToString("0") + "%";
+		}
+		else if (rowNum == 8)
+		{
+			amt *= 100f;
+			result = "-" + amt.ToString("0") + "%";
+		}
+		else if (rowNum == 9)
+		{
+			amt *= 100f;
+			result = "+" + amt.ToString("f1") + "%";
+		}
+		else if (rowNum == 10)
+		{
+			result = "+" + amt.ToString("0") + "%";
+		}
+		else if (rowNum == 11)
+		{
+			if (amt > 1f)
+			{
+				amt -= 1f;
+				amt *= 100f;
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 12)
+		{
+			if (amt > 1f)
+			{
+				amt -= 1f;
+				amt *= 100f;
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 13)
+		{
+			result = "+" + amt.ToString("f1") + "%";
+		}
+		else if (rowNum == 14)
+		{
+			if (amt > 1f)
+			{
+				amt -= 1f;
+				amt *= 100f;
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		return result;
+	}
+
+	private float getAcademiaAmt(int rowNum)
+	{
+		float result = 0f;
+		if (rowNum == 0)
+		{
+			result = 1f + (float)AcademiaManager.Instance.listAcademia[0].totalBonus * 0.01f;
+		}
+		else if (rowNum == 1)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 2)
+		{
+			result = 1f + (float)AcademiaManager.Instance.listAcademia[2].totalBonus * 0.01f;
+		}
+		else if (rowNum == 3)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 4)
+		{
+			result = 1f + (float)AcademiaManager.Instance.listAcademia[1].totalBonus * 0.01f;
+		}
+		else if (rowNum == 5)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 6)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 7)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 8)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 9)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 10)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 11)
+		{
+			result = 1f + (float)AcademiaManager.Instance.listAcademia[3].totalBonus * 0.01f;
+		}
+		else if (rowNum == 12)
+		{
+			result = 1f + (float)AcademiaManager.Instance.listAcademia[4].totalBonus * 0.01f;
+		}
+		else if (rowNum == 13)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 14)
+		{
+			result = 1f + (float)AcademiaManager.Instance.listAcademia[5].totalBonus * 0.01f;
+		}
+		return result;
+	}
+
+	private string getAcademiaString(int rowNum, float amt)
+	{
+		string result = string.Empty;
+		if (amt > 1f)
+		{
+			amt -= 1f;
+			amt *= 100f;
+		}
+		if (rowNum == 0)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 1)
+		{
+			result = "-";
+		}
+		else if (rowNum == 2)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 3)
+		{
+			result = "-";
+		}
+		else if (rowNum == 4)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 5)
+		{
+			result = "-";
+		}
+		else if (rowNum == 6)
+		{
+			result = "-";
+		}
+		else if (rowNum == 7)
+		{
+			result = "-";
+		}
+		else if (rowNum == 8)
+		{
+			result = "-";
+		}
+		else if (rowNum == 9)
+		{
+			result = "-";
+		}
+		else if (rowNum == 10)
+		{
+			result = "-";
+		}
+		else if (rowNum == 11)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 12)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 13)
+		{
+			result = "-";
+		}
+		else if (rowNum == 14)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		return result;
+	}
+
+	private float getSkillTreeAmt(int rowNum)
+	{
+		float num = 0f;
+		if (rowNum == 0)
+		{
+			num = 1f + (float)GameManager.Instance.treeAll1Lvl * 0.25f;
+			num += (float)GameManager.Instance.treeMelee1Lvl * 0.5f;
+		}
+		else if (rowNum == 1)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 2)
+		{
+			num = 1f + (float)GameManager.Instance.treeAll5Lvl * 0.1f;
+		}
+		else if (rowNum == 3)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 4)
+		{
+			num = 1f + (float)GameManager.Instance.treeAll2Lvl * 0.25f;
+			num += (float)GameManager.Instance.treeMelee2Lvl * 0.5f;
+		}
+		else if (rowNum == 5)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 6)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 7)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 8)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 9)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 10)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 11)
+		{
+			num = 1f + (float)GameManager.Instance.treeAll3Lvl * 0.25f;
+		}
+		else if (rowNum == 12)
+		{
+			num = 1f + (float)GameManager.Instance.treeAll4Lvl * 0.1f;
+		}
+		else if (rowNum == 13)
+		{
+			num = 0f;
+		}
+		else if (rowNum == 14)
+		{
+			num = 1f + (float)GameManager.Instance.treeAll6Lvl * 0.05f;
+		}
+		return num;
+	}
+
+	private string getSkillTreeString(int rowNum, float amt)
+	{
+		string result = string.Empty;
+		if (amt > 1f)
+		{
+			amt -= 1f;
+			amt *= 100f;
+		}
+		if (rowNum == 0)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 1)
+		{
+			result = "-";
+		}
+		else if (rowNum == 2)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 3)
+		{
+			result = "-";
+		}
+		else if (rowNum == 4)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 5)
+		{
+			result = "-";
+		}
+		else if (rowNum == 6)
+		{
+			result = "-";
+		}
+		else if (rowNum == 7)
+		{
+			result = "-";
+		}
+		else if (rowNum == 8)
+		{
+			result = "-";
+		}
+		else if (rowNum == 9)
+		{
+			result = "-";
+		}
+		else if (rowNum == 10)
+		{
+			result = "-";
+		}
+		else if (rowNum == 11)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 12)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 13)
+		{
+			result = "-";
+		}
+		else if (rowNum == 14)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		return result;
+	}
+
+	private float getAurasAmt(int rowNum)
+	{
+		float result = 0f;
+		if (rowNum == 0)
+		{
+			result = 1f + (float)GameManager.Instance.auraDmgLvl * 0.05f;
+		}
+		else if (rowNum == 1)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 2)
+		{
+			result = 1f;
+		}
+		else if (rowNum == 3)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 4)
+		{
+			result = 1f + (float)GameManager.Instance.auraHpLvl * 0.05f;
+		}
+		else if (rowNum == 5)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 6)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 7)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 8)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 9)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 10)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 11)
+		{
+			result = 1f + (float)GameManager.Instance.auraGoldLvl * 0.05f;
+		}
+		else if (rowNum == 12)
+		{
+			result = 1f;
+		}
+		else if (rowNum == 13)
+		{
+			result = 0f;
+		}
+		else if (rowNum == 14)
+		{
+			result = 1f;
+		}
+		return result;
+	}
+
+	private string getAurasString(int rowNum, float amt)
+	{
+		string result = string.Empty;
+		if (amt > 1f)
+		{
+			amt -= 1f;
+			amt *= 100f;
+		}
+		if (rowNum == 0)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 1)
+		{
+			result = "-";
+		}
+		else if (rowNum == 2)
+		{
+			result = "-";
+		}
+		else if (rowNum == 3)
+		{
+			result = "-";
+		}
+		else if (rowNum == 4)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 5)
+		{
+			result = "-";
+		}
+		else if (rowNum == 6)
+		{
+			result = "-";
+		}
+		else if (rowNum == 7)
+		{
+			result = "-";
+		}
+		else if (rowNum == 8)
+		{
+			result = "-";
+		}
+		else if (rowNum == 9)
+		{
+			result = "-";
+		}
+		else if (rowNum == 10)
+		{
+			result = "-";
+		}
+		else if (rowNum == 11)
+		{
+			if (amt > 1f)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 12)
+		{
+			result = "-";
+		}
+		else if (rowNum == 13)
+		{
+			result = "-";
+		}
+		else if (rowNum == 14)
+		{
+			result = "-";
+		}
+		return result;
+	}
+
+	private double get3xBoostAmt(int rowNum)
+	{
+		double result = 0.0;
+		if (rowNum == 0)
+		{
+			result = (double)GameManager.Instance.iap3xComboBonus * (double)GameManager.Instance.iap3xDpsHpBonus;
+		}
+		else if (rowNum == 1)
+		{
+			result = 0.0;
+		}
+		else if (rowNum == 2)
+		{
+			result = 1.0;
+		}
+		else if (rowNum == 3)
+		{
+			result = 0.0;
+		}
+		else if (rowNum == 4)
+		{
+			result = (double)GameManager.Instance.iap3xComboBonus * (double)GameManager.Instance.iap3xDpsHpBonus;
+		}
+		else if (rowNum == 5)
+		{
+			result = 0.0;
+		}
+		else if (rowNum == 6)
+		{
+			result = 0.0;
+		}
+		else if (rowNum == 7)
+		{
+			result = 0.0;
+		}
+		else if (rowNum == 8)
+		{
+			result = 0.0;
+		}
+		else if (rowNum == 9)
+		{
+			result = 0.0;
+		}
+		else if (rowNum == 10)
+		{
+			result = 0.0;
+		}
+		else if (rowNum == 11)
+		{
+			result = (double)GameManager.Instance.iap3xComboBonus * (double)GameManager.Instance.iap3xGoldBonus;
+		}
+		else if (rowNum == 12)
+		{
+			result = 1.0;
+		}
+		else if (rowNum == 13)
+		{
+			result = 0.0;
+		}
+		else if (rowNum == 14)
+		{
+			result = (double)GameManager.Instance.iap3xComboBonus * (double)GameManager.Instance.iap3xBlueprintBonus;
+		}
+		return result;
+	}
+
+	private string get3xBoostString(int rowNum, double amt)
+	{
+		string result = string.Empty;
+		if (amt > 1.0)
+		{
+			amt *= 100.0;
+		}
+		if (rowNum == 0)
+		{
+			if (amt > 1.0)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 1)
+		{
+			result = "-";
+		}
+		else if (rowNum == 2)
+		{
+			result = "-";
+		}
+		else if (rowNum == 3)
+		{
+			result = "-";
+		}
+		else if (rowNum == 4)
+		{
+			if (amt > 1.0)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 5)
+		{
+			result = "-";
+		}
+		else if (rowNum == 6)
+		{
+			result = "-";
+		}
+		else if (rowNum == 7)
+		{
+			result = "-";
+		}
+		else if (rowNum == 8)
+		{
+			result = "-";
+		}
+		else if (rowNum == 9)
+		{
+			result = "-";
+		}
+		else if (rowNum == 10)
+		{
+			result = "-";
+		}
+		else if (rowNum == 11)
+		{
+			if (amt > 1.0)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		else if (rowNum == 12)
+		{
+			result = "-";
+		}
+		else if (rowNum == 13)
+		{
+			result = "-";
+		}
+		else if (rowNum == 14)
+		{
+			if (amt > 1.0)
+			{
+				result = "+" + UIManager.Instance.convertNumberFormat(amt.ToString("0")) + "%";
+			}
+			else
+			{
+				result = "+0%";
+			}
+		}
+		return result;
+	}
+
+	private string getTotalsString(int rowNum, float baseAmt, float commAmt, float techAmt, float academiaAmt, float skillTreeAmt, float aurasAmt, double x3BoostAmt)
+	{
+		string result = string.Empty;
+		if (rowNum == 0)
+		{
+			double num = (double)(commAmt * techAmt * academiaAmt * skillTreeAmt * aurasAmt) * x3BoostAmt * 100.0 - 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num.ToString("0")) + "%";
+		}
+		else if (rowNum == 1)
+		{
+			double num2 = ((double)(commAmt + techAmt + academiaAmt + skillTreeAmt + aurasAmt) + x3BoostAmt) * 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num2.ToString("0")) + "%";
+		}
+		else if (rowNum == 2)
+		{
+			double num3 = (double)(commAmt * techAmt * academiaAmt * skillTreeAmt * aurasAmt) * x3BoostAmt * 100.0 - 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num3.ToString("0")) + "%";
+		}
+		else if (rowNum == 3)
+		{
+			double num4 = (double)(commAmt + techAmt + academiaAmt + skillTreeAmt + aurasAmt) + x3BoostAmt;
+			result = "+" + UIManager.Instance.convertNumberFormat(num4.ToString("0")) + "%";
+		}
+		else if (rowNum == 4)
+		{
+			double num5 = (double)(commAmt * techAmt * academiaAmt * skillTreeAmt * aurasAmt) * x3BoostAmt * 100.0 - 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num5.ToString("0")) + "%";
+		}
+		else if (rowNum == 5)
+		{
+			double num6 = ((double)(commAmt + techAmt + academiaAmt + skillTreeAmt + aurasAmt) + x3BoostAmt) * 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num6.ToString("0")) + "%";
+		}
+		else if (rowNum == 6)
+		{
+			double num7 = ((double)(commAmt + techAmt + academiaAmt + skillTreeAmt + aurasAmt) + x3BoostAmt) * 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num7.ToString("0")) + "%";
+		}
+		else if (rowNum == 7)
+		{
+			double num8 = ((double)(commAmt + techAmt + academiaAmt + skillTreeAmt + aurasAmt) + x3BoostAmt) * 100.0;
+			result = "-" + UIManager.Instance.convertNumberFormat(num8.ToString("0")) + "%";
+		}
+		else if (rowNum == 8)
+		{
+			double num9 = ((double)(commAmt + techAmt + academiaAmt + skillTreeAmt + aurasAmt) + x3BoostAmt) * 100.0;
+			result = "-" + UIManager.Instance.convertNumberFormat(num9.ToString("0")) + "%";
+		}
+		else if (rowNum == 9)
+		{
+			double num10 = ((double)(commAmt + techAmt + academiaAmt + skillTreeAmt + aurasAmt) + x3BoostAmt) * 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num10.ToString("0")) + "%";
+		}
+		else if (rowNum == 10)
+		{
+			double num11 = (double)(commAmt + techAmt + academiaAmt + skillTreeAmt + aurasAmt) + x3BoostAmt;
+			result = "+" + UIManager.Instance.convertNumberFormat(num11.ToString("0")) + "%";
+		}
+		else if (rowNum == 11)
+		{
+			double num12 = (double)(commAmt * techAmt * academiaAmt * skillTreeAmt * aurasAmt) * x3BoostAmt * 100.0 - 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num12.ToString("0")) + "%";
+		}
+		else if (rowNum == 12)
+		{
+			double num13 = (double)(commAmt * techAmt * academiaAmt * skillTreeAmt * aurasAmt) * x3BoostAmt * 100.0 - 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num13.ToString("0")) + "%";
+		}
+		else if (rowNum == 13)
+		{
+			double num14 = (double)(commAmt + techAmt + academiaAmt + skillTreeAmt + aurasAmt) + x3BoostAmt;
+			result = "+" + UIManager.Instance.convertNumberFormat(num14.ToString("0")) + "%";
+		}
+		else if (rowNum == 14)
+		{
+			double num15 = (double)(commAmt * techAmt * academiaAmt * skillTreeAmt * aurasAmt) * x3BoostAmt * 100.0 - 100.0;
+			result = "+" + UIManager.Instance.convertNumberFormat(num15.ToString("0")) + "%";
+		}
+		return result;
+	}
+
+	private void Update()
+	{
+	}
+
+	public List<GameObject> listStatsCells;
+}

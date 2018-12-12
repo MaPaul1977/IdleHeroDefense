@@ -1,0 +1,300 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class AchievementCell : MonoBehaviour
+{
+	private void Start()
+	{
+		this.progSlider.minValue = 0f;
+		this.progSlider.maxValue = 1f;
+		this.updateCell();
+	}
+
+	private void OnEnable()
+	{
+		this.progSlider.minValue = 0f;
+		this.progSlider.maxValue = 1f;
+		this.updateCell();
+	}
+
+	private void updateCell()
+	{
+		this.star1.transform.position = this.grey1.transform.position;
+		this.star2.transform.position = this.grey2.transform.position;
+		this.star3.transform.position = this.grey3.transform.position;
+		this.star4.transform.position = this.grey4.transform.position;
+		this.star5.transform.position = this.grey5.transform.position;
+		this.star6.transform.position = this.grey6.transform.position;
+		this.star7.transform.position = this.grey7.transform.position;
+		this.star8.transform.position = this.grey8.transform.position;
+		this.star9.transform.position = this.grey9.transform.position;
+		this.star10.transform.position = this.grey10.transform.position;
+		double num = this.thisAch.currAmt / this.thisAch.nextAmt;
+		if (num <= 0.0)
+		{
+			num = 0.0;
+		}
+		else if (num >= 1.0)
+		{
+			num = 1.0;
+		}
+		this.progSlider.value = (float)num;
+		string str = string.Empty;
+		string str2 = string.Empty;
+		if (this.thisAch.achNum != 0)
+		{
+			str = UIManager.Instance.convertNumberFormat(this.thisAch.currAmt.ToString("0"));
+			str2 = UIManager.Instance.convertNumberFormat(this.thisAch.nextAmt.ToString("0"));
+		}
+		else
+		{
+			TimeSpan timeSpan = TimeSpan.FromSeconds((double)((int)this.thisAch.currAmt));
+			str = string.Format("{0:D1}d {1:D1}h {2:D1}m {3:D1}s", new object[]
+			{
+				timeSpan.Days,
+				timeSpan.Hours,
+				timeSpan.Minutes,
+				timeSpan.Seconds
+			});
+			TimeSpan timeSpan2 = TimeSpan.FromSeconds((double)((int)this.thisAch.nextAmt));
+			str2 = string.Format("{0:D1}d {1:D1}h {2:D1}m {3:D1}s", new object[]
+			{
+				timeSpan2.Days,
+				timeSpan2.Hours,
+				timeSpan2.Minutes,
+				timeSpan2.Seconds
+			});
+		}
+		if (this.thisAch.level < 10)
+		{
+			this.progText.text = str + " / " + str2;
+		}
+		else
+		{
+			this.progText.text = str + " / complete";
+		}
+		if (this.thisAch.level >= 1)
+		{
+			this.star1.SetActive(true);
+		}
+		else
+		{
+			this.star1.SetActive(false);
+		}
+		if (this.thisAch.level >= 2)
+		{
+			this.star2.SetActive(true);
+		}
+		else
+		{
+			this.star2.SetActive(false);
+		}
+		if (this.thisAch.level >= 3)
+		{
+			this.star3.SetActive(true);
+		}
+		else
+		{
+			this.star3.SetActive(false);
+		}
+		if (this.thisAch.level >= 4)
+		{
+			this.star4.SetActive(true);
+		}
+		else
+		{
+			this.star4.SetActive(false);
+		}
+		if (this.thisAch.level >= 5)
+		{
+			this.star5.SetActive(true);
+		}
+		else
+		{
+			this.star5.SetActive(false);
+		}
+		if (this.thisAch.level >= 6)
+		{
+			this.star6.SetActive(true);
+		}
+		else
+		{
+			this.star6.SetActive(false);
+		}
+		if (this.thisAch.level >= 7)
+		{
+			this.star7.SetActive(true);
+		}
+		else
+		{
+			this.star7.SetActive(false);
+		}
+		if (this.thisAch.level >= 8)
+		{
+			this.star8.SetActive(true);
+		}
+		else
+		{
+			this.star8.SetActive(false);
+		}
+		if (this.thisAch.level >= 9)
+		{
+			this.star9.SetActive(true);
+		}
+		else
+		{
+			this.star9.SetActive(false);
+		}
+		if (this.thisAch.level >= 10)
+		{
+			this.star10.SetActive(true);
+		}
+		else
+		{
+			this.star10.SetActive(false);
+		}
+		if (this.thisAch.level < 10)
+		{
+			if (this.thisAch.currAmt >= this.thisAch.nextAmt)
+			{
+				UIManager.Instance.changeButtonColorV2(this.claimButton, "green", false);
+				this.claimButton.GetComponent<Button>().enabled = true;
+				this.completeBg.SetActive(true);
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.claimButton, "grey", false);
+				this.claimButton.GetComponent<Button>().enabled = false;
+				this.completeBg.SetActive(false);
+			}
+			this.claimTitle.text = "Claim";
+			int num2 = 5;
+			if (this.thisAch.level == 1)
+			{
+				num2 = 10;
+			}
+			else if (this.thisAch.level == 2)
+			{
+				num2 = 15;
+			}
+			else if (this.thisAch.level == 3)
+			{
+				num2 = 20;
+			}
+			else if (this.thisAch.level == 4)
+			{
+				num2 = 25;
+			}
+			else if (this.thisAch.level == 5)
+			{
+				num2 = 30;
+			}
+			else if (this.thisAch.level == 6)
+			{
+				num2 = 35;
+			}
+			else if (this.thisAch.level == 7)
+			{
+				num2 = 40;
+			}
+			else if (this.thisAch.level == 8)
+			{
+				num2 = 45;
+			}
+			else if (this.thisAch.level == 9)
+			{
+				num2 = 50;
+			}
+			this.claimAmt.text = "+" + num2;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.claimButton, "grey", false);
+			this.claimButton.GetComponent<Button>().enabled = false;
+			this.claimTitle.text = "Maxed";
+			this.claimAmt.text = "N/A";
+			this.completeBg.SetActive(false);
+		}
+		this.savedLevel = (double)this.thisAch.level;
+		this.savedCurrAmt = this.thisAch.currAmt;
+	}
+
+	public void clickedClaimButton()
+	{
+		this.thisAch.claimReward();
+		this.updateCell();
+		AchievementManager.Instance.checkIfAchComplete(this.thisAch.achNum);
+	}
+
+	private void Update()
+	{
+		if (this.savedLevel != (double)this.thisAch.level)
+		{
+			this.updateCell();
+		}
+		else if (this.savedCurrAmt != this.thisAch.currAmt)
+		{
+			this.updateCell();
+		}
+	}
+
+	public Achievement thisAch;
+
+	public GameObject completeBg;
+
+	public Text progText;
+
+	public Slider progSlider;
+
+	public GameObject star1;
+
+	public GameObject star2;
+
+	public GameObject star3;
+
+	public GameObject star4;
+
+	public GameObject star5;
+
+	public GameObject star6;
+
+	public GameObject star7;
+
+	public GameObject star8;
+
+	public GameObject star9;
+
+	public GameObject star10;
+
+	public GameObject grey1;
+
+	public GameObject grey2;
+
+	public GameObject grey3;
+
+	public GameObject grey4;
+
+	public GameObject grey5;
+
+	public GameObject grey6;
+
+	public GameObject grey7;
+
+	public GameObject grey8;
+
+	public GameObject grey9;
+
+	public GameObject grey10;
+
+	public GameObject claimButton;
+
+	public Text claimTitle;
+
+	public Text claimAmt;
+
+	private double savedLevel;
+
+	private double savedCurrAmt;
+}

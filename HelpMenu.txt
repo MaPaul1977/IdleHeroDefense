@@ -1,0 +1,164 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using PlayFab;
+using PlayFab.ClientModels;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HelpMenu : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	public void clickedRewardCodeButton()
+	{
+		string _date = string.Empty;
+		string _value = string.Empty;
+		string _amt = "100";
+		string _giveDate = string.Empty;
+		string _giveAmt = string.Empty;
+		string _giveName = string.Empty;
+		string _giveCode = string.Empty;
+		UIManager.Instance.blackbg.SetActive(true);
+		if (this.codeInput.text == "unbanmepls" && GameManager.Instance.isBanned)
+		{
+			SoundManager.Instance.playReward();
+			this.rewardCodeCorrectPanel.SetActive(true);
+			this.rewardCodeCorrectAmtText.text = "Unbanned";
+			GameManager.Instance.isBanned = false;
+			LoginManager.Instance.tryLogInPlayFab();
+			return;
+		}
+		if (LoginManager.Instance.isConnectedPlayfab)
+		{
+			PlayFabClientAPI.GetTitleData(new GetTitleDataRequest(), delegate(GetTitleDataResult result)
+			{
+				foreach (KeyValuePair<string, string> keyValuePair in result.Data)
+				{
+					if (keyValuePair.Key == "RewardCodeDate")
+					{
+						_date = keyValuePair.Value;
+					}
+					else if (keyValuePair.Key == "RewardCodeValue")
+					{
+						_value = keyValuePair.Value;
+					}
+					else if (keyValuePair.Key == "RewardCodeAmt")
+					{
+						_amt = keyValuePair.Value;
+					}
+					else if (keyValuePair.Key == "GiveAmt")
+					{
+						_giveAmt = keyValuePair.Value;
+					}
+					else if (keyValuePair.Key == "GiveCode")
+					{
+						_giveCode = keyValuePair.Value;
+					}
+					else if (keyValuePair.Key == "GiveDate")
+					{
+						_giveDate = keyValuePair.Value;
+					}
+					else if (keyValuePair.Key == "GiveName")
+					{
+						_giveName = keyValuePair.Value;
+					}
+				}
+				DateTime dateTime = DateTime.ParseExact(GameManager.Instance.currServerTime.ToString("yyyy/MM/dd"), "yyyy/MM/dd", null);
+				DateTime t = DateTime.ParseExact(GameManager.Instance.lastRewardCodeDate, "yyyy/MM/dd", null);
+				DateTime d = DateTime.ParseExact(_date, "yyyy/MM/dd", null);
+				DateTime d2 = DateTime.ParseExact(_giveDate, "yyyy/MM/dd", null);
+				DateTime t2 = DateTime.ParseExact(GameManager.Instance.lastGiveExtraCodeDate, "yyyy/MM/dd", null);
+				if (this.codeInput.text == _value && dateTime == d && dateTime > t)
+				{
+					this.rewardCodeCorrectPanel.SetActive(true);
+					this.rewardCodeCorrectAmtText.text = "+" + _amt;
+					SoundManager.Instance.playReward();
+					GameManager.Instance.gemsAmt += int.Parse(_amt);
+					GameManager.Instance.lastRewardCodeDate = GameManager.Instance.currServerTime.ToString("yyyy/MM/dd");
+				}
+				else if (LoginManager.Instance.playFabID == _giveName && this.codeInput.text == _giveCode && dateTime == d2 && dateTime > t2)
+				{
+					this.rewardCodeCorrectPanel.SetActive(true);
+					SoundManager.Instance.playReward();
+					GameManager.Instance.lastGiveExtraCodeDate = GameManager.Instance.currServerTime.ToString("yyyy/MM/dd");
+					if (_giveAmt == "2xspeed")
+					{
+						this.rewardCodeCorrectAmtText.text = "2x Speed Boost";
+						GameManager.Instance.iap2xGameSpeed = true;
+					}
+					else if (_giveAmt == "skipads")
+					{
+						this.rewardCodeCorrectAmtText.text = "Skip Video Ads";
+						GameManager.Instance.iapSkipAds = true;
+					}
+					else if (_giveAmt == "class1")
+					{
+						this.rewardCodeCorrectAmtText.text = "Champion Class";
+						GameManager.Instance.iapCommClass1 = true;
+					}
+					else if (_giveAmt == "class2")
+					{
+						this.rewardCodeCorrectAmtText.text = "Mastermind Class";
+						GameManager.Instance.iapCommClass2 = true;
+					}
+					else if (_giveAmt == "class3")
+					{
+						this.rewardCodeCorrectAmtText.text = "Kingslayer Class";
+						GameManager.Instance.iapCommClass3 = true;
+					}
+					else if (_giveAmt == "3xemeralds")
+					{
+						this.rewardCodeCorrectAmtText.text = "3x Emeralds Boost";
+						GameManager.Instance.iap3xEmeralds = true;
+					}
+					else
+					{
+						this.rewardCodeCorrectAmtText.text = "+" + _giveAmt;
+						GameManager.Instance.gemsAmt += int.Parse(_giveAmt);
+					}
+				}
+				else
+				{
+					this.rewardCodeIncorrectPanel.SetActive(true);
+					this.rewardCodeIncorrectSub1.SetActive(false);
+					this.rewardCodeIncorrectSub2.SetActive(true);
+					this.rewardCodeDate.gameObject.SetActive(true);
+					this.rewardCodeDate.text = "Note: current date on server is " + GameManager.Instance.currServerTime.ToString("yyyy/MM/dd");
+				}
+			}, delegate(PlayFabError error)
+			{
+				UnityEngine.Debug.Log("error getting titleData:");
+				this.rewardCodeIncorrectPanel.SetActive(true);
+				this.rewardCodeIncorrectSub1.SetActive(true);
+				this.rewardCodeIncorrectSub2.SetActive(false);
+			}, null, null);
+		}
+		else
+		{
+			this.rewardCodeIncorrectPanel.SetActive(true);
+			this.rewardCodeIncorrectSub1.SetActive(true);
+			this.rewardCodeIncorrectSub2.SetActive(false);
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	public InputField codeInput;
+
+	public GameObject rewardCodeIncorrectPanel;
+
+	public GameObject rewardCodeIncorrectSub1;
+
+	public GameObject rewardCodeIncorrectSub2;
+
+	public Text rewardCodeDate;
+
+	public GameObject rewardCodeCorrectPanel;
+
+	public Text rewardCodeCorrectAmtText;
+}

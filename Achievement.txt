@@ -1,0 +1,1094 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class Achievement : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	public string saveData()
+	{
+		return JsonUtility.ToJson(this);
+	}
+
+	public void loadData(string _loadData)
+	{
+		if (_loadData != string.Empty)
+		{
+			JsonUtility.FromJsonOverwrite(_loadData, this);
+		}
+	}
+
+	public void claimReward()
+	{
+		this.level++;
+		if (this.level == 1)
+		{
+			GameManager.Instance.gemsAmt += 5;
+		}
+		else if (this.level == 2)
+		{
+			GameManager.Instance.gemsAmt += 10;
+		}
+		else if (this.level == 3)
+		{
+			GameManager.Instance.gemsAmt += 15;
+		}
+		else if (this.level == 4)
+		{
+			GameManager.Instance.gemsAmt += 20;
+		}
+		else if (this.level == 5)
+		{
+			GameManager.Instance.gemsAmt += 25;
+		}
+		else if (this.level == 6)
+		{
+			GameManager.Instance.gemsAmt += 30;
+		}
+		else if (this.level == 7)
+		{
+			GameManager.Instance.gemsAmt += 35;
+		}
+		else if (this.level == 8)
+		{
+			GameManager.Instance.gemsAmt += 40;
+		}
+		else if (this.level == 9)
+		{
+			GameManager.Instance.gemsAmt += 45;
+		}
+		else if (this.level == 10)
+		{
+			GameManager.Instance.gemsAmt += 50;
+		}
+		if (this.achNum == 0)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 14400.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 43200.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 86400.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 129600.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 172800.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 216000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 259200.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 345600.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 432000.0;
+			}
+		}
+		else if (this.achNum == 1)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 5.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 10.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 25.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 50.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 100.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 200.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 300.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 400.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 500.0;
+			}
+		}
+		else if (this.achNum == 2)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 5.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 10.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 20.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 40.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 75.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 125.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 200.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 350.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 500.0;
+			}
+		}
+		else if (this.achNum == 3)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 100.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 250.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 500.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 1000.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 1500.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 2000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 2500.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 3250.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 4000.0;
+			}
+		}
+		else if (this.achNum == 4)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 1500.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 25000.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 75000.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 250000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 1000000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 2500000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 5000000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 10000000.0;
+			}
+		}
+		else if (this.achNum == 5)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 150.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 500.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 2500.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 10000.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 50000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 100000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 250000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 500000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 1000000.0;
+			}
+		}
+		else if (this.achNum == 6)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 1000.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 25000.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 75000.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 250000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 1000000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 5000000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 25000000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 75000000.0;
+			}
+		}
+		else if (this.achNum == 7)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 50.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 250.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 2500.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 7500.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 40000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 100000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 250000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 750000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 2500000.0;
+			}
+		}
+		else if (this.achNum == 8)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 5.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 8.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 12.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 16.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 20.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 25.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 30.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 32.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 35.0;
+			}
+		}
+		else if (this.achNum == 9)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 10.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 25.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 50.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 75.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 100.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 125.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 150.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 200.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 250.0;
+			}
+		}
+		else if (this.achNum == 10)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 1000.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 25000.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 75000.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 150000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 400000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 1000000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 2500000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 7500000.0;
+			}
+		}
+		else if (this.achNum == 11)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 25.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 75.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 250.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 500.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 1000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 3500.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 7500.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 15000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 50000.0;
+			}
+		}
+		else if (this.achNum == 12)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 100.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 500.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 1250.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 12500.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 40000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 125000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 250000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 750000.0;
+			}
+		}
+		else if (this.achNum == 13)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 25.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 75.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 250.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 500.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 1000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 1500.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 2500.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 10000.0;
+			}
+		}
+		else if (this.achNum == 14)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 25.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 150.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 400.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 1000.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 1500.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 3000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 10000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 25000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 75000.0;
+			}
+		}
+		else if (this.achNum == 15)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 4.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 7.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 10.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 13.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 16.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 20.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 24.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 27.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 30.0;
+			}
+		}
+		else if (this.achNum == 16)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = double.Parse("1000000000");
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = double.Parse("1000000000000");
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = double.Parse("10000000000000000");
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = double.Parse("100000000000000000000000");
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = double.Parse("1000000000000000000000000000000000000");
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = double.Parse("100000000000000000000000000000000000000000000000000000000000000000");
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = double.Parse("1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = double.Parse("100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = double.Parse("10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+			}
+		}
+		else if (this.achNum == 17)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 2500.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 25000.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 250000.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 2500000.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 25000000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 250000000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 50000000000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 5000000000000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 5E+15;
+			}
+		}
+		else if (this.achNum == 18)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 25.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 100.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 350.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 1000.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 25000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 150000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 500000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 1000000.0;
+			}
+		}
+		else if (this.achNum == 19)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 15.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 50.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 150.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 500.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 1000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 25000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 100000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 250000.0;
+			}
+		}
+		else if (this.achNum == 20)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 25.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 100.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 250.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 750.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 2500.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 10000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 25000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 50000.0;
+			}
+		}
+		else if (this.achNum == 21)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 50.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 250.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 750.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 2500.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 10000.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 25000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 100000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 250000.0;
+			}
+		}
+		else if (this.achNum == 22)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 5.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 25.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 75.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 150.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 250.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 500.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 750.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 1000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 1500.0;
+			}
+		}
+		else if (this.achNum == 23)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 4.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 6.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 8.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 10.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 12.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 14.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 16.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 19.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 22.0;
+			}
+		}
+		else if (this.achNum == 24)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 250.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 750.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 1500.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 2500.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 5000.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 7500.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 10000.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 15000.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 25000.0;
+			}
+		}
+		else if (this.achNum == 25)
+		{
+			if (this.level == 1)
+			{
+				this.nextAmt = 3.0;
+			}
+			else if (this.level == 2)
+			{
+				this.nextAmt = 5.0;
+			}
+			else if (this.level == 3)
+			{
+				this.nextAmt = 7.0;
+			}
+			else if (this.level == 4)
+			{
+				this.nextAmt = 10.0;
+			}
+			else if (this.level == 5)
+			{
+				this.nextAmt = 12.0;
+			}
+			else if (this.level == 6)
+			{
+				this.nextAmt = 15.0;
+			}
+			else if (this.level == 7)
+			{
+				this.nextAmt = 17.0;
+			}
+			else if (this.level == 8)
+			{
+				this.nextAmt = 20.0;
+			}
+			else if (this.level == 9)
+			{
+				this.nextAmt = 25.0;
+			}
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	public int achNum;
+
+	public int level;
+
+	public double currAmt;
+
+	public double nextAmt;
+}

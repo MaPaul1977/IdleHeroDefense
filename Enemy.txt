@@ -1,0 +1,1332 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class Enemy : MonoBehaviour
+{
+	private void Start()
+	{
+		base.transform.SetParent(EnemyManager.Instance.enemyParent.transform);
+		this.actualUnit = base.transform.GetChild(0).gameObject;
+		this.animator = this.actualUnit.GetComponent<Animator>();
+		this.spriteRender0 = this.actualUnit.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+		for (int i = 0; i < this.actualUnit.transform.childCount; i++)
+		{
+			GameObject gameObject = this.actualUnit.transform.GetChild(i).gameObject;
+			this.addSpriteRenderer(gameObject.GetComponent<SpriteRenderer>());
+			for (int j = 0; j < gameObject.transform.childCount; j++)
+			{
+				this.addSpriteRenderer(gameObject.transform.GetChild(j).gameObject.GetComponent<SpriteRenderer>());
+			}
+		}
+		if (TheUnderground.Instance.playingMiniGame)
+		{
+			double num;
+			if (GameManager.Instance.statHighestWave >= 4500)
+			{
+				num = 1000.0;
+			}
+			else if (GameManager.Instance.statHighestWave >= 4000)
+			{
+				num = 900.0;
+			}
+			else if (GameManager.Instance.statHighestWave >= 3500)
+			{
+				num = 800.0;
+			}
+			else if (GameManager.Instance.statHighestWave >= 3000)
+			{
+				num = 700.0;
+			}
+			else if (GameManager.Instance.statHighestWave >= 2500)
+			{
+				num = 600.0;
+			}
+			else if (GameManager.Instance.statHighestWave >= 2000)
+			{
+				num = 500.0;
+			}
+			else if (GameManager.Instance.statHighestWave >= 1500)
+			{
+				num = 400.0;
+			}
+			else if (GameManager.Instance.statHighestWave >= 1000)
+			{
+				num = 300.0;
+			}
+			else if (GameManager.Instance.statHighestWave >= 500)
+			{
+				num = 200.0;
+			}
+			else
+			{
+				num = 100.0;
+			}
+			if (TheUnderground.Instance.onWaveNum > 1)
+			{
+				TheUnderground.Instance.enemyDps *= num;
+			}
+			this.dps = TheUnderground.Instance.enemyDps;
+			this.maxHp = this.dps * 20.0;
+			this.isInGameArea = true;
+		}
+		else if (PirateRaid.Instance.playingMiniGame)
+		{
+			if (PirateRaid.Instance.onWaveNum > 1)
+			{
+				PirateRaid.Instance.enemyDps *= 7.5;
+			}
+			this.dps = PirateRaid.Instance.enemyDps;
+			this.maxHp = this.dps * 18.0;
+		}
+		else
+		{
+			this.dps = GameManager.Instance.getActEnemyDps(this.isBoss);
+			this.maxHp = GameManager.Instance.getActEnemyHp(this.isBoss);
+		}
+		if (this.type == 1)
+		{
+			this.dps *= 1.0;
+			this.maxHp *= 1.5;
+		}
+		else if (this.type == 2)
+		{
+			this.dps *= 1.5;
+			this.maxHp *= 1.0;
+		}
+		else if (this.type == 3)
+		{
+			this.dps *= 1.0;
+			this.maxHp *= 1.0;
+		}
+		if (this.dps < 1.0)
+		{
+			this.dps = 1.0;
+		}
+		if (double.IsInfinity(this.dps) || double.IsNaN(this.dps))
+		{
+			this.dps = double.PositiveInfinity;
+		}
+		if (double.IsInfinity(this.maxHp) || double.IsNaN(this.maxHp))
+		{
+			this.maxHp = double.PositiveInfinity;
+		}
+		this.dps = Math.Round(this.dps, 0);
+		this.maxHp = Math.Round(this.maxHp, 0);
+		this.attSpeed = UnityEngine.Random.Range(0.75f, 2f);
+		this.savedAttSpeed = this.attSpeed;
+		this.currHp = this.maxHp;
+		this.movementSpeed = UnityEngine.Random.Range(2f, 3f);
+		this.savedMovementSpeed = this.movementSpeed;
+		float num2;
+		if (this.type == 1)
+		{
+			num2 = UnityEngine.Random.Range(-0.1f, 0.1f);
+		}
+		else if (this.type == 2)
+		{
+			num2 = UnityEngine.Random.Range(-0.8f, 0.8f);
+		}
+		else
+		{
+			num2 = UnityEngine.Random.Range(-0.5f, 0.5f);
+		}
+		this.range += num2;
+		if (this.isBoss && GameManager.Instance.onMapNum != 0 && GameManager.Instance.onMapNum != 3)
+		{
+			if (this.type == 1)
+			{
+				this.range += 0.25f;
+			}
+			else
+			{
+				this.range += 0.4f;
+			}
+		}
+		GameObject poolObject;
+		if (!this.isBoss)
+		{
+			poolObject = UIManager.Instance.getPoolObject(UIManager.Instance.poolEnemyHpBar);
+		}
+		else
+		{
+			poolObject = UIManager.Instance.getPoolObject(UIManager.Instance.poolBossHpBar);
+		}
+		if (poolObject != null)
+		{
+			EnemyHealthBar component = poolObject.GetComponent<EnemyHealthBar>();
+			component.thisEnemy = this;
+			poolObject.SetActive(true);
+		}
+		if (this.type == 3)
+		{
+			this.medicTimer = UnityEngine.Random.Range(15f, 25f);
+		}
+		if (this.isBoss)
+		{
+			SoundManager.Instance.playBoss();
+		}
+		EnemyManager.Instance.enemyList.Add(this);
+	}
+
+	private void addSpriteRenderer(SpriteRenderer spriteRenderer)
+	{
+		if (this.spriteRender1 == null)
+		{
+			this.spriteRender1 = spriteRenderer;
+		}
+		else if (this.spriteRender2 == null)
+		{
+			this.spriteRender2 = spriteRenderer;
+		}
+		else if (this.spriteRender3 == null)
+		{
+			this.spriteRender3 = spriteRenderer;
+		}
+		else if (this.spriteRender4 == null)
+		{
+			this.spriteRender4 = spriteRenderer;
+		}
+		else if (this.spriteRender5 == null)
+		{
+			this.spriteRender5 = spriteRenderer;
+		}
+		else if (this.spriteRender6 == null)
+		{
+			this.spriteRender6 = spriteRenderer;
+		}
+		else if (this.spriteRender7 == null)
+		{
+			this.spriteRender7 = spriteRenderer;
+		}
+		else if (this.spriteRender8 == null)
+		{
+			this.spriteRender8 = spriteRenderer;
+		}
+		else if (this.spriteRender9 == null)
+		{
+			this.spriteRender9 = spriteRenderer;
+		}
+	}
+
+	private void OnTriggerEnter2D(Collider2D other)
+	{
+		if (!this.isInGameArea)
+		{
+			this.findClosestHero();
+			this.isInGameArea = true;
+		}
+	}
+
+	private void OnMouseUpAsButton()
+	{
+		Vector3 origin = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		origin.z = Camera.main.transform.position.z;
+		Ray ray = new Ray(origin, new Vector3(0f, 0f, 1f));
+		if (Physics2D.GetRayIntersection(ray) != null && !this.IsPointerOverUIObject() && GameManager.Instance.selectedHero != null)
+		{
+			UnityEngine.Debug.Log("touched enemy");
+			GameManager.Instance.selectedHero.stopHeroAttStuff();
+			GameManager.Instance.selectedHero.setClickedAnEnemy();
+			GameManager.Instance.selectedHero.targetEnemy = this;
+			GameManager.Instance.selectedHero.clickedToMove = false;
+		}
+	}
+
+	private bool IsPointerOverUIObject()
+	{
+		PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
+		pointerEventData.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		List<RaycastResult> list = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(pointerEventData, list);
+		return list.Count > 0;
+	}
+
+	private void findClosestHero()
+	{
+		if (HeroManager.Instance.hero31.activeSkill1ActiveTimer > 0f && HeroManager.Instance.hero31.currHp > 0.0 && HeroManager.Instance.hero31.isActiveHero)
+		{
+			this.targetHero = HeroManager.Instance.hero31;
+			return;
+		}
+		for (int i = 0; i < GameManager.Instance.activeHeroes.Count; i++)
+		{
+			Hero hero = GameManager.Instance.activeHeroes[i];
+			if (hero.currHp > 0.0)
+			{
+				if (this.targetHero == null)
+				{
+					this.targetHero = hero;
+				}
+				else if ((hero.transform.position - base.transform.position).magnitude < (this.targetHero.transform.position - base.transform.position).magnitude)
+				{
+					this.targetHero = hero;
+				}
+			}
+		}
+	}
+
+	public void takeDamage(double _dmgDealt, Hero _fromHero, bool _isCritHit)
+	{
+		if (!_isCritHit)
+		{
+			SoundManager.Instance.playHit();
+		}
+		else
+		{
+			SoundManager.Instance.playCrit();
+		}
+		if (_fromHero.type == 1 && GameManager.Instance.treeMelee5Lvl > 0)
+		{
+			float num = (float)GameManager.Instance.treeMelee5Lvl * 0.2f;
+			float num2 = (float)UnityEngine.Random.Range(0, 1000) * 0.1f;
+			if (num2 < num)
+			{
+				this.isStunned = true;
+				this.skillTreeStunnedTimer = 1f;
+				if (GameManager.Instance.settingsParticleEffects)
+				{
+					GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesStunSeeingStars);
+					gameObject.transform.position = base.transform.position + new Vector3(0f, 1.75f, 0f);
+					gameObject.transform.SetParent(UIManager.Instance.particlesParent.transform);
+					UnityEngine.Object.Destroy(gameObject, 1f);
+				}
+				if (GameManager.Instance.q6Num == 3)
+				{
+					GameManager.Instance.q6CurrVal++;
+					GameManager.Instance.checkQuestStatus();
+				}
+			}
+		}
+		if (_fromHero == HeroManager.Instance.hero6 && _fromHero.activeSkill2ActiveTimer > 0f)
+		{
+			this.isSlowed = true;
+		}
+		if (_fromHero == HeroManager.Instance.hero9 && _fromHero.activeSkill2ActiveTimer > 0f && !TheUnderground.Instance.playingMiniGame && !PirateRaid.Instance.playingMiniGame)
+		{
+			double num3 = GameManager.Instance.getActGoldDrop(this.isBoss, false) * 0.34999999403953552;
+			num3 = Math.Round(num3, 0);
+			GameObject poolObject = UIManager.Instance.getPoolObject(UIManager.Instance.poolGoldDrop);
+			if (poolObject != null)
+			{
+				poolObject.transform.position = base.transform.position;
+				CoinDrop component = poolObject.GetComponent<CoinDrop>();
+				component.fromEnemy = this;
+				component.coinNum = 1;
+				component.coinAmt = num3;
+				component.isBoss = false;
+				poolObject.SetActive(true);
+			}
+		}
+		if (_fromHero == HeroManager.Instance.hero10 && _fromHero.activeSkill2ActiveTimer > 0f)
+		{
+			this.isAttSlowed = true;
+		}
+		if (_fromHero == HeroManager.Instance.hero19 && _fromHero.activeSkill2ActiveTimer > 0f)
+		{
+			this.isSlowed = true;
+		}
+		if (_fromHero == HeroManager.Instance.hero23 && _fromHero.activeSkill2ActiveTimer > 0f && !TheUnderground.Instance.playingMiniGame && !PirateRaid.Instance.playingMiniGame)
+		{
+			double num4 = GameManager.Instance.getActGoldDrop(this.isBoss, false) * 0.5;
+			num4 = Math.Round(num4, 0);
+			GameObject poolObject2 = UIManager.Instance.getPoolObject(UIManager.Instance.poolGoldDrop);
+			if (poolObject2 != null)
+			{
+				poolObject2.transform.position = base.transform.position;
+				CoinDrop component2 = poolObject2.GetComponent<CoinDrop>();
+				component2.fromEnemy = this;
+				component2.coinNum = 1;
+				component2.coinAmt = num4;
+				component2.isBoss = false;
+				poolObject2.SetActive(true);
+			}
+		}
+		if (_fromHero == HeroManager.Instance.hero24 && _fromHero.activeSkill2ActiveTimer > 0f)
+		{
+			this.isAttSlowed = true;
+		}
+		if (double.IsInfinity(_dmgDealt) || double.IsNaN(_dmgDealt))
+		{
+			_dmgDealt = 1E+308;
+		}
+		this.currHp -= _dmgDealt;
+		if (GameManager.Instance.settingsParticleEffects)
+		{
+			GameObject poolObject3 = UIManager.Instance.getPoolObject(UIManager.Instance.poolBloodHit);
+			if (poolObject3 != null)
+			{
+				poolObject3.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+				ParticleSystem component3 = poolObject3.GetComponent<ParticleSystem>();
+				poolObject3.SetActive(true);
+				component3.Play();
+			}
+		}
+		if (GameManager.Instance.settingsCombatTexts)
+		{
+			GameObject poolObject4 = UIManager.Instance.getPoolObject(UIManager.Instance.poolDmgText);
+			if (poolObject4 != null)
+			{
+				Vector3 worldPosition = new Vector3(base.transform.position.x, base.transform.position.y + 0.5f, base.transform.position.z);
+				UtilityMethods.MoveUiElementToWorldPosition(poolObject4.GetComponent<RectTransform>(), worldPosition);
+				Text component4 = poolObject4.GetComponent<Text>();
+				if (!_isCritHit)
+				{
+					component4.color = UIManager.colorWhite;
+					component4.fontSize = 16;
+				}
+				else
+				{
+					component4.color = UIManager.colorGrey;
+					component4.fontSize = 20;
+				}
+				component4.text = "-" + UIManager.Instance.convertNumberFormat(_dmgDealt.ToString("0"));
+				poolObject4.SetActive(true);
+			}
+		}
+		if (this.currHp <= 0.0)
+		{
+			this.currHp = 0.0;
+			this.updSortLayer(99);
+			EnemyManager.Instance.enemyList.Remove(this);
+			this.animator.Play("Die");
+			SoundManager.Instance.playDeath();
+			base.GetComponent<CapsuleCollider2D>().enabled = false;
+			if (GameManager.Instance.m1Num == 4 && _fromHero.type == 2)
+			{
+				GameManager.Instance.m1CurrVal++;
+				GameManager.Instance.checkMissionStatus();
+			}
+			if (GameManager.Instance.m2Num == 4 && _fromHero.type == 1)
+			{
+				GameManager.Instance.m2CurrVal++;
+				GameManager.Instance.checkMissionStatus();
+			}
+			if (GameManager.Instance.m3Num == 4 && _fromHero.type == 3)
+			{
+				GameManager.Instance.m3CurrVal++;
+				GameManager.Instance.checkMissionStatus();
+			}
+			if (_fromHero.tier == GameManager.Instance.q3Num)
+			{
+				GameManager.Instance.q3CurrVal++;
+				GameManager.Instance.checkQuestStatus();
+			}
+			if (GameManager.Instance.q4Num == 4)
+			{
+				GameManager.Instance.q4CurrVal++;
+				GameManager.Instance.checkQuestStatus();
+			}
+			if (!this.isBoss)
+			{
+				GameManager.Instance.statEnemiesKilled++;
+				GameManager.Instance.leadEnemiesKilled++;
+				AchievementManager.Instance.listAch[4].currAmt += 1.0;
+				AchievementManager.Instance.checkIfAchComplete(4);
+				if (UIManager.Instance.onTutNum == 3 && GameManager.Instance.statEnemiesKilled >= 3)
+				{
+					UIManager.Instance.doTutorialScreensV2();
+				}
+				if (UIManager.Instance.onTutNum == 7 && GameManager.Instance.statEnemiesKilled >= 10)
+				{
+					UIManager.Instance.doTutorialScreensV2();
+				}
+				if (GameManager.Instance.m1Num == 0)
+				{
+					GameManager.Instance.m1CurrVal++;
+					GameManager.Instance.checkMissionStatus();
+				}
+			}
+			else
+			{
+				AchievementManager.Instance.listAch[5].currAmt += 1.0;
+				AchievementManager.Instance.checkIfAchComplete(5);
+				if (UIManager.Instance.onTutNum == 10)
+				{
+					UIManager.Instance.doTutorialScreensV2();
+				}
+				if (GameManager.Instance.m1Num == 1)
+				{
+					GameManager.Instance.m1CurrVal++;
+					GameManager.Instance.checkMissionStatus();
+				}
+			}
+			if (!TheUnderground.Instance.playingMiniGame && !PirateRaid.Instance.playingMiniGame)
+			{
+				if (!this.isEvilChest)
+				{
+					float num5 = (float)UnityEngine.Random.Range(0, 1001) * 0.1f;
+					float num6 = GameManager.Instance.getChestChance(false);
+					if (_fromHero.type == 2)
+					{
+						num6 += (float)GameManager.Instance.treeRange4Lvl * 0.5f;
+					}
+					if (num5 < num6)
+					{
+						GameObject poolObject5 = UIManager.Instance.getPoolObject(UIManager.Instance.poolChestDrop);
+						if (poolObject5 != null)
+						{
+							poolObject5.transform.position = base.transform.position;
+							GoldChest component5 = poolObject5.GetComponent<GoldChest>();
+							component5.fromEnemy = this;
+							component5.coinAmt = GameManager.Instance.getActChestGold(this.isBoss, false);
+							component5.isBoss = this.isBoss;
+							poolObject5.SetActive(true);
+						}
+						AchievementManager.Instance.listAch[7].currAmt += 1.0;
+						AchievementManager.Instance.checkIfAchComplete(7);
+						if (GameManager.Instance.m2Num == 0)
+						{
+							GameManager.Instance.m2CurrVal++;
+							GameManager.Instance.checkMissionStatus();
+						}
+						if (GameManager.Instance.q4Num == 2)
+						{
+							GameManager.Instance.q4CurrVal++;
+							GameManager.Instance.checkQuestStatus();
+						}
+					}
+					else if (!this.isBoss)
+					{
+						GameObject poolObject6 = UIManager.Instance.getPoolObject(UIManager.Instance.poolGoldDrop);
+						if (poolObject6 != null)
+						{
+							poolObject6.transform.position = base.transform.position + new Vector3(0f, 0.75f, 0f);
+							CoinDrop component6 = poolObject6.GetComponent<CoinDrop>();
+							component6.fromEnemy = this;
+							component6.coinNum = 1;
+							component6.coinAmt = GameManager.Instance.getActGoldDrop(this.isBoss, false);
+							component6.isBoss = this.isBoss;
+							poolObject6.SetActive(true);
+						}
+					}
+					else
+					{
+						for (int i = 0; i < 3; i++)
+						{
+							GameObject poolObject7 = UIManager.Instance.getPoolObject(UIManager.Instance.poolGoldDrop);
+							if (poolObject7 != null)
+							{
+								poolObject7.transform.position = base.transform.position + new Vector3(0f, 0.75f, 0f);
+								CoinDrop component7 = poolObject7.GetComponent<CoinDrop>();
+								component7.fromEnemy = this;
+								component7.coinNum = i;
+								component7.coinAmt = GameManager.Instance.getActGoldDrop(this.isBoss, false);
+								component7.isBoss = this.isBoss;
+								poolObject7.SetActive(true);
+							}
+						}
+					}
+					if (this.isBoss && _fromHero.type == 2 && HeroManager.Instance.hero34.isActiveHero && UnityEngine.Random.Range(0, 5) == 0)
+					{
+						for (int j = 0; j < 2; j++)
+						{
+							Vector3 position = base.transform.position;
+							if (j == 1)
+							{
+								position = base.transform.position + new Vector3(-0.4f, 0f, 1f);
+							}
+							else
+							{
+								position = base.transform.position + new Vector3(0.4f, 0f, 0f);
+							}
+							GameObject poolObject8 = UIManager.Instance.getPoolObject(UIManager.Instance.poolChestDrop);
+							if (poolObject8 != null)
+							{
+								poolObject8.transform.position = position;
+								GoldChest component8 = poolObject8.GetComponent<GoldChest>();
+								component8.fromEnemy = this;
+								component8.coinAmt = GameManager.Instance.getActChestGold(this.isBoss, false);
+								component8.isBoss = this.isBoss;
+								poolObject8.SetActive(true);
+							}
+						}
+						AchievementManager.Instance.listAch[7].currAmt += 2.0;
+						AchievementManager.Instance.checkIfAchComplete(7);
+						if (GameManager.Instance.m2Num == 0)
+						{
+							GameManager.Instance.m2CurrVal += 2;
+							GameManager.Instance.checkMissionStatus();
+						}
+						if (GameManager.Instance.q4Num == 2)
+						{
+							GameManager.Instance.q4CurrVal += 2;
+							GameManager.Instance.checkQuestStatus();
+						}
+					}
+				}
+				else
+				{
+					for (int k = 0; k < 5; k++)
+					{
+						Vector3 position2 = base.transform.position;
+						if (k == 0)
+						{
+							position2 = base.transform.position + new Vector3(0f, 0f, 1f);
+						}
+						else if (k == 1)
+						{
+							position2 = base.transform.position + new Vector3(-0.5f, 0.25f, 2f);
+						}
+						else if (k == 2)
+						{
+							position2 = base.transform.position + new Vector3(0.5f, 0.25f, 2f);
+						}
+						else if (k == 3)
+						{
+							position2 = base.transform.position + new Vector3(-0.5f, -0.25f, 0f);
+						}
+						else if (k == 4)
+						{
+							position2 = base.transform.position + new Vector3(0.5f, -0.25f, 0f);
+						}
+						GameObject poolObject9 = UIManager.Instance.getPoolObject(UIManager.Instance.poolChestDrop);
+						if (poolObject9 != null)
+						{
+							poolObject9.transform.position = position2;
+							GoldChest component9 = poolObject9.GetComponent<GoldChest>();
+							component9.fromEnemy = this;
+							component9.coinAmt = GameManager.Instance.getActChestGold(this.isBoss, false);
+							component9.isBoss = this.isBoss;
+							poolObject9.SetActive(true);
+						}
+					}
+					AchievementManager.Instance.listAch[7].currAmt += 5.0;
+					AchievementManager.Instance.checkIfAchComplete(7);
+					if (GameManager.Instance.m2Num == 0)
+					{
+						GameManager.Instance.m2CurrVal += 5;
+						GameManager.Instance.checkMissionStatus();
+					}
+					if (GameManager.Instance.q4Num == 2)
+					{
+						GameManager.Instance.q4CurrVal += 5;
+						GameManager.Instance.checkQuestStatus();
+					}
+					if (GameManager.Instance.q4Num == 3)
+					{
+						GameManager.Instance.q4CurrVal++;
+						GameManager.Instance.checkQuestStatus();
+					}
+				}
+			}
+			if (!GameManager.Instance.alreadyPlayedWave || TheUnderground.Instance.playingMiniGame || PirateRaid.Instance.playingMiniGame)
+			{
+				if (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 3)
+				{
+					GameManager.Instance.tournamentScore++;
+				}
+				int num7 = 1;
+				if (HeroManager.Instance.hero5.activeSkill2ActiveTimer > 0f)
+				{
+					num7 *= 2;
+				}
+				if (HeroManager.Instance.hero20.activeSkill2ActiveTimer > 0f)
+				{
+					num7 *= 3;
+				}
+				int num8 = 0;
+				if (GameManager.Instance.commIcon == 12)
+				{
+					num8 = 1;
+				}
+				else if (GameManager.Instance.commIcon == 23)
+				{
+					num8 = 3;
+				}
+				int num9 = (1 + GameManager.Instance.badge14Lvl + num8) * num7;
+				if (this.isBoss)
+				{
+					num9 = (5 + GameManager.Instance.badge14Lvl + num8) * num7;
+				}
+				_fromHero.equipCurrExp += num9;
+				_fromHero.evolveCurrExp += num9;
+				if (_fromHero.evolveCurrExp >= _fromHero.evolveNextExp)
+				{
+					_fromHero.evolveHero();
+				}
+				if (GameManager.Instance.q5Num == 4)
+				{
+					GameManager.Instance.q5CurrVal += num9;
+					GameManager.Instance.checkQuestStatus();
+				}
+				if (_fromHero.equipCurrExp >= _fromHero.equipNextExp)
+				{
+					EquipmentManager.Instance.getNewEquip(_fromHero);
+				}
+				if (GameManager.Instance.settingsCombatTexts)
+				{
+					GameObject poolObject10 = UIManager.Instance.getPoolObject(UIManager.Instance.poolGoldText);
+					if (poolObject10 != null)
+					{
+						Vector3 worldPosition2 = new Vector3(_fromHero.transform.position.x, _fromHero.transform.position.y + 0.5f, _fromHero.transform.position.z);
+						UtilityMethods.MoveUiElementToWorldPosition(poolObject10.GetComponent<RectTransform>(), worldPosition2);
+						Text component10 = poolObject10.GetComponent<Text>();
+						component10.color = Color.green;
+						component10.fontSize = 16;
+						component10.text = "+" + num9 + " exp";
+						poolObject10.SetActive(true);
+					}
+				}
+			}
+			if (HeroManager.Instance.hero33.activeSkill1ActiveTimer > 0f)
+			{
+				GameManager.Instance.addNewCommExp(1);
+				if (!UIManager.Instance.menu.activeSelf && GameManager.Instance.settingsCombatTexts)
+				{
+					GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.commExpTextPrefab);
+					gameObject2.GetComponent<Text>().text = "+1 exp";
+					gameObject2.transform.SetParent(UIManager.Instance.dmgTextParent.transform, false);
+					gameObject2.GetComponent<RectTransform>().anchoredPosition = new Vector2(150f, -75f);
+				}
+			}
+			if (TheUnderground.Instance.playingMiniGame)
+			{
+				int onWaveNum = TheUnderground.Instance.onWaveNum;
+				int num10 = UnityEngine.Random.Range(0, 3);
+				if (num10 == 0)
+				{
+					TheUnderground.Instance.rewardDmgAura += onWaveNum;
+				}
+				else if (num10 == 1)
+				{
+					TheUnderground.Instance.rewardHpAura += onWaveNum;
+				}
+				else if (num10 == 2)
+				{
+					TheUnderground.Instance.rewardGoldAura += onWaveNum;
+				}
+				EnemyManager.Instance.hellWaitTimer = 0.5f;
+				EnemyManager.Instance.needNewBoss = true;
+			}
+			else if (PirateRaid.Instance.playingMiniGame)
+			{
+				int num11 = UnityEngine.Random.Range(0, 3);
+				if (num11 == 0)
+				{
+					PirateRaid.Instance.rewardRune1++;
+				}
+				else if (num11 == 1)
+				{
+					PirateRaid.Instance.rewardRune2++;
+				}
+				else if (num11 == 2)
+				{
+					PirateRaid.Instance.rewardRune3++;
+				}
+			}
+			else if (!this.isBoss && EnemyManager.Instance.enemyList.Count == 0)
+			{
+				if (!GameManager.Instance.isFarmingWave)
+				{
+					EnemyManager.Instance.needNewBoss = true;
+				}
+				else
+				{
+					GameManager.Instance.restartWave();
+				}
+			}
+			else if (this.isBoss)
+			{
+				GameManager.Instance.doNextWave();
+			}
+			UnityEngine.Object.Destroy(base.gameObject, 2f);
+		}
+		EnemyOverviewMenu.Instance.updAggHp();
+	}
+
+	private void Update()
+	{
+		if (GameManager.Instance.prestigePause || TheUnderground.Instance.loadingMiniGame || PirateRaid.Instance.loadingMiniGame || UIManager.Instance.tutv2Pause)
+		{
+			if (UIManager.Instance.tutv2Pause && this.isBoss)
+			{
+				return;
+			}
+			if (!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+			{
+				this.animator.Play("Idle");
+			}
+			return;
+		}
+		else
+		{
+			if (GameManager.Instance.isGameOver)
+			{
+				if (!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+				{
+					this.animator.Play("Idle");
+				}
+				return;
+			}
+			if (this.currHp <= 0.0)
+			{
+				return;
+			}
+			if (HeroManager.Instance.hero31.activeSkill2ActiveTimer > 0f)
+			{
+				this.gasTimer += Time.deltaTime;
+				if (this.gasTimer >= 1f)
+				{
+					this.gasTimer = 0f;
+					double num = this.maxHp * 0.01;
+					num = Math.Round(num, 0);
+					this.takeDamage(num, HeroManager.Instance.hero31, false);
+				}
+			}
+			if (this.type == 3)
+			{
+				this.medicTimer -= Time.deltaTime;
+				if (this.medicTimer <= 0f)
+				{
+					Enemy enemy = null;
+					for (int i = 0; i < EnemyManager.Instance.enemyList.Count; i++)
+					{
+						Enemy enemy2 = EnemyManager.Instance.enemyList[i];
+						if (enemy2.currHp > 0.0)
+						{
+							if (enemy == null)
+							{
+								enemy = enemy2;
+							}
+							else if (enemy2.currHp < enemy.currHp)
+							{
+								enemy = enemy2;
+							}
+						}
+					}
+					enemy.currHp += enemy.maxHp * 0.15000000596046448;
+					if (enemy.currHp > enemy.maxHp)
+					{
+						enemy.currHp = enemy.maxHp;
+					}
+					if (GameManager.Instance.settingsParticleEffects)
+					{
+						GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(UIManager.Instance.particlesEnemyHeal);
+						gameObject.transform.position = enemy.transform.position;
+						gameObject.transform.SetParent(UIManager.Instance.particlesParent.transform);
+						UnityEngine.Object.Destroy(gameObject, 1f);
+					}
+					this.medicTimer = UnityEngine.Random.Range(15f, 25f);
+				}
+			}
+			if (this.isPoisoned)
+			{
+				this.poisonedTimer += Time.deltaTime;
+				if (this.poisonedTimer >= 1f)
+				{
+					if (HeroManager.Instance.hero18.activeSkill2ActiveTimer > 0f)
+					{
+						double num2 = this.maxHp * 0.014999999664723873;
+						num2 = Math.Round(num2, 0);
+						this.takeDamage(num2, HeroManager.Instance.hero18, false);
+					}
+					else if (HeroManager.Instance.hero3.activeSkill2ActiveTimer > 0f)
+					{
+						double num3 = this.maxHp * 0.0099999997764825821;
+						num3 = Math.Round(num3, 0);
+						this.takeDamage(num3, HeroManager.Instance.hero3, false);
+					}
+					else
+					{
+						this.isPoisoned = false;
+					}
+					this.poisonedTimer = 0f;
+				}
+			}
+			else
+			{
+				this.poisonedTimer = 0f;
+			}
+			if (this.isSlowed)
+			{
+				if (HeroManager.Instance.hero19.activeSkill2ActiveTimer > 0f)
+				{
+					this.movementSpeed = this.savedMovementSpeed * 0.25f;
+				}
+				else if (HeroManager.Instance.hero6.activeSkill2ActiveTimer > 0f)
+				{
+					this.movementSpeed = this.savedMovementSpeed * 0.5f;
+				}
+				else
+				{
+					this.isSlowed = false;
+					this.movementSpeed = this.savedMovementSpeed;
+				}
+			}
+			if (this.isStunned)
+			{
+				if (this.skillTreeStunnedTimer > 0f)
+				{
+					this.skillTreeStunnedTimer -= Time.deltaTime;
+				}
+				if (!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+				{
+					this.animator.Play("Idle");
+				}
+				if (HeroManager.Instance.hero8.activeSkill2ActiveTimer > 0f)
+				{
+					return;
+				}
+				if (HeroManager.Instance.hero26.activeSkill2ActiveTimer > 0f)
+				{
+					return;
+				}
+				if (HeroManager.Instance.hero35.activeSkill2ActiveTimer > 0f)
+				{
+					return;
+				}
+				if (this.skillTreeStunnedTimer > 0f)
+				{
+					return;
+				}
+				this.isStunned = false;
+			}
+			if (this.isAttSlowed)
+			{
+				if (this.skillTreeSlowedTimer > 0f)
+				{
+					this.skillTreeSlowedTimer -= Time.deltaTime;
+				}
+				if (this.skillTreeSlowedTimer > 0f)
+				{
+					this.attSpeed = this.savedAttSpeed * 1.5f;
+				}
+				else if (HeroManager.Instance.hero24.activeSkill2ActiveTimer > 0f)
+				{
+					this.attSpeed = this.savedAttSpeed * 1.5f;
+				}
+				else if (HeroManager.Instance.hero10.activeSkill2ActiveTimer > 0f)
+				{
+					this.attSpeed = this.savedAttSpeed * 1.35f;
+				}
+				else
+				{
+					this.isAttSlowed = false;
+					this.attSpeed = this.savedAttSpeed;
+				}
+			}
+			float num4 = this.movementSpeed;
+			if (GameManager.Instance.settings2xGameSpeed || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 2) || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 3) || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 4))
+			{
+				num4 *= 1.75f;
+			}
+			if (GameManager.Instance.iapTournBoost && GameManager.Instance.tournamentActive)
+			{
+				num4 *= 1.6f;
+			}
+			if (!this.isInGameArea)
+			{
+				num4 *= 2f;
+			}
+			if (this.isInAttackAnim)
+			{
+				this.attackAnimTimer -= Time.deltaTime;
+				if (this.attackAnimTimer <= 0f)
+				{
+					this.attackAnimTimer = 0f;
+					this.isInAttackAnim = false;
+					if (this.targetHero.currHp > 0.0 && this.targetHero != null)
+					{
+						double dmgDealtwTypeMult = GameManager.Instance.getDmgDealtwTypeMult(this.getActDmg(false), this.type, this.targetHero.type);
+						if (this.targetHero == HeroManager.Instance.hero4 && this.targetHero.activeSkill2ActiveTimer > 0f)
+						{
+							double num5 = dmgDealtwTypeMult * 0.25;
+							num5 = Math.Round(num5, 0);
+							this.takeDamage(num5, this.targetHero, false);
+						}
+						if (this.targetHero == HeroManager.Instance.hero21 && this.targetHero.activeSkill2ActiveTimer > 0f)
+						{
+							double num6 = dmgDealtwTypeMult * 0.35;
+							num6 = Math.Round(num6, 0);
+							this.takeDamage(num6, this.targetHero, false);
+						}
+						float num7 = (float)UnityEngine.Random.Range(0, 1000) * 0.1f;
+						float num8 = (float)UnityEngine.Random.Range(0, 1000) * 0.1f;
+						if (num7 < this.targetHero.getEvasionChance(false))
+						{
+							if (GameManager.Instance.settingsCombatTexts)
+							{
+								GameObject poolObject = UIManager.Instance.getPoolObject(UIManager.Instance.poolDmgText);
+								if (poolObject != null)
+								{
+									Vector3 worldPosition = new Vector3(this.targetHero.transform.position.x, this.targetHero.transform.position.y + 0.5f, this.targetHero.transform.position.z);
+									UtilityMethods.MoveUiElementToWorldPosition(poolObject.GetComponent<RectTransform>(), worldPosition);
+									Text component = poolObject.GetComponent<Text>();
+									component.color = UIManager.colorOrange;
+									component.fontSize = 16;
+									component.text = "miss";
+									poolObject.SetActive(true);
+								}
+							}
+							if (GameManager.Instance.m2Num == 2)
+							{
+								GameManager.Instance.m2CurrVal++;
+								GameManager.Instance.checkMissionStatus();
+							}
+							if (GameManager.Instance.q5Num == 3)
+							{
+								GameManager.Instance.q5CurrVal++;
+								GameManager.Instance.checkQuestStatus();
+							}
+						}
+						else if (num8 < (float)(GameManager.Instance.badge10Lvl * 2))
+						{
+							if (GameManager.Instance.settingsCombatTexts)
+							{
+								GameObject poolObject2 = UIManager.Instance.getPoolObject(UIManager.Instance.poolDmgText);
+								if (poolObject2 != null)
+								{
+									Vector3 worldPosition2 = new Vector3(this.targetHero.transform.position.x, this.targetHero.transform.position.y + 0.5f, this.targetHero.transform.position.z);
+									UtilityMethods.MoveUiElementToWorldPosition(poolObject2.GetComponent<RectTransform>(), worldPosition2);
+									Text component2 = poolObject2.GetComponent<Text>();
+									component2.color = UIManager.colorOrange;
+									component2.fontSize = 16;
+									component2.text = "blocked";
+									poolObject2.SetActive(true);
+								}
+							}
+						}
+						else
+						{
+							this.targetHero.takeDamage(dmgDealtwTypeMult);
+						}
+					}
+					else
+					{
+						this.targetHero = null;
+						this.findClosestHero();
+						this.animator.Play("Idle");
+					}
+				}
+				return;
+			}
+			if (this.isInGameArea)
+			{
+				this.checkForNewHeroTimer += Time.deltaTime;
+				if (this.checkForNewHeroTimer >= 1f)
+				{
+					this.findClosestHero();
+				}
+				if (this.targetHero == null)
+				{
+					if (!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+					{
+						this.animator.Play("Idle");
+					}
+					this.findClosestHero();
+				}
+				else if (this.targetHero.currHp <= 0.0)
+				{
+					this.targetHero = null;
+					this.findClosestHero();
+				}
+				else
+				{
+					if (base.transform.position.x < this.targetHero.transform.position.x)
+					{
+						base.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+					}
+					else
+					{
+						base.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+					}
+					if ((this.targetHero.transform.position - base.transform.position).magnitude > this.range)
+					{
+						float maxDistanceDelta = num4 * Time.deltaTime;
+						base.transform.position = Vector3.MoveTowards(base.transform.position, this.targetHero.transform.position, maxDistanceDelta);
+						if (!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+						{
+							this.animator.Play("Run");
+						}
+					}
+					else
+					{
+						if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+						{
+							this.animator.Play("Idle");
+						}
+						float num9 = this.attSpeed;
+						if (GameManager.Instance.settings2xGameSpeed || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 2) || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 3) || (GameManager.Instance.tournamentActive && GameManager.Instance.tournamentOnType == 4))
+						{
+							num9 *= 0.625f;
+						}
+						if (GameManager.Instance.iapTournBoost && GameManager.Instance.tournamentActive)
+						{
+							num9 *= 0.675f;
+						}
+						if (HeroManager.Instance.hero32.isActiveHero)
+						{
+							num9 *= 1.25f;
+						}
+						this.attackTimer += Time.deltaTime;
+						if (this.attackTimer >= num9)
+						{
+							this.attackTimer = 0f;
+							int num10 = UnityEngine.Random.Range(0, 2);
+							if (num10 == 0)
+							{
+								this.animator.Play("Attack1");
+							}
+							else if (num10 == 1)
+							{
+								this.animator.Play("Attack2");
+							}
+							if (this.type != 1)
+							{
+								if (this.type == 2)
+								{
+									GameObject poolObject3 = UIManager.Instance.getPoolObject(UIManager.Instance.poolRangeProjectiles);
+									if (poolObject3 != null)
+									{
+										poolObject3.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+										Projectile component3 = poolObject3.GetComponent<Projectile>();
+										component3.targetPos = this.targetHero.transform.position + new Vector3(0f, 0.5f, 0f);
+										component3.isKnife = false;
+										poolObject3.SetActive(true);
+									}
+								}
+								else
+								{
+									GameObject poolObject4 = UIManager.Instance.getPoolObject(UIManager.Instance.poolMageProjectiles);
+									if (poolObject4 != null)
+									{
+										poolObject4.transform.position = base.transform.position + new Vector3(0f, 0.5f, 0f);
+										Projectile component4 = poolObject4.GetComponent<Projectile>();
+										component4.targetPos = this.targetHero.transform.position + new Vector3(0f, 0.5f, 0f);
+										component4.isKnife = false;
+										poolObject4.SetActive(true);
+									}
+								}
+							}
+							float num11 = 0.35f;
+							this.attackAnimTimer = num11;
+							if (this.animator.GetCurrentAnimatorStateInfo(0).length > num9)
+							{
+								this.attackAnimTimer = num9 / this.animator.GetCurrentAnimatorStateInfo(0).length * num11;
+								float value = this.animator.GetCurrentAnimatorStateInfo(0).length / num9;
+								this.animator.SetFloat("AnimSpeed", value);
+							}
+							this.isInAttackAnim = true;
+						}
+					}
+				}
+			}
+			else if ((this.startPos - base.transform.position).magnitude > 0.35f)
+			{
+				float maxDistanceDelta2 = num4 * Time.deltaTime;
+				base.transform.position = Vector3.MoveTowards(base.transform.position, this.startPos, maxDistanceDelta2);
+				if (base.transform.position.x < this.startPos.x)
+				{
+					base.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+				}
+				else
+				{
+					base.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+				}
+				if (!this.animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+				{
+					this.animator.Play("Run");
+				}
+			}
+			else if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+			{
+				this.animator.Play("Idle");
+			}
+			return;
+		}
+	}
+
+	public double getActDmg(bool bypassSkills)
+	{
+		float num = 1f;
+		if (!bypassSkills)
+		{
+			if (HeroManager.Instance.hero1.isActiveHero)
+			{
+				num -= 0.03f;
+			}
+			if (this.targetHero == HeroManager.Instance.hero4 && this.targetHero.activeSkill1ActiveTimer > 0f)
+			{
+				num -= 0.35f;
+			}
+			if (this.targetHero == HeroManager.Instance.hero11 && this.targetHero.activeSkill2ActiveTimer > 0f)
+			{
+				num -= 1f;
+			}
+			if (HeroManager.Instance.hero12.activeSkill1ActiveTimer > 0f)
+			{
+				num -= 0.15f;
+			}
+			if (HeroManager.Instance.hero17.isActiveHero)
+			{
+				num -= 0.05f;
+			}
+			if (this.targetHero == HeroManager.Instance.hero21 && this.targetHero.activeSkill1ActiveTimer > 0f)
+			{
+				num -= 0.5f;
+			}
+			if (HeroManager.Instance.hero22.activeSkill1ActiveTimer > 0f)
+			{
+				num -= 0.25f;
+			}
+			if (this.targetHero == HeroManager.Instance.hero29 && this.targetHero.activeSkill2ActiveTimer > 0f)
+			{
+				num -= 1f;
+			}
+			if (HeroManager.Instance.hero33.activeSkill2ActiveTimer > 0f)
+			{
+				num -= 1f;
+			}
+			if (num <= 0f)
+			{
+				num = 0f;
+			}
+		}
+		float num2 = 1f - (float)GameManager.Instance.badge9Lvl * 0.03f;
+		double num3 = this.dps * (double)this.attSpeed * (double)num * (double)num2;
+		num3 = Math.Round(num3, 0);
+		if (num3 < 1.0 && num > 0f)
+		{
+			num3 = 1.0;
+		}
+		return num3;
+	}
+
+	public void updSortLayer(int layerNum)
+	{
+		string sortingLayerName = "Unit" + layerNum;
+		if (this.currHp <= 0.0)
+		{
+			sortingLayerName = "Actors";
+		}
+		this.spriteRender0.sortingLayerName = sortingLayerName;
+		if (this.spriteRender1 != null)
+		{
+			this.spriteRender1.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender2 != null)
+		{
+			this.spriteRender2.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender3 != null)
+		{
+			this.spriteRender3.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender4 != null)
+		{
+			this.spriteRender4.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender5 != null)
+		{
+			this.spriteRender5.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender6 != null)
+		{
+			this.spriteRender6.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender7 != null)
+		{
+			this.spriteRender7.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender8 != null)
+		{
+			this.spriteRender8.sortingLayerName = sortingLayerName;
+		}
+		if (this.spriteRender9 != null)
+		{
+			this.spriteRender9.sortingLayerName = sortingLayerName;
+		}
+	}
+
+	[Header("Manually Set Attributes")]
+	public int type;
+
+	public bool isBoss;
+
+	public bool isEvilChest;
+
+	public float range;
+
+	[Header("Automatically Set Attributes")]
+	public bool isInGameArea;
+
+	public Vector3 startPos;
+
+	public Hero targetHero;
+
+	public float attSpeed;
+
+	private float savedAttSpeed;
+
+	public double dps;
+
+	public double currHp;
+
+	public double maxHp;
+
+	private float medicTimer;
+
+	public bool isPoisoned;
+
+	private float poisonedTimer;
+
+	public bool isSlowed;
+
+	public bool isStunned;
+
+	public bool isAttSlowed;
+
+	private float skillTreeStunnedTimer;
+
+	private float skillTreeSlowedTimer;
+
+	private float movementSpeed;
+
+	private float savedMovementSpeed;
+
+	private float attackTimer;
+
+	private bool isInAttackAnim;
+
+	private float attackAnimTimer;
+
+	private float checkForNewHeroTimer;
+
+	private float gasTimer;
+
+	private Animator animator;
+
+	private float stuckTimer;
+
+	private Vector3 targetPosition = new Vector3(0f, 0f, 0f);
+
+	private Vector3 lastPosition;
+
+	private bool clickedToMove;
+
+	private GameObject actualUnit;
+
+	public SpriteRenderer spriteRender0;
+
+	private SpriteRenderer spriteRender1;
+
+	private SpriteRenderer spriteRender2;
+
+	private SpriteRenderer spriteRender3;
+
+	private SpriteRenderer spriteRender4;
+
+	private SpriteRenderer spriteRender5;
+
+	private SpriteRenderer spriteRender6;
+
+	private SpriteRenderer spriteRender7;
+
+	private SpriteRenderer spriteRender8;
+
+	private SpriteRenderer spriteRender9;
+}

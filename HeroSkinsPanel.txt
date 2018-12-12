@@ -1,0 +1,75 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HeroSkinsPanel : MonoBehaviour
+{
+	private void Start()
+	{
+		this.updatePanel();
+	}
+
+	private void OnEnable()
+	{
+		this.updatePanel();
+	}
+
+	private void updatePanel()
+	{
+		if (GameManager.Instance.iapRareSkins)
+		{
+			this.rareButton.SetActive(false);
+		}
+		if (GameManager.Instance.iapEpicSkins)
+		{
+			this.epicButton.SetActive(false);
+		}
+		if (GameManager.Instance.gemsAmt >= 1500)
+		{
+			this.rareButton.GetComponent<Button>().enabled = true;
+			UIManager.Instance.changeButtonColorV2(this.rareButton, "green", false);
+		}
+		else
+		{
+			this.rareButton.GetComponent<Button>().enabled = false;
+			UIManager.Instance.changeButtonColorV2(this.rareButton, "grey", false);
+		}
+		this.savedRareSkins = GameManager.Instance.iapRareSkins;
+		this.savedEpicSkins = GameManager.Instance.iapEpicSkins;
+	}
+
+	public void clickedExitButton()
+	{
+		UIManager.Instance.heroSkinsPanel.SetActive(false);
+	}
+
+	public void clickedBuyRare()
+	{
+		GameManager.Instance.gemsAmt -= 1500;
+		GameManager.Instance.iapRareSkins = true;
+		GameManager.Instance.settingsRareSkins = true;
+		GameManager.Instance.settingsEpicSkins = false;
+		SoundManager.Instance.playReward();
+		for (int i = 0; i < HeroManager.Instance.heroList.Count; i++)
+		{
+			HeroManager.Instance.heroList[i].setActualUnit();
+		}
+	}
+
+	private void Update()
+	{
+		if (this.savedRareSkins != GameManager.Instance.iapRareSkins || this.savedEpicSkins != GameManager.Instance.iapEpicSkins)
+		{
+			this.updatePanel();
+		}
+	}
+
+	public GameObject rareButton;
+
+	public GameObject epicButton;
+
+	private bool savedRareSkins;
+
+	private bool savedEpicSkins;
+}

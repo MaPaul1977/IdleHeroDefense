@@ -1,0 +1,27 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class CommanderExpText : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void Update()
+	{
+		this.moveAmt += this.moveSpeed * Time.deltaTime;
+		base.transform.position += new Vector3(this.moveAmt * 1.5f, 0f, 0f);
+		this.spawnCounter += Time.deltaTime;
+		if (this.spawnCounter >= 1.75f)
+		{
+			UnityEngine.Object.Destroy(base.gameObject);
+		}
+	}
+
+	private float spawnCounter;
+
+	private float moveSpeed = 1f;
+
+	private float moveAmt;
+}

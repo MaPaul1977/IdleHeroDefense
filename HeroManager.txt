@@ -1,0 +1,100 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class HeroManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		HeroManager.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	private void Update()
+	{
+	}
+
+	public static HeroManager Instance;
+
+	public List<Hero> heroList;
+
+	public Hero hero1;
+
+	public Hero hero2;
+
+	public Hero hero3;
+
+	public Hero hero4;
+
+	public Hero hero5;
+
+	public Hero hero6;
+
+	public Hero hero7;
+
+	public Hero hero8;
+
+	public Hero hero9;
+
+	public Hero hero10;
+
+	public Hero hero11;
+
+	public Hero hero12;
+
+	public Hero hero13;
+
+	public Hero hero14;
+
+	public Hero hero15;
+
+	public Hero hero16;
+
+	public Hero hero17;
+
+	public Hero hero18;
+
+	public Hero hero19;
+
+	public Hero hero20;
+
+	public Hero hero21;
+
+	public Hero hero22;
+
+	public Hero hero23;
+
+	public Hero hero24;
+
+	public Hero hero25;
+
+	public Hero hero26;
+
+	public Hero hero27;
+
+	public Hero hero28;
+
+	public Hero hero29;
+
+	public Hero hero30;
+
+	public Hero hero31;
+
+	public Hero hero32;
+
+	public Hero hero33;
+
+	public Hero hero34;
+
+	public Hero hero35;
+
+	public List<GameObject> skinList1;
+
+	public List<GameObject> skinList2;
+
+	public List<GameObject> skinList3;
+}

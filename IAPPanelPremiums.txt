@@ -1,0 +1,125 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class IAPPanelPremiums : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void OnEnable()
+	{
+		this.updateTable();
+	}
+
+	public void updateTable()
+	{
+		if (!GameManager.Instance.iap2xGameSpeed)
+		{
+			UIManager.Instance.changeButtonColorV2(this.speed2xButton, "green", true);
+			this.speed2xButton.GetComponent<Button>().enabled = true;
+			this.speed2xButtonDesc.text = "$9.99";
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.speed2xButton, "grey", true);
+			this.speed2xButton.GetComponent<Button>().enabled = false;
+			this.speed2xButtonDesc.text = "Purchased";
+		}
+		if (!GameManager.Instance.iap3xEmeralds)
+		{
+			UIManager.Instance.changeButtonColorV2(this.emeralds3xButton, "green", true);
+			this.emeralds3xButton.GetComponent<Button>().enabled = true;
+			this.emeralds3xButtonDesc.text = "$14.99";
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.emeralds3xButton, "grey", true);
+			this.emeralds3xButton.GetComponent<Button>().enabled = false;
+			this.emeralds3xButtonDesc.text = "Purchased";
+		}
+		if (!GameManager.Instance.iapSkipAds)
+		{
+			UIManager.Instance.changeButtonColorV2(this.skipAdsButton, "green", true);
+			this.skipAdsButton.GetComponent<Button>().enabled = true;
+			this.skipAdsButtonDesc.text = "$5.99";
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.skipAdsButton, "grey", true);
+			this.skipAdsButton.GetComponent<Button>().enabled = false;
+			this.skipAdsButtonDesc.text = "Purchased";
+		}
+		if (!GameManager.Instance.iap2xAdRewards)
+		{
+			UIManager.Instance.changeButtonColorV2(this.x2AdsRewardButton, "green", true);
+			this.x2AdsRewardButton.GetComponent<Button>().enabled = true;
+			this.x2AdsRewardButtonDesc.text = "$9.99";
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.x2AdsRewardButton, "grey", true);
+			this.x2AdsRewardButton.GetComponent<Button>().enabled = false;
+			this.x2AdsRewardButtonDesc.text = "Purchased";
+		}
+		this.savedSkipAds = GameManager.Instance.iapSkipAds;
+		this.saved2xSpeed = GameManager.Instance.iap2xGameSpeed;
+		this.saved3xEmeralds = GameManager.Instance.iap3xEmeralds;
+		this.saved2xAdRewards = GameManager.Instance.iap2xAdRewards;
+		this.savedRareSkins = GameManager.Instance.iapRareSkins;
+		this.savedEpicSkins = GameManager.Instance.iapEpicSkins;
+		if (Application.platform == RuntimePlatform.IPhonePlayer)
+		{
+			this.restorePaneliOS.SetActive(true);
+		}
+		else
+		{
+			this.restorePaneliOS.SetActive(false);
+		}
+	}
+
+	public void clickedPreviewButton()
+	{
+		UIManager.Instance.heroSkinsPanel.SetActive(true);
+	}
+
+	private void Update()
+	{
+		if (this.savedSkipAds != GameManager.Instance.iapSkipAds || this.saved2xSpeed != GameManager.Instance.iap2xGameSpeed || this.saved3xEmeralds != GameManager.Instance.iap3xEmeralds || this.saved2xAdRewards != GameManager.Instance.iap2xAdRewards || this.savedRareSkins != GameManager.Instance.iapRareSkins || this.savedEpicSkins != GameManager.Instance.iapEpicSkins)
+		{
+			this.updateTable();
+		}
+	}
+
+	public GameObject speed2xButton;
+
+	public Text speed2xButtonDesc;
+
+	public GameObject emeralds3xButton;
+
+	public Text emeralds3xButtonDesc;
+
+	public GameObject skipAdsButton;
+
+	public Text skipAdsButtonDesc;
+
+	public GameObject x2AdsRewardButton;
+
+	public Text x2AdsRewardButtonDesc;
+
+	public GameObject restorePaneliOS;
+
+	private bool savedSkipAds;
+
+	private bool saved2xSpeed;
+
+	private bool saved3xEmeralds;
+
+	private bool saved2xAdRewards;
+
+	private bool savedRareSkins;
+
+	private bool savedEpicSkins;
+}

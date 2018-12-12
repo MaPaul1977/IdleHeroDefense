@@ -1,0 +1,479 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class MissionsManager : MonoBehaviour
+{
+	private void Start()
+	{
+		this.m1Slider.minValue = 0f;
+		this.m1Slider.maxValue = 1f;
+		this.m2Slider.minValue = 0f;
+		this.m2Slider.maxValue = 1f;
+		this.m3Slider.minValue = 0f;
+		this.m3Slider.maxValue = 1f;
+		this.m4Slider.minValue = 0f;
+		this.m4Slider.maxValue = 1f;
+		this.m5Slider.minValue = 0f;
+		this.m5Slider.maxValue = 1f;
+		this.updateTable();
+	}
+
+	private void OnEnable()
+	{
+		if (LoginManager.Instance.isConnectedPlayfab)
+		{
+			this.notConnectedObj.SetActive(false);
+			this.updateTable();
+		}
+		else
+		{
+			this.notConnectedObj.SetActive(true);
+		}
+	}
+
+	public void claim1Clicked()
+	{
+		GameManager.Instance.m1Claimed = true;
+		GameManager.Instance.gemsAmt += 20 + GameManager.Instance.badge18Lvl;
+		AchievementManager.Instance.listAch[9].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(9);
+		GameManager.Instance.checkMissionStatus();
+		this.updateTable();
+	}
+
+	public void claim2Clicked()
+	{
+		GameManager.Instance.m2Claimed = true;
+		GameManager.Instance.gemsAmt += 20 + GameManager.Instance.badge18Lvl;
+		AchievementManager.Instance.listAch[9].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(9);
+		GameManager.Instance.checkMissionStatus();
+		this.updateTable();
+	}
+
+	public void claim3Clicked()
+	{
+		GameManager.Instance.m3Claimed = true;
+		GameManager.Instance.gemsAmt += 20 + GameManager.Instance.badge18Lvl;
+		AchievementManager.Instance.listAch[9].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(9);
+		GameManager.Instance.checkMissionStatus();
+		this.updateTable();
+	}
+
+	public void claim4Clicked()
+	{
+		GameManager.Instance.m4Claimed = true;
+		GameManager.Instance.gemsAmt += 20 + GameManager.Instance.badge18Lvl;
+		AchievementManager.Instance.listAch[9].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(9);
+		GameManager.Instance.checkMissionStatus();
+		this.updateTable();
+	}
+
+	public void claim5Clicked()
+	{
+		GameManager.Instance.m5Claimed = true;
+		GameManager.Instance.gemsAmt += 20 + GameManager.Instance.badge18Lvl;
+		AchievementManager.Instance.listAch[9].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(9);
+		GameManager.Instance.checkMissionStatus();
+		this.updateTable();
+	}
+
+	private void updateTable()
+	{
+		if (GameManager.Instance.m1Num == 0)
+		{
+			this.m1Title.text = "Enemies killed";
+		}
+		else if (GameManager.Instance.m1Num == 1)
+		{
+			this.m1Title.text = "Bosses killed";
+		}
+		else if (GameManager.Instance.m1Num == 2)
+		{
+			this.m1Title.text = "Hero skills used";
+		}
+		else if (GameManager.Instance.m1Num == 3)
+		{
+			this.m1Title.text = "Pass waves without a melee hero";
+		}
+		else if (GameManager.Instance.m1Num == 4)
+		{
+			this.m1Title.text = "Range hero kills";
+		}
+		float num = (float)GameManager.Instance.m1CurrVal / (float)GameManager.Instance.m1NeedVal;
+		if (num >= 1f || GameManager.Instance.m1Claimed)
+		{
+			num = 1f;
+		}
+		this.m1Slider.value = num;
+		this.m1Prog.text = GameManager.Instance.m1CurrVal + " / " + GameManager.Instance.m1NeedVal;
+		if (!GameManager.Instance.m1Claimed)
+		{
+			if (GameManager.Instance.m1CurrVal >= GameManager.Instance.m1NeedVal)
+			{
+				UIManager.Instance.changeButtonColorV2(this.m1ClaimButton, "green", false);
+				this.m1ClaimButton.GetComponent<Button>().enabled = true;
+				this.activeBg1.SetActive(true);
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.m1ClaimButton, "grey", false);
+				this.m1ClaimButton.GetComponent<Button>().enabled = false;
+				this.activeBg1.SetActive(false);
+			}
+			this.m1ClaimTitle.text = "Claim";
+			int num2 = 20 + GameManager.Instance.badge18Lvl;
+			this.m1ClaimAmt.text = "+" + num2.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.m1ClaimButton, "grey", false);
+			this.m1ClaimButton.GetComponent<Button>().enabled = false;
+			this.activeBg1.SetActive(false);
+			this.m1ClaimTitle.text = "Claimed";
+			this.m1ClaimAmt.text = "N/A";
+		}
+		if (GameManager.Instance.m2Num == 0)
+		{
+			this.m2Title.text = "Get chest drops";
+		}
+		else if (GameManager.Instance.m2Num == 1)
+		{
+			this.m2Title.text = "Do critical hits";
+		}
+		else if (GameManager.Instance.m2Num == 2)
+		{
+			this.m2Title.text = "Evade enemy hits";
+		}
+		else if (GameManager.Instance.m2Num == 3)
+		{
+			this.m2Title.text = "Do splash hits";
+		}
+		else if (GameManager.Instance.m2Num == 4)
+		{
+			this.m2Title.text = "Melee hero kills";
+		}
+		else if (GameManager.Instance.m2Num == 5)
+		{
+			this.m2Title.text = "Collect video ad rewards";
+		}
+		float num3 = (float)GameManager.Instance.m2CurrVal / (float)GameManager.Instance.m2NeedVal;
+		if (num3 >= 1f || GameManager.Instance.m2Claimed)
+		{
+			num3 = 1f;
+		}
+		this.m2Slider.value = num3;
+		this.m2Prog.text = GameManager.Instance.m2CurrVal + " / " + GameManager.Instance.m2NeedVal;
+		if (!GameManager.Instance.m2Claimed)
+		{
+			if (GameManager.Instance.m2CurrVal >= GameManager.Instance.m2NeedVal)
+			{
+				UIManager.Instance.changeButtonColorV2(this.m2ClaimButton, "green", false);
+				this.m2ClaimButton.GetComponent<Button>().enabled = true;
+				this.activeBg2.SetActive(true);
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.m2ClaimButton, "grey", false);
+				this.m2ClaimButton.GetComponent<Button>().enabled = false;
+				this.activeBg2.SetActive(false);
+			}
+			this.m2ClaimTitle.text = "Claim";
+			int num4 = 20 + GameManager.Instance.badge18Lvl;
+			this.m2ClaimAmt.text = "+" + num4.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.m2ClaimButton, "grey", false);
+			this.m2ClaimButton.GetComponent<Button>().enabled = false;
+			this.activeBg2.SetActive(false);
+			this.m2ClaimTitle.text = "Claimed";
+			this.m2ClaimAmt.text = "N/A";
+		}
+		if (GameManager.Instance.m3Num == 0)
+		{
+			this.m3Title.text = "Reach a new highest wave";
+		}
+		else if (GameManager.Instance.m3Num == 1)
+		{
+			this.m3Title.text = "Earn commander exp";
+		}
+		else if (GameManager.Instance.m3Num == 2)
+		{
+			this.m3Title.text = "Do prestiges";
+		}
+		else if (GameManager.Instance.m3Num == 3)
+		{
+			this.m3Title.text = "Pass consecutive waves without failing";
+		}
+		else if (GameManager.Instance.m3Num == 4)
+		{
+			this.m3Title.text = "Mage hero kills";
+		}
+		else if (GameManager.Instance.m3Num == 5)
+		{
+			this.m3Title.text = "Evolve heroes";
+		}
+		float num5 = (float)GameManager.Instance.m3CurrVal / (float)GameManager.Instance.m3NeedVal;
+		if (num5 >= 1f || GameManager.Instance.m3Claimed)
+		{
+			num5 = 1f;
+		}
+		this.m3Slider.value = num5;
+		this.m3Prog.text = GameManager.Instance.m3CurrVal + " / " + GameManager.Instance.m3NeedVal;
+		if (!GameManager.Instance.m3Claimed)
+		{
+			if (GameManager.Instance.m3CurrVal >= GameManager.Instance.m3NeedVal)
+			{
+				UIManager.Instance.changeButtonColorV2(this.m3ClaimButton, "green", false);
+				this.m3ClaimButton.GetComponent<Button>().enabled = true;
+				this.activeBg3.SetActive(true);
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.m3ClaimButton, "grey", false);
+				this.m3ClaimButton.GetComponent<Button>().enabled = false;
+				this.activeBg3.SetActive(false);
+			}
+			this.m3ClaimTitle.text = "Claim";
+			int num6 = 20 + GameManager.Instance.badge18Lvl;
+			this.m3ClaimAmt.text = "+" + num6.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.m3ClaimButton, "grey", false);
+			this.m3ClaimButton.GetComponent<Button>().enabled = false;
+			this.activeBg3.SetActive(false);
+			this.m3ClaimTitle.text = "Claimed";
+			this.m3ClaimAmt.text = "N/A";
+		}
+		if (GameManager.Instance.m4Num == 1)
+		{
+			this.m4Title.text = "Find an equipment with " + GameManager.Instance.m4NeedVal + "+ power";
+		}
+		else if (GameManager.Instance.m4Num == 2)
+		{
+			this.m4Title.text = "Find ultra rare or better equipment";
+		}
+		else if (GameManager.Instance.m4Num == 3)
+		{
+			this.m4Title.text = "Find legendary or better equipment";
+		}
+		else if (GameManager.Instance.m4Num == 4)
+		{
+			this.m4Title.text = "Find new equipment";
+		}
+		else if (GameManager.Instance.m4Num == 5)
+		{
+			this.m4Title.text = "Waves w/ only one active hero";
+		}
+		if (GameManager.Instance.m4Num != 1)
+		{
+			float num7 = (float)GameManager.Instance.m4CurrVal / (float)GameManager.Instance.m4NeedVal;
+			if (num7 >= 1f)
+			{
+				num7 = 1f;
+			}
+			this.m4Slider.value = num7;
+			this.m4Prog.text = GameManager.Instance.m4CurrVal + " / " + GameManager.Instance.m4NeedVal;
+		}
+		else
+		{
+			float num8 = (float)GameManager.Instance.m4CurrVal / (float)GameManager.Instance.m4NeedVal;
+			if (num8 >= 1f)
+			{
+				this.m4Slider.value = 1f;
+				this.m4Prog.text = "1 / 1";
+			}
+			else
+			{
+				this.m4Slider.value = 0f;
+				this.m4Prog.text = "0 / 1";
+			}
+		}
+		if (!GameManager.Instance.m4Claimed)
+		{
+			if (GameManager.Instance.m4CurrVal >= GameManager.Instance.m4NeedVal)
+			{
+				UIManager.Instance.changeButtonColorV2(this.m4ClaimButton, "green", false);
+				this.m4ClaimButton.GetComponent<Button>().enabled = true;
+				this.activeBg4.SetActive(true);
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.m4ClaimButton, "grey", false);
+				this.m4ClaimButton.GetComponent<Button>().enabled = false;
+				this.activeBg4.SetActive(false);
+			}
+			this.m4ClaimTitle.text = "Claim";
+			int num9 = 20 + GameManager.Instance.badge18Lvl;
+			this.m4ClaimAmt.text = "+" + num9.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.m4ClaimButton, "grey", false);
+			this.m4ClaimButton.GetComponent<Button>().enabled = false;
+			this.activeBg4.SetActive(false);
+			this.m4ClaimTitle.text = "Claimed";
+			this.m4ClaimAmt.text = "N/A";
+		}
+		if (GameManager.Instance.m5Num == 1)
+		{
+			this.m5Title.text = "Reach a new highest wave";
+		}
+		else if (GameManager.Instance.m5Num == 2)
+		{
+			this.m5Title.text = "Play the Underground minigame";
+		}
+		else if (GameManager.Instance.m5Num == 3)
+		{
+			this.m5Title.text = "Active play time";
+		}
+		else if (GameManager.Instance.m5Num == 4)
+		{
+			this.m5Title.text = "Consecutive waves w/o a hero dying";
+		}
+		else if (GameManager.Instance.m5Num == 5)
+		{
+			this.m5Title.text = "Play minigames";
+		}
+		float num10 = (float)GameManager.Instance.m5CurrVal / (float)GameManager.Instance.m5NeedVal;
+		if (num10 >= 1f || GameManager.Instance.m5Claimed)
+		{
+			num10 = 1f;
+		}
+		this.m5Slider.value = num10;
+		if (GameManager.Instance.m5Num != 3)
+		{
+			this.m5Prog.text = GameManager.Instance.m5CurrVal + " / " + GameManager.Instance.m5NeedVal;
+		}
+		else
+		{
+			TimeSpan timeSpan = TimeSpan.FromSeconds((double)GameManager.Instance.m5CurrVal);
+			string str = string.Format("{0:D2}h {1:D2}m {2:D2}s", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+			TimeSpan timeSpan2 = TimeSpan.FromSeconds((double)GameManager.Instance.m5NeedVal);
+			string str2 = string.Format("{0:D2}h {1:D2}m {2:D2}s", timeSpan2.Hours, timeSpan2.Minutes, timeSpan2.Seconds);
+			this.m5Prog.text = str + " / " + str2;
+		}
+		if (!GameManager.Instance.m5Claimed)
+		{
+			if (GameManager.Instance.m5CurrVal >= GameManager.Instance.m5NeedVal)
+			{
+				UIManager.Instance.changeButtonColorV2(this.m5ClaimButton, "green", false);
+				this.m5ClaimButton.GetComponent<Button>().enabled = true;
+				this.activeBg5.SetActive(true);
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.m5ClaimButton, "grey", false);
+				this.m5ClaimButton.GetComponent<Button>().enabled = false;
+				this.activeBg5.SetActive(false);
+			}
+			this.m5ClaimTitle.text = "Claim";
+			int num11 = 20 + GameManager.Instance.badge18Lvl;
+			this.m5ClaimAmt.text = "+" + num11.ToString();
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.m5ClaimButton, "grey", false);
+			this.m5ClaimButton.GetComponent<Button>().enabled = false;
+			this.activeBg5.SetActive(false);
+			this.m5ClaimTitle.text = "Claimed";
+			this.m5ClaimAmt.text = "N/A";
+		}
+		int num12 = (int)(GameManager.Instance.currServerTime.AddDays(1.0).Date - GameManager.Instance.currServerTime).TotalSeconds;
+		TimeSpan timeSpan3 = TimeSpan.FromSeconds((double)num12);
+		this.refreshText.text = "Missions refresh in: " + string.Format("{0:D1}h {1:D2}m", timeSpan3.Hours, timeSpan3.Minutes);
+	}
+
+	private void Update()
+	{
+		this.refreshTimer += Time.deltaTime;
+		if (this.refreshTimer >= 1f)
+		{
+			this.refreshTimer = 0f;
+			this.updateTable();
+		}
+	}
+
+	public GameObject notConnectedObj;
+
+	public GameObject activeBg1;
+
+	public Text m1Title;
+
+	public Slider m1Slider;
+
+	public Text m1Prog;
+
+	public GameObject m1ClaimButton;
+
+	public Text m1ClaimTitle;
+
+	public Text m1ClaimAmt;
+
+	public GameObject activeBg2;
+
+	public Text m2Title;
+
+	public Slider m2Slider;
+
+	public Text m2Prog;
+
+	public GameObject m2ClaimButton;
+
+	public Text m2ClaimTitle;
+
+	public Text m2ClaimAmt;
+
+	public GameObject activeBg3;
+
+	public Text m3Title;
+
+	public Slider m3Slider;
+
+	public Text m3Prog;
+
+	public GameObject m3ClaimButton;
+
+	public Text m3ClaimTitle;
+
+	public Text m3ClaimAmt;
+
+	public GameObject activeBg4;
+
+	public Text m4Title;
+
+	public Slider m4Slider;
+
+	public Text m4Prog;
+
+	public GameObject m4ClaimButton;
+
+	public Text m4ClaimTitle;
+
+	public Text m4ClaimAmt;
+
+	public GameObject activeBg5;
+
+	public Text m5Title;
+
+	public Slider m5Slider;
+
+	public Text m5Prog;
+
+	public GameObject m5ClaimButton;
+
+	public Text m5ClaimTitle;
+
+	public Text m5ClaimAmt;
+
+	public Text refreshText;
+
+	private float refreshTimer;
+}

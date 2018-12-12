@@ -1,0 +1,49 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class AcademiaCell : MonoBehaviour
+{
+	private void Start()
+	{
+		this.updateCell();
+	}
+
+	private void OnEnable()
+	{
+		this.updateCell();
+	}
+
+	private void updateCell()
+	{
+		this.numTomesText.text = "Completed: " + this.thisAcademia.totalBooks;
+		this.bonusText.text = "+" + UIManager.Instance.convertNumberFormat(this.thisAcademia.totalBonus.ToString("0")) + "% " + AcademiaManager.Instance.listAcademiaBonusText[this.thisAcademia.bookNum - 1];
+		this.bookSlider.value = (float)(this.thisAcademia.totalPages - this.thisAcademia.lastBookPages) / (float)(this.thisAcademia.nextBookPages - this.thisAcademia.lastBookPages);
+		if (this.bookSlider.value >= 1f)
+		{
+			this.bookSlider.value = 1f;
+		}
+		this.savedPages = this.thisAcademia.totalPages;
+	}
+
+	private void Update()
+	{
+		if (this.thisAcademia.totalPages != this.savedPages)
+		{
+			this.updateCell();
+		}
+	}
+
+	[Header("Manually Set Attributes")]
+	public Academia thisAcademia;
+
+	[Header("Automatically Set Attributes")]
+	public Slider bookSlider;
+
+	public Text bonusText;
+
+	public Text numTomesText;
+
+	private int savedPages;
+}

@@ -1,0 +1,432 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class TheUnderground : MonoBehaviour
+{
+	private void Awake()
+	{
+		TheUnderground.Instance = this;
+	}
+
+	private void getInitEnemyDps()
+	{
+		this.enemyDps = 1.0;
+		int num = this.waveReq / 2;
+		for (int i = 1; i < num; i++)
+		{
+			float num2;
+			if (i > 2000)
+			{
+				num2 = 1.155f;
+				if (i % 25 == 0)
+				{
+					num2 = 1.7f;
+				}
+			}
+			else if (i > 1000)
+			{
+				num2 = 1.14f;
+				if (i % 25 == 0)
+				{
+					num2 = 1.65f;
+				}
+			}
+			else if (i > 500)
+			{
+				num2 = 1.145f;
+				if (i % 25 == 0)
+				{
+					num2 = 1.675f;
+				}
+			}
+			else if (i > 200)
+			{
+				num2 = 1.15f;
+				if (i % 25 == 0)
+				{
+					num2 = 1.7f;
+				}
+			}
+			else if (i > 50)
+			{
+				num2 = 1.155f;
+				if (i % 25 == 0)
+				{
+					num2 = 1.725f;
+				}
+			}
+			else
+			{
+				num2 = 1.16f;
+				if (i % 50 == 0)
+				{
+					num2 = 1.75f;
+				}
+			}
+			double num3 = this.enemyDps;
+			this.enemyDps *= (double)num2;
+			if (this.enemyDps == num3)
+			{
+				this.enemyDps += 1.0;
+			}
+			this.enemyDps = Math.Round(this.enemyDps, 0);
+		}
+	}
+
+	public void checkIfCanPlay()
+	{
+		if (LoginManager.Instance.isConnectedPlayfab)
+		{
+			this.waveReq = GameManager.Instance.statHighestWave / 2;
+			if (GameManager.Instance.badge21Lvl > 0)
+			{
+				float num = (float)this.waveReq;
+				num *= 1f - (float)GameManager.Instance.badge21Lvl * 0.03f;
+				this.waveReq = (int)num;
+			}
+			if (this.waveReq < 150)
+			{
+				this.waveReq = 150;
+			}
+			if (GameManager.Instance.enemyWaveNum > this.waveReq)
+			{
+				int num2 = (int)(GameManager.Instance.currServerTime - Convert.ToDateTime(GameManager.Instance.lastUndergroundTime)).TotalSeconds;
+				if (num2 >= 10800)
+				{
+					this.uiButtonTimer.text = "Play!";
+					this.readyToPlay = true;
+				}
+				else
+				{
+					TimeSpan timeSpan = TimeSpan.FromSeconds((double)(10800 - num2));
+					this.uiButtonTimer.text = string.Format("{0:D1}h {1:D1}m", timeSpan.Hours, timeSpan.Minutes);
+					this.readyToPlay = false;
+				}
+			}
+			else
+			{
+				this.uiButtonTimer.text = "Wave " + this.waveReq + "\nReq";
+				this.readyToPlay = false;
+			}
+		}
+		else
+		{
+			this.uiButtonTimer.text = "N/A";
+			this.readyToPlay = false;
+		}
+	}
+
+	public void clickedUIButton()
+	{
+		this.playButton.SetActive(false);
+		this.cantPlayButton.SetActive(false);
+		this.replayTextGo.SetActive(false);
+		this.replayButton.SetActive(false);
+		UIManager.Instance.blackbg.SetActive(true);
+		this.pregamePanel.gameObject.SetActive(true);
+		this.checkIfCanPlay();
+		this.commIcon.sprite = UIManager.Instance.commIcons[GameManager.Instance.commIcon];
+		if (this.readyToPlay)
+		{
+			this.playButton.SetActive(true);
+		}
+		else if (LoginManager.Instance.isConnectedPlayfab)
+		{
+			if (GameManager.Instance.enemyWaveNum > this.waveReq)
+			{
+				int num = (int)(GameManager.Instance.currServerTime - Convert.ToDateTime(GameManager.Instance.lastUndergroundTime)).TotalSeconds;
+				if (num < 10800)
+				{
+					this.replayTextGo.SetActive(true);
+					this.replayText.text = "Refreshing:\n" + this.uiButtonTimer.text;
+					this.replayButton.SetActive(true);
+					if (GameManager.Instance.gemsAmt >= 150)
+					{
+						UIManager.Instance.changeButtonColorV2(this.replayButton, "green", false);
+						this.replayButton.GetComponent<Button>().enabled = true;
+					}
+					else
+					{
+						UIManager.Instance.changeButtonColorV2(this.replayButton, "grey", false);
+						this.replayButton.GetComponent<Button>().enabled = false;
+					}
+				}
+			}
+			else
+			{
+				this.cantPlayButton.SetActive(true);
+				this.cantPlayText.text = "Wave " + this.waveReq + " Required";
+			}
+		}
+		else
+		{
+			this.cantPlayButton.SetActive(true);
+			this.cantPlayText.text = "Not Connected to Server";
+		}
+	}
+
+	public void clickedReplayButton()
+	{
+		GameManager.Instance.gemsAmt -= 150;
+		GameManager.Instance.lastUndergroundTime = Convert.ToString(GameManager.Instance.currServerTime.AddHours(-5.0));
+		this.clickedUIButton();
+	}
+
+	public void clickedPlayButton()
+	{
+		UIManager.Instance.closeBlackBg();
+		GameManager.Instance.lastUndergroundTime = Convert.ToString(GameManager.Instance.currServerTime);
+		if (GameManager.Instance.m5Num == 2)
+		{
+			GameManager.Instance.m5CurrVal++;
+			GameManager.Instance.checkMissionStatus();
+		}
+		if (GameManager.Instance.m5Num == 5)
+		{
+			GameManager.Instance.m5CurrVal++;
+			GameManager.Instance.checkMissionStatus();
+		}
+		this.loadingTimer = 0f;
+		UIManager.Instance.prestigeWhiteBg.SetActive(true);
+		UIManager.Instance.prestigeWhiteBg.GetComponent<Image>().canvasRenderer.SetAlpha(0f);
+		UIManager.Instance.prestigeWhiteBg.GetComponent<Image>().CrossFadeAlpha(1f, 3f, false);
+		this.loadingMiniGame = true;
+		this.savedActiveHeroesList = new List<Hero>(GameManager.Instance.activeHeroes);
+		this.rewardDmgAura = 0;
+		this.rewardHpAura = 0;
+		this.rewardGoldAura = 0;
+		this.getInitEnemyDps();
+		UIManager.Instance.heroMenuButton.enabled = false;
+		GameManager.Instance.restartWave();
+	}
+
+	public void endGame()
+	{
+		UIManager.Instance.listMaps[GameManager.Instance.onMapNum].SetActive(true);
+		this.mapHell.SetActive(false);
+		SoundManager.Instance.playReward();
+		for (int i = 0; i < EnemyManager.Instance.enemyList.Count; i++)
+		{
+			Enemy enemy = EnemyManager.Instance.enemyList[i];
+			UnityEngine.Object.Destroy(enemy.gameObject);
+		}
+		EnemyManager.Instance.enemyList.Clear();
+		for (int j = GameManager.Instance.activeHeroes.Count; j > 0; j--)
+		{
+			Hero hero = GameManager.Instance.activeHeroes[j - 1];
+			GameManager.Instance.activeHeroes.Remove(hero);
+			hero.isActiveHero = false;
+			hero.stopHeroAttStuff();
+			hero.transform.position = new Vector3(0f, 30f, 0f);
+			if (hero == GameManager.Instance.selectedHero)
+			{
+				GameManager.Instance.selectedHero = null;
+			}
+		}
+		GameManager.Instance.numAliveHeroes = 0;
+		GameManager.Instance.activeHeroes = new List<Hero>(this.savedActiveHeroesList);
+		for (int k = 0; k < GameManager.Instance.activeHeroes.Count; k++)
+		{
+			Hero hero2 = GameManager.Instance.activeHeroes[k];
+			hero2.currHp = 0.0;
+			hero2.isActiveHero = true;
+			hero2.transform.position = hero2.preMiniGamePosition;
+		}
+		this.loadingMiniGame = false;
+		this.playingMiniGame = false;
+		UIManager.Instance.heroMenuButton.enabled = true;
+		GameManager.Instance.restartWave();
+		int num = this.onWaveNum - 1;
+		this.endgameKills.text = num.ToString("0");
+		this.endgameCommIcon.sprite = UIManager.Instance.commIcons[GameManager.Instance.commIcon];
+		int amt = num * 30;
+		GameManager.Instance.addNewCommExp(amt);
+		this.endgameCommExp.text = "+" + amt.ToString("0") + " exp";
+		AchievementManager.Instance.listAch[20].currAmt += (double)(this.onWaveNum - 1);
+		AchievementManager.Instance.checkIfAchComplete(20);
+		float num2 = 1f + (float)GameManager.Instance.badge22Lvl * 0.1f;
+		float num3 = (float)this.rewardDmgAura * 0.25f * num2;
+		this.rewardDmgAura = (int)num3;
+		float num4 = (float)this.rewardHpAura * 0.25f * num2;
+		this.rewardHpAura = (int)num4;
+		float num5 = (float)this.rewardGoldAura * 0.25f * num2;
+		this.rewardGoldAura = (int)num5;
+		GameManager.Instance.auraDmgLvl += this.rewardDmgAura;
+		GameManager.Instance.auraHpLvl += this.rewardHpAura;
+		GameManager.Instance.auraGoldLvl += this.rewardGoldAura;
+		AchievementManager.Instance.listAch[21].currAmt += (double)(this.rewardDmgAura + this.rewardHpAura + this.rewardGoldAura);
+		AchievementManager.Instance.checkIfAchComplete(21);
+		this.endgameTitleDmg.text = "Aura of Damage (x" + this.rewardDmgAura + ")";
+		this.endgameTitleHp.text = "Aura of Health (x" + this.rewardHpAura + ")";
+		this.endgameTitleGold.text = "Aura of Gold (x" + this.rewardGoldAura + ")";
+		this.endgameAuraDmg.text = "+" + (this.rewardDmgAura * 5).ToString("0") + "% DPS";
+		this.endgameAuraHp.text = "+" + (this.rewardHpAura * 5).ToString("0") + "% HP";
+		this.endgameAuraGold.text = "+" + (this.rewardGoldAura * 5).ToString("0") + "% Gold";
+		UIManager.Instance.blackbg.SetActive(true);
+		this.endgamePanel.gameObject.SetActive(true);
+		this.checkIfCanPlay();
+		DataManager.Instance.saveData(false);
+	}
+
+	public void loadGame()
+	{
+		this.mapHell.SetActive(true);
+		UIManager.Instance.listMaps[GameManager.Instance.onMapNum].SetActive(false);
+		for (int i = 0; i < EnemyManager.Instance.enemyList.Count; i++)
+		{
+			Enemy enemy = EnemyManager.Instance.enemyList[i];
+			UnityEngine.Object.Destroy(enemy.gameObject);
+		}
+		EnemyManager.Instance.enemyList.Clear();
+		for (int j = GameManager.Instance.activeHeroes.Count; j > 0; j--)
+		{
+			Hero hero = GameManager.Instance.activeHeroes[j - 1];
+			hero.preMiniGamePosition = hero.transform.position;
+			GameManager.Instance.activeHeroes.Remove(hero);
+			hero.isActiveHero = false;
+			hero.stopHeroAttStuff();
+			hero.transform.position = new Vector3(0f, 30f, 0f);
+			if (hero == GameManager.Instance.selectedHero)
+			{
+				GameManager.Instance.selectedHero = null;
+			}
+		}
+		GameManager.Instance.numAliveHeroes = 0;
+		this.newActiveHeroesList.Clear();
+		for (int k = 0; k < HeroManager.Instance.heroList.Count; k++)
+		{
+			Hero hero2 = HeroManager.Instance.heroList[k];
+			if (hero2.level > 0)
+			{
+				this.newActiveHeroesList.Add(hero2);
+			}
+		}
+		for (int l = 0; l < 5; l++)
+		{
+			if (this.newActiveHeroesList.Count > 0)
+			{
+				int index = UnityEngine.Random.Range(0, this.newActiveHeroesList.Count);
+				Hero hero3 = this.newActiveHeroesList[index];
+				int count = GameManager.Instance.activeHeroes.Count;
+				if (count == 0)
+				{
+					hero3.gameObject.transform.position = new Vector3(0f, 3.5f);
+				}
+				else if (count == 1)
+				{
+					hero3.gameObject.transform.position = new Vector3(-1.5f, 5f);
+				}
+				else if (count == 2)
+				{
+					hero3.gameObject.transform.position = new Vector3(1.5f, 5f);
+				}
+				else if (count == 3)
+				{
+					hero3.gameObject.transform.position = new Vector3(-1.5f, 2f);
+				}
+				else if (count == 4)
+				{
+					hero3.gameObject.transform.position = new Vector3(1.5f, 2f);
+				}
+				this.newActiveHeroesList.Remove(hero3);
+				GameManager.Instance.activeHeroes.Add(hero3);
+				GameManager.Instance.numAliveHeroes++;
+				hero3.isActiveHero = true;
+				hero3.currHp = hero3.getActMaxHp(hero3.baseDps);
+				hero3.currMana = hero3.getActMaxMana();
+				hero3.targetPosition = hero3.gameObject.transform.position;
+			}
+		}
+		this.loadingMiniGame = false;
+		this.playingMiniGame = true;
+		this.onWaveNum = 0;
+		EnemyManager.Instance.hellWaitTimer = 3f;
+		EnemyManager.Instance.needNewBoss = true;
+		UIManager.Instance.heroMenuButton.enabled = false;
+		UIManager.Instance.prestigeWhiteBg.SetActive(false);
+	}
+
+	private void Update()
+	{
+		if (this.loadingMiniGame)
+		{
+			this.loadingTimer += Time.deltaTime;
+			if (this.loadingTimer >= 3f)
+			{
+				this.loadingTimer = 0f;
+				this.loadGame();
+			}
+		}
+	}
+
+	public static TheUnderground Instance;
+
+	public bool loadingMiniGame;
+
+	public bool playingMiniGame;
+
+	public List<Hero> savedActiveHeroesList;
+
+	public List<Hero> newActiveHeroesList;
+
+	public GameObject mapHell;
+
+	public int onWaveNum;
+
+	public double enemyDps;
+
+	public GameObject uiButton;
+
+	public Text uiButtonTimer;
+
+	public GameObject pregamePanel;
+
+	public Image commIcon;
+
+	public GameObject playButton;
+
+	public GameObject cantPlayButton;
+
+	public Text cantPlayText;
+
+	public GameObject replayTextGo;
+
+	public Text replayText;
+
+	public GameObject replayButton;
+
+	public GameObject endgamePanel;
+
+	public Text endgameKills;
+
+	public Image endgameCommIcon;
+
+	public Text endgameCommExp;
+
+	public Text endgameTitleDmg;
+
+	public Text endgameTitleHp;
+
+	public Text endgameTitleGold;
+
+	public Text endgameAuraDmg;
+
+	public Text endgameAuraHp;
+
+	public Text endgameAuraGold;
+
+	public int rewardDmgAura;
+
+	public int rewardHpAura;
+
+	public int rewardGoldAura;
+
+	private bool readyToPlay;
+
+	private float loadingTimer;
+
+	private int waveReq;
+}

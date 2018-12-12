@@ -1,0 +1,88 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GoldChest : MonoBehaviour
+{
+	private void Start()
+	{
+		GameObject gameObject = base.transform.GetChild(0).gameObject;
+		this.spriteRenderer = gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+	}
+
+	private void initObject()
+	{
+		this.shouldInit = true;
+		this.spawnCounter = 0f;
+		base.gameObject.SetActive(false);
+	}
+
+	private void Update()
+	{
+		if (GameManager.Instance.prestigePause)
+		{
+			return;
+		}
+		if (this.shouldInit)
+		{
+			this.shouldInit = false;
+			if (this.fromEnemy != null && this.spriteRenderer != null)
+			{
+				this.spriteRenderer.sortingLayerName = this.fromEnemy.spriteRender0.sortingLayerName;
+			}
+		}
+		this.spawnCounter += Time.deltaTime;
+		if (this.spawnCounter >= 2.5f)
+		{
+			if (GameManager.Instance.settingsCombatTexts)
+			{
+				GameObject poolObject = UIManager.Instance.getPoolObject(UIManager.Instance.poolGoldText);
+				if (poolObject != null)
+				{
+					UtilityMethods.MoveUiElementToWorldPosition(poolObject.GetComponent<RectTransform>(), base.transform.position);
+					Text component = poolObject.GetComponent<Text>();
+					component.color = UIManager.colorYellow;
+					if (!this.isBoss)
+					{
+						component.fontSize = 22;
+					}
+					else
+					{
+						component.fontSize = 26;
+					}
+					component.text = "+" + UIManager.Instance.convertNumberFormat(this.coinAmt.ToString("0"));
+					poolObject.SetActive(true);
+				}
+			}
+			GameManager.Instance.goldAmt += this.coinAmt;
+			AchievementManager.Instance.listAch[16].currAmt += this.coinAmt;
+			AchievementManager.Instance.checkIfAchComplete(16);
+			if (GameManager.Instance.settingsParticleEffects)
+			{
+				GameObject poolObject2 = UIManager.Instance.getPoolObject(UIManager.Instance.poolChestDropParticles);
+				if (poolObject2 != null)
+				{
+					poolObject2.transform.position = base.transform.position;
+					ParticleSystem component2 = poolObject2.GetComponent<ParticleSystem>();
+					poolObject2.SetActive(true);
+					component2.Play();
+				}
+			}
+			SoundManager.Instance.playChest();
+			this.initObject();
+		}
+	}
+
+	public bool isBoss;
+
+	public double coinAmt;
+
+	public Enemy fromEnemy;
+
+	private bool shouldInit = true;
+
+	private float spawnCounter;
+
+	private SpriteRenderer spriteRenderer;
+}

@@ -1,0 +1,99 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using TapjoyUnity;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class IAPPanelGems : MonoBehaviour
+{
+	private void Start()
+	{
+		this.updateTable();
+	}
+
+	private void OnEnable()
+	{
+		this.updateTable();
+		TapjoyManager.Instance.updateStatus();
+	}
+
+	public void updateTable()
+	{
+		if (Tapjoy.IsConnected && TapjoyManager.Instance.tjWall.IsContentReady() && TapjoyManager.Instance.loadedInitBalance)
+		{
+			this.tjButton.GetComponent<Button>().enabled = true;
+			UIManager.Instance.changeButtonColorV2(this.tjButton, "green", true);
+			this.tjButtonText.text = "View\nOffers";
+		}
+		else
+		{
+			this.tjButton.GetComponent<Button>().enabled = false;
+			UIManager.Instance.changeButtonColorV2(this.tjButton, "grey", true);
+			this.tjButtonText.text = "Loading\nOffers";
+		}
+		if (LoginManager.Instance.isConnectedPlayfab && GameManager.Instance.currServerTime.DayOfWeek == DayOfWeek.Friday)
+		{
+			IAPManagerMobile.Instance.isSale = true;
+			this.desc1.SetActive(false);
+			this.desc2.SetActive(false);
+			this.desc3.SetActive(false);
+			this.desc4.SetActive(false);
+			this.desc5.SetActive(false);
+			this.sale1.SetActive(true);
+			this.sale2.SetActive(true);
+			this.sale3.SetActive(true);
+			this.sale4.SetActive(true);
+			this.sale5.SetActive(true);
+		}
+		else
+		{
+			IAPManagerMobile.Instance.isSale = false;
+			this.desc1.SetActive(true);
+			this.desc2.SetActive(true);
+			this.desc3.SetActive(true);
+			this.desc4.SetActive(true);
+			this.desc5.SetActive(true);
+			this.sale1.SetActive(false);
+			this.sale2.SetActive(false);
+			this.sale3.SetActive(false);
+			this.sale4.SetActive(false);
+			this.sale5.SetActive(false);
+		}
+	}
+
+	private void Update()
+	{
+		this.updateTimer += Time.deltaTime;
+		if (this.updateTimer >= 2.5f)
+		{
+			this.updateTimer = 0f;
+			this.updateTable();
+		}
+	}
+
+	public GameObject desc1;
+
+	public GameObject desc2;
+
+	public GameObject desc3;
+
+	public GameObject desc4;
+
+	public GameObject desc5;
+
+	public GameObject sale1;
+
+	public GameObject sale2;
+
+	public GameObject sale3;
+
+	public GameObject sale4;
+
+	public GameObject sale5;
+
+	private float updateTimer = 2f;
+
+	public GameObject tjButton;
+
+	public Text tjButtonText;
+}

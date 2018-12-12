@@ -1,0 +1,20 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class FontChanger : MonoBehaviour
+{
+	private void Awake()
+	{
+		foreach (Text text in Resources.FindObjectsOfTypeAll(typeof(Text)) as Text[])
+		{
+			if (text.font.name == "Arial" && text.fontStyle == FontStyle.Bold)
+			{
+				text.font = this.fontArialBold;
+			}
+		}
+	}
+
+	public Font fontArialBold;
+}

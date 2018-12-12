@@ -1,0 +1,705 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Purchasing;
+using UnityEngine.Purchasing.Extension;
+using UnityEngine.Purchasing.Security;
+
+public class IAPManagerMobile : MonoBehaviour, IStoreListener
+{
+	private void Awake()
+	{
+		IAPManagerMobile.Instance = this;
+	}
+
+	private void Start()
+	{
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			base.gameObject.SetActive(false);
+			return;
+		}
+		if (IAPManagerMobile.m_StoreController == null)
+		{
+			this.InitializePurchasing();
+		}
+	}
+
+	public void InitializePurchasing()
+	{
+		if (this.IsInitialized())
+		{
+			return;
+		}
+		ConfigurationBuilder configurationBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance(), new IPurchasingModule[0]);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapGems250, ProductType.Consumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapGems600, ProductType.Consumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapGems1750, ProductType.Consumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapGems4000, ProductType.Consumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapGems12500, ProductType.Consumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapTournBoost, ProductType.Consumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iap2xAdBoost, ProductType.Consumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapSkipVideoAds, ProductType.NonConsumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iap2xGameSpeed, ProductType.NonConsumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapCommClass1, ProductType.NonConsumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapCommClass2, ProductType.NonConsumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapCommClass3, ProductType.NonConsumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iap3xEmeralds, ProductType.NonConsumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iap2xAdRewards, ProductType.NonConsumable);
+		configurationBuilder.AddProduct(IAPManagerMobile.iapEpicSkins, ProductType.NonConsumable);
+		UnityPurchasing.Initialize(this, configurationBuilder);
+	}
+
+	private bool IsInitialized()
+	{
+		return IAPManagerMobile.m_StoreController != null && IAPManagerMobile.m_StoreExtensionProvider != null;
+	}
+
+	public void clickedBuyProductButton(string productID)
+	{
+		UnityEngine.Debug.Log("purchase initiated");
+		UIManager.Instance.closeTournBoostPanel();
+		UIManager.Instance.iapBlackBg.SetActive(true);
+		UIManager.Instance.iapPurchasing.SetActive(true);
+		this.BuyProductID(productID);
+	}
+
+	private void BuyProductID(string productId)
+	{
+		if (this.IsInitialized())
+		{
+			Product product = IAPManagerMobile.m_StoreController.products.WithID(productId);
+			if (product != null && product.availableToPurchase)
+			{
+				UnityEngine.Debug.Log(string.Format("Purchasing product asychronously: '{0}'", product.definition.id));
+				IAPManagerMobile.m_StoreController.InitiatePurchase(product);
+			}
+			else
+			{
+				UnityEngine.Debug.Log("BuyProductID: FAIL. Not purchasing product, either is not found or is not available for purchase");
+				UnityEngine.Debug.Log("purchase failed - item not available");
+				UIManager.Instance.iapBlackBg.SetActive(true);
+				UIManager.Instance.iapPurchasing.SetActive(false);
+				UIManager.Instance.iapFailed.SetActive(true);
+			}
+		}
+		else
+		{
+			UnityEngine.Debug.Log("BuyProductID FAIL. Not initialized.");
+			UnityEngine.Debug.Log("purchase failed - not initialized");
+			UIManager.Instance.iapBlackBg.SetActive(true);
+			UIManager.Instance.iapPurchasing.SetActive(false);
+			UIManager.Instance.iapFailed.SetActive(true);
+		}
+	}
+
+	public void RestorePurchases()
+	{
+		if (!this.IsInitialized())
+		{
+			UnityEngine.Debug.Log("RestorePurchases FAIL. Not initialized.");
+			return;
+		}
+		if (Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.OSXPlayer)
+		{
+			UnityEngine.Debug.Log("RestorePurchases started ...");
+			IAppleExtensions extension = IAPManagerMobile.m_StoreExtensionProvider.GetExtension<IAppleExtensions>();
+			extension.RestoreTransactions(delegate(bool result)
+			{
+				UnityEngine.Debug.Log("RestorePurchases continuing: " + result + ". If no further messages, no purchases available to restore.");
+			});
+		}
+		else
+		{
+			UnityEngine.Debug.Log("RestorePurchases FAIL. Not supported on this platform. Current = " + Application.platform);
+		}
+	}
+
+	public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
+	{
+		UnityEngine.Debug.Log("OnInitialized: PASS");
+		IAPManagerMobile.m_StoreController = controller;
+		IAPManagerMobile.m_StoreExtensionProvider = extensions;
+	}
+
+	public void OnInitializeFailed(InitializationFailureReason error)
+	{
+		UnityEngine.Debug.Log("OnInitializeFailed InitializationFailureReason:" + error);
+	}
+
+	public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
+	{
+		bool flag = true;
+		CrossPlatformValidator crossPlatformValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
+		try
+		{
+			IPurchaseReceipt[] array = crossPlatformValidator.Validate(args.purchasedProduct.receipt);
+		}
+		catch (IAPSecurityException)
+		{
+			UnityEngine.Debug.Log("Invalid receipt, not unlocking content");
+			flag = false;
+		}
+		if (flag)
+		{
+			UnityEngine.Debug.Log("purchase success");
+			UIManager.Instance.iapBlackBg.SetActive(true);
+			UIManager.Instance.iapPurchasing.SetActive(false);
+			UIManager.Instance.iapSuccessful.SetActive(true);
+			if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapSkipVideoAds, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!GameManager.Instance.iapSkipAds)
+				{
+					GameManager.Instance.iapSkipAds = true;
+					GameManager.Instance.gemsAmt += 500;
+					GameManager.Instance.amtBoughtFromIAPs += 500;
+					GameManager.Instance.statMoneySpent += 6;
+					GameManager.Instance.leadMoneySpent += 6;
+					AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+					{
+						{
+							"af_content_id",
+							"Skip Ads"
+						},
+						{
+							"af_content_type",
+							"IAP"
+						},
+						{
+							"af_revenue",
+							"5.99"
+						},
+						{
+							"af_currency",
+							"USD"
+						}
+					});
+				}
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapGems250, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!this.isSale)
+				{
+					GameManager.Instance.gemsAmt += 250;
+					GameManager.Instance.amtBoughtFromIAPs += 250;
+				}
+				else
+				{
+					GameManager.Instance.gemsAmt += 275;
+					GameManager.Instance.amtBoughtFromIAPs += 275;
+				}
+				GameManager.Instance.statMoneySpent += 2;
+				GameManager.Instance.leadMoneySpent += 2;
+				AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+				{
+					{
+						"af_content_id",
+						"Gems 250"
+					},
+					{
+						"af_content_type",
+						"IAP"
+					},
+					{
+						"af_revenue",
+						"1.99"
+					},
+					{
+						"af_currency",
+						"USD"
+					}
+				});
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapGems600, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!this.isSale)
+				{
+					GameManager.Instance.gemsAmt += 600;
+					GameManager.Instance.amtBoughtFromIAPs += 600;
+				}
+				else
+				{
+					GameManager.Instance.gemsAmt += 690;
+					GameManager.Instance.amtBoughtFromIAPs += 690;
+				}
+				GameManager.Instance.statMoneySpent += 4;
+				GameManager.Instance.leadMoneySpent += 4;
+				AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+				{
+					{
+						"af_content_id",
+						"Gems 600"
+					},
+					{
+						"af_content_type",
+						"IAP"
+					},
+					{
+						"af_revenue",
+						"3.99"
+					},
+					{
+						"af_currency",
+						"USD"
+					}
+				});
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapGems1750, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!this.isSale)
+				{
+					GameManager.Instance.gemsAmt += 1750;
+					GameManager.Instance.amtBoughtFromIAPs += 1750;
+				}
+				else
+				{
+					GameManager.Instance.gemsAmt += 2015;
+					GameManager.Instance.amtBoughtFromIAPs += 2015;
+				}
+				GameManager.Instance.statMoneySpent += 10;
+				GameManager.Instance.leadMoneySpent += 10;
+				AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+				{
+					{
+						"af_content_id",
+						"Gems 1750"
+					},
+					{
+						"af_content_type",
+						"IAP"
+					},
+					{
+						"af_revenue",
+						"9.99"
+					},
+					{
+						"af_currency",
+						"USD"
+					}
+				});
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapGems4000, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!this.isSale)
+				{
+					GameManager.Instance.gemsAmt += 4000;
+					GameManager.Instance.amtBoughtFromIAPs += 4000;
+				}
+				else
+				{
+					GameManager.Instance.gemsAmt += 4800;
+					GameManager.Instance.amtBoughtFromIAPs += 4800;
+				}
+				GameManager.Instance.statMoneySpent += 20;
+				GameManager.Instance.leadMoneySpent += 20;
+				AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+				{
+					{
+						"af_content_id",
+						"Gems 4000"
+					},
+					{
+						"af_content_type",
+						"IAP"
+					},
+					{
+						"af_revenue",
+						"19.99"
+					},
+					{
+						"af_currency",
+						"USD"
+					}
+				});
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapGems12500, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!this.isSale)
+				{
+					GameManager.Instance.gemsAmt += 12500;
+					GameManager.Instance.amtBoughtFromIAPs += 12500;
+				}
+				else
+				{
+					GameManager.Instance.gemsAmt += 15000;
+					GameManager.Instance.amtBoughtFromIAPs += 15000;
+				}
+				GameManager.Instance.statMoneySpent += 50;
+				GameManager.Instance.leadMoneySpent += 50;
+				AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+				{
+					{
+						"af_content_id",
+						"Gems 12500"
+					},
+					{
+						"af_content_type",
+						"IAP"
+					},
+					{
+						"af_revenue",
+						"49.99"
+					},
+					{
+						"af_currency",
+						"USD"
+					}
+				});
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iap2xGameSpeed, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!GameManager.Instance.iap2xGameSpeed)
+				{
+					GameManager.Instance.iap2xGameSpeed = true;
+					GameManager.Instance.settings2xGameSpeed = true;
+					GameManager.Instance.statMoneySpent += 10;
+					GameManager.Instance.leadMoneySpent += 10;
+					AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+					{
+						{
+							"af_content_id",
+							"Game Speed 2x"
+						},
+						{
+							"af_content_type",
+							"IAP"
+						},
+						{
+							"af_revenue",
+							"9.99"
+						},
+						{
+							"af_currency",
+							"USD"
+						}
+					});
+				}
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapTournBoost, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				GameManager.Instance.iapTournBoost = true;
+				GameManager.Instance.gemsAmt += 250;
+				GameManager.Instance.amtBoughtFromIAPs += 250;
+				GameManager.Instance.statMoneySpent += 3;
+				GameManager.Instance.leadMoneySpent += 3;
+				TournamentManager.Instance.openPvpMenu();
+				AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+				{
+					{
+						"af_content_id",
+						"Tourn Boost"
+					},
+					{
+						"af_content_type",
+						"IAP"
+					},
+					{
+						"af_revenue",
+						"2.99"
+					},
+					{
+						"af_currency",
+						"USD"
+					}
+				});
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapCommClass1, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!GameManager.Instance.iapCommClass1)
+				{
+					GameManager.Instance.iapCommClass1 = true;
+					GameManager.Instance.statMoneySpent += 12;
+					GameManager.Instance.leadMoneySpent += 12;
+					UIManager.Instance.iapCommClass1.updateCell();
+					AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+					{
+						{
+							"af_content_id",
+							"Class Champion"
+						},
+						{
+							"af_content_type",
+							"IAP"
+						},
+						{
+							"af_revenue",
+							"11.99"
+						},
+						{
+							"af_currency",
+							"USD"
+						}
+					});
+				}
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapCommClass2, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!GameManager.Instance.iapCommClass2)
+				{
+					GameManager.Instance.iapCommClass2 = true;
+					GameManager.Instance.statMoneySpent += 6;
+					GameManager.Instance.leadMoneySpent += 6;
+					UIManager.Instance.iapCommClass2.updateCell();
+					AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+					{
+						{
+							"af_content_id",
+							"Class Mastermind"
+						},
+						{
+							"af_content_type",
+							"IAP"
+						},
+						{
+							"af_revenue",
+							"5.99"
+						},
+						{
+							"af_currency",
+							"USD"
+						}
+					});
+				}
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapCommClass3, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!GameManager.Instance.iapCommClass3)
+				{
+					GameManager.Instance.iapCommClass3 = true;
+					GameManager.Instance.statMoneySpent += 9;
+					GameManager.Instance.leadMoneySpent += 9;
+					UIManager.Instance.iapCommClass3.updateCell();
+					AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+					{
+						{
+							"af_content_id",
+							"Class Kingslayer"
+						},
+						{
+							"af_content_type",
+							"IAP"
+						},
+						{
+							"af_revenue",
+							"8.99"
+						},
+						{
+							"af_currency",
+							"USD"
+						}
+					});
+				}
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iap3xEmeralds, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!GameManager.Instance.iap3xEmeralds)
+				{
+					GameManager.Instance.iap3xEmeralds = true;
+					GameManager.Instance.gemsAmt += 750;
+					GameManager.Instance.amtBoughtFromIAPs += 750;
+					GameManager.Instance.statMoneySpent += 15;
+					GameManager.Instance.leadMoneySpent += 15;
+					GameManager.Instance.q1Reward *= 3;
+					GameManager.Instance.q2Reward *= 3;
+					GameManager.Instance.q3Reward *= 3;
+					GameManager.Instance.q4Reward *= 3;
+					GameManager.Instance.q5Reward *= 3;
+					GameManager.Instance.q6Reward *= 3;
+					AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+					{
+						{
+							"af_content_id",
+							"Emeralds 3x"
+						},
+						{
+							"af_content_type",
+							"IAP"
+						},
+						{
+							"af_revenue",
+							"14.99"
+						},
+						{
+							"af_currency",
+							"USD"
+						}
+					});
+				}
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iap2xAdBoost, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				GameManager.Instance.iap2xAdBoost = 86400;
+				GameManager.Instance.gemsAmt += 250;
+				GameManager.Instance.amtBoughtFromIAPs += 250;
+				GameManager.Instance.statMoneySpent += 6;
+				GameManager.Instance.leadMoneySpent += 6;
+				if (GameManager.Instance.iapSkipAds)
+				{
+					UIManager.Instance.videoAdRewardAmt *= 2.0;
+					UIManager.Instance.closeBlackBg();
+					UIManager.Instance.showAdReward();
+				}
+				else
+				{
+					UIManager.Instance.closeBlackBg();
+					UIManager.Instance.clickedVideoAdButton();
+				}
+				AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+				{
+					{
+						"af_content_id",
+						"Ad Boost 2x"
+					},
+					{
+						"af_content_type",
+						"IAP"
+					},
+					{
+						"af_revenue",
+						"5.99"
+					},
+					{
+						"af_currency",
+						"USD"
+					}
+				});
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iap2xAdRewards, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!GameManager.Instance.iap2xAdRewards)
+				{
+					GameManager.Instance.iap2xAdRewards = true;
+					GameManager.Instance.gemsAmt += 500;
+					GameManager.Instance.amtBoughtFromIAPs += 500;
+					GameManager.Instance.statMoneySpent += 10;
+					GameManager.Instance.leadMoneySpent += 10;
+					AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+					{
+						{
+							"af_content_id",
+							"Ad Reward 2x"
+						},
+						{
+							"af_content_type",
+							"IAP"
+						},
+						{
+							"af_revenue",
+							"9.99"
+						},
+						{
+							"af_currency",
+							"USD"
+						}
+					});
+				}
+			}
+			else if (string.Equals(args.purchasedProduct.definition.id, IAPManagerMobile.iapEpicSkins, StringComparison.Ordinal))
+			{
+				UnityEngine.Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
+				if (!GameManager.Instance.iapEpicSkins)
+				{
+					GameManager.Instance.iapEpicSkins = true;
+					GameManager.Instance.settingsRareSkins = false;
+					GameManager.Instance.settingsEpicSkins = true;
+					GameManager.Instance.statMoneySpent += 10;
+					GameManager.Instance.leadMoneySpent += 10;
+					for (int i = 0; i < HeroManager.Instance.heroList.Count; i++)
+					{
+						HeroManager.Instance.heroList[i].setActualUnit();
+					}
+					AppsFlyer.trackRichEvent("af_purchase", new Dictionary<string, string>
+					{
+						{
+							"af_content_id",
+							"Epic Hero Skins"
+						},
+						{
+							"af_content_type",
+							"IAP"
+						},
+						{
+							"af_revenue",
+							"9.99"
+						},
+						{
+							"af_currency",
+							"USD"
+						}
+					});
+				}
+			}
+			DataManager.Instance.saveData(true);
+		}
+		else
+		{
+			UnityEngine.Debug.Log("purchase failed - R.V.");
+			UIManager.Instance.iapBlackBg.SetActive(true);
+			UIManager.Instance.iapPurchasing.SetActive(false);
+			UIManager.Instance.iapFailed.SetActive(true);
+		}
+		return PurchaseProcessingResult.Complete;
+	}
+
+	public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+	{
+		UnityEngine.Debug.Log(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
+		UnityEngine.Debug.Log("purchase failed");
+		UIManager.Instance.iapBlackBg.SetActive(true);
+		UIManager.Instance.iapPurchasing.SetActive(false);
+		UIManager.Instance.iapFailed.SetActive(true);
+	}
+
+	public static IAPManagerMobile Instance;
+
+	private static IStoreController m_StoreController;
+
+	private static IExtensionProvider m_StoreExtensionProvider;
+
+	public static string iapSkipVideoAds = "idlehd.skipvideoads";
+
+	public static string iapGems250 = "idlehd.250gems";
+
+	public static string iapGems600 = "idlehd.600gems";
+
+	public static string iapGems1750 = "idlehd.1750gems";
+
+	public static string iapGems4000 = "idlehd.4000gems";
+
+	public static string iapGems12500 = "idlehd.12500gems";
+
+	public static string iap2xGameSpeed = "idlehd.2xspeed";
+
+	public static string iapTournBoost = "idlehd.tournboost";
+
+	public static string iapCommClass1 = "idlehd.commclass1";
+
+	public static string iapCommClass2 = "idlehd.commclass2";
+
+	public static string iapCommClass3 = "idlehd.commclass3";
+
+	public static string iap3xEmeralds = "idlehd.3xemeralds";
+
+	public static string iap2xAdBoost = "idlehd.adboost";
+
+	public static string iap2xAdRewards = "idlehd.2xadrewards";
+
+	public static string iapEpicSkins = "idlehd.epicskins";
+
+	public bool isSale;
+}

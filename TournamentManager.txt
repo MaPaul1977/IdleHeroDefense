@@ -1,0 +1,1836 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using PlayFab;
+using PlayFab.ClientModels;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class TournamentManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		TournamentManager.Instance = this;
+	}
+
+	private void Start()
+	{
+		this.showScores = true;
+		this.uiButton.GetComponent<Animator>().enabled = false;
+		this.updateButtonText();
+	}
+
+	public void updateButtonText()
+	{
+		if (!LoginManager.Instance.isConnectedPlayfab)
+		{
+			GameManager.Instance.tournamentActive = false;
+			this.uiButtonText.text = "N/A";
+			this.uiButton.GetComponent<Animator>().enabled = false;
+			return;
+		}
+		PlayFabClientAPI.GetTitleData(new GetTitleDataRequest(), delegate(GetTitleDataResult result)
+		{
+			foreach (KeyValuePair<string, string> keyValuePair in result.Data)
+			{
+				if (keyValuePair.Key == "TournamentDate")
+				{
+					GameManager.Instance.tournamentOnDate = keyValuePair.Value;
+				}
+				else if (keyValuePair.Key == "TournamentType")
+				{
+					GameManager.Instance.tournamentOnType = int.Parse(keyValuePair.Value);
+				}
+			}
+			UnityEngine.Debug.Log("got tournament title data");
+			DateTime d = DateTime.ParseExact(GameManager.Instance.currServerTime.ToString("yyyy/MM/dd"), "yyyy/MM/dd", null);
+			DateTime dateTime = DateTime.ParseExact(GameManager.Instance.tournamentLastDate, "yyyy/MM/dd", null);
+			DateTime dateTime2 = DateTime.ParseExact(GameManager.Instance.tournamentOnDate, "yyyy/MM/dd", null);
+			if (GameManager.Instance.currServerTime.DayOfWeek == DayOfWeek.Sunday || GameManager.Instance.currServerTime.DayOfWeek == DayOfWeek.Wednesday)
+			{
+				if (dateTime < dateTime2 && d == dateTime2)
+				{
+					this.uiButtonText.text = "Play!";
+					GameManager.Instance.tournamentActive = false;
+					this.uiButton.GetComponent<Animator>().enabled = true;
+				}
+				else if (dateTime == dateTime2 && d == dateTime2)
+				{
+					int num = (int)(GameManager.Instance.currServerTime.AddDays(1.0).Date - GameManager.Instance.currServerTime).TotalSeconds;
+					TimeSpan timeSpan = TimeSpan.FromSeconds((double)num);
+					this.uiButtonText.text = "Active\n(" + string.Format("{0:D1}h {1:D1}m", timeSpan.Hours, timeSpan.Minutes) + ")";
+					GameManager.Instance.tournamentActive = true;
+					this.uiButton.GetComponent<Animator>().enabled = false;
+				}
+				else
+				{
+					this.uiButtonText.text = "N/A";
+					GameManager.Instance.tournamentActive = false;
+					this.uiButton.GetComponent<Animator>().enabled = false;
+				}
+			}
+			else
+			{
+				if (!GameManager.Instance.tournamentClaimedReward && dateTime == dateTime2)
+				{
+					this.uiButtonText.text = "Claim\nPrize!";
+					this.uiButton.GetComponent<Animator>().enabled = true;
+				}
+				else
+				{
+					this.uiButtonText.text = "N/A";
+					this.uiButton.GetComponent<Animator>().enabled = false;
+				}
+				GameManager.Instance.tournamentActive = false;
+			}
+		}, delegate(PlayFabError error)
+		{
+			UnityEngine.Debug.Log("error getting tournament data");
+			this.uiButtonText.text = "N/A";
+			GameManager.Instance.tournamentActive = false;
+			this.uiButton.GetComponent<Animator>().enabled = false;
+		}, null, null);
+	}
+
+	public void openPvpMenu()
+	{
+		this.pvpLoadingPanel.SetActive(false);
+		this.pvpForgotToHostPanel.SetActive(false);
+		this.pvpNotConnectedPanel.SetActive(false);
+		this.pvpNextPanel.SetActive(false);
+		this.boostButton.SetActive(false);
+		this.joinButton.SetActive(false);
+		this.claimButton.SetActive(false);
+		this.cantJoinButton.SetActive(false);
+		UIManager.Instance.blackbg.SetActive(true);
+		this.pvpActivePanel.SetActive(true);
+		if (!LoginManager.Instance.isConnectedPlayfab)
+		{
+			this.pvpNotConnectedPanel.SetActive(true);
+			return;
+		}
+		DateTime d = DateTime.ParseExact(GameManager.Instance.currServerTime.ToString("yyyy/MM/dd"), "yyyy/MM/dd", null);
+		DateTime dateTime = DateTime.ParseExact(GameManager.Instance.tournamentLastDate, "yyyy/MM/dd", null);
+		DateTime dateTime2 = DateTime.ParseExact(GameManager.Instance.tournamentOnDate, "yyyy/MM/dd", null);
+		if (GameManager.Instance.currServerTime.DayOfWeek == DayOfWeek.Sunday || GameManager.Instance.currServerTime.DayOfWeek == DayOfWeek.Wednesday)
+		{
+			if (dateTime < dateTime2 && d == dateTime2)
+			{
+				if (GameManager.Instance.enemyWaveNum > GameManager.Instance.nextPrestigeWave)
+				{
+					this.joinButton.SetActive(true);
+				}
+				else
+				{
+					this.cantJoinButton.SetActive(true);
+					this.cantJoinButton.GetComponent<Button>().enabled = false;
+					this.cantJoinReqText.text = "Wave " + (GameManager.Instance.nextPrestigeWave + 1) + " Required";
+				}
+			}
+			else
+			{
+				if (!(dateTime == dateTime2) || !(d == dateTime2))
+				{
+					this.pvpForgotToHostPanel.SetActive(true);
+					return;
+				}
+				if (!GameManager.Instance.iapTournBoost)
+				{
+					this.boostButton.SetActive(true);
+				}
+				int num = (int)(GameManager.Instance.currServerTime.AddDays(1.0).Date - GameManager.Instance.currServerTime).TotalSeconds;
+				TimeSpan timeSpan = TimeSpan.FromSeconds((double)num);
+				this.timeRemainingText.text = string.Format("{0:D1}h {1:D1}m", timeSpan.Hours, timeSpan.Minutes) + " remaining";
+			}
+		}
+		else
+		{
+			if (GameManager.Instance.tournamentClaimedReward || !(dateTime == dateTime2))
+			{
+				int num2 = 0;
+				if (GameManager.Instance.currServerTime.DayOfWeek < DayOfWeek.Wednesday)
+				{
+					num2 = (int)(DayOfWeek.Wednesday - GameManager.Instance.currServerTime.DayOfWeek);
+				}
+				else if (GameManager.Instance.currServerTime.DayOfWeek < (DayOfWeek)7)
+				{
+					num2 = (int)((DayOfWeek)7 - GameManager.Instance.currServerTime.DayOfWeek);
+				}
+				DateTime date = GameManager.Instance.currServerTime.AddDays((double)num2).Date;
+				int num3 = (int)(date - GameManager.Instance.currServerTime).TotalSeconds;
+				TimeSpan timeSpan2 = TimeSpan.FromSeconds((double)num3);
+				this.nextTournTimeText.text = string.Format("{0:D1}d {1:D1}h {2:D1}m", timeSpan2.Days, timeSpan2.Hours, timeSpan2.Minutes);
+				this.pvpNextPanel.SetActive(true);
+				return;
+			}
+			this.claimButton.SetActive(true);
+		}
+		if (!this.scoresLoaded)
+		{
+			this.pvpLoadingPanel.SetActive(true);
+			this.loadLeaderboard();
+			return;
+		}
+		this.rewardPlaceText.text = "1";
+		for (int i = 1; i < 9; i++)
+		{
+			int num4 = this.getBracketPlacements(this.savedYourBracket, i) + 1;
+			int bracketPlacements = this.getBracketPlacements(this.savedYourBracket, i + 1);
+			if (i < 8)
+			{
+				if (num4 != bracketPlacements)
+				{
+					Text text = this.rewardPlaceText;
+					string text2 = text.text;
+					text.text = string.Concat(new object[]
+					{
+						text2,
+						"\n",
+						num4,
+						" - ",
+						bracketPlacements
+					});
+				}
+				else
+				{
+					Text text3 = this.rewardPlaceText;
+					text3.text = text3.text + "\n" + num4;
+				}
+			}
+			else
+			{
+				Text text4 = this.rewardPlaceText;
+				string text2 = text4.text;
+				text4.text = string.Concat(new object[]
+				{
+					text2,
+					"\n",
+					num4,
+					"+"
+				});
+			}
+		}
+	}
+
+	public void openTournBoost()
+	{
+		UIManager.Instance.openTournBoostPanel();
+	}
+
+	public void openPvpHelpMenu()
+	{
+		this.pvpHelpPanel.SetActive(true);
+	}
+
+	public void closePvpHelpMenu()
+	{
+		this.pvpHelpPanel.SetActive(false);
+	}
+
+	private void loadLeaderboard()
+	{
+		this.lastUpdateTimer = 0f;
+		this.rewardAtBg.SetActive(false);
+		this.placeAtBg.SetActive(false);
+		this.listPos.Clear();
+		this.listName.Clear();
+		this.listId.Clear();
+		this.listVal.Clear();
+		bool youreTop14 = false;
+		DateTime lastDT = DateTime.ParseExact(GameManager.Instance.tournamentLastDate, "yyyy/MM/dd", null);
+		DateTime onDT = DateTime.ParseExact(GameManager.Instance.tournamentOnDate, "yyyy/MM/dd", null);
+		int num;
+		if (GameManager.Instance.tournamentActive || (!GameManager.Instance.tournamentClaimedReward && lastDT == onDT))
+		{
+			num = GameManager.Instance.tournamentBracket;
+		}
+		else if (AchievementManager.Instance.listAch[3].currAmt <= 500.0)
+		{
+			num = 9;
+		}
+		else if (AchievementManager.Instance.listAch[3].currAmt <= 1000.0)
+		{
+			num = 8;
+		}
+		else if (AchievementManager.Instance.listAch[3].currAmt <= 1500.0)
+		{
+			num = 7;
+		}
+		else if (AchievementManager.Instance.listAch[3].currAmt <= 2000.0)
+		{
+			num = 6;
+		}
+		else if (AchievementManager.Instance.listAch[3].currAmt <= 2500.0)
+		{
+			num = 5;
+		}
+		else if (AchievementManager.Instance.listAch[3].currAmt <= 3000.0)
+		{
+			num = 4;
+		}
+		else if (AchievementManager.Instance.listAch[3].currAmt <= 3500.0)
+		{
+			num = 3;
+		}
+		else if (AchievementManager.Instance.listAch[3].currAmt <= 4000.0)
+		{
+			num = 2;
+		}
+		else
+		{
+			num = 1;
+		}
+		this.savedYourBracket = num;
+		this.rewardBracketTitleText.text = "Bracket " + num + " Rewards";
+		this.rewardGemsText.text = string.Concat(new string[]
+		{
+			this.getGemReward(num, 1).ToString(),
+			" gems\n",
+			this.getGemReward(num, 2).ToString(),
+			" gems\n",
+			this.getGemReward(num, 3).ToString(),
+			" gems\n",
+			this.getGemReward(num, 4).ToString(),
+			" gems\n",
+			this.getGemReward(num, 5).ToString(),
+			" gems\n",
+			this.getGemReward(num, 6).ToString(),
+			" gems\n",
+			this.getGemReward(num, 7).ToString(),
+			" gems\n",
+			this.getGemReward(num, 8).ToString(),
+			" gems\n",
+			this.getGemReward(num, 9).ToString(),
+			" gems"
+		});
+		this.rewardArtsText.text = string.Concat(new string[]
+		{
+			this.getArtifactReward(num, 1).ToString(),
+			" artifacts\n",
+			this.getArtifactReward(num, 2).ToString(),
+			" artifacts\n",
+			this.getArtifactReward(num, 3).ToString(),
+			" artifacts\n",
+			this.getArtifactReward(num, 4).ToString(),
+			" artifacts\n",
+			this.getArtifactReward(num, 5).ToString(),
+			" artifacts\n",
+			this.getArtifactReward(num, 6).ToString(),
+			" artifacts\n",
+			this.getArtifactReward(num, 7).ToString(),
+			" artifacts\n",
+			this.getArtifactReward(num, 8).ToString(),
+			" artifacts\n",
+			this.getArtifactReward(num, 9).ToString(),
+			" artifacts"
+		});
+		string bString = "Tourn B" + num.ToString();
+		if (GameManager.Instance.tournamentOnType == 1)
+		{
+			this.leaderboardTitle.text = "Bracket " + num + " Leaderboard";
+		}
+		PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+		{
+			StatisticName = bString,
+			StartPosition = 0,
+			MaxResultsCount = new int?(14)
+		}, delegate(GetLeaderboardResult result)
+		{
+			foreach (PlayerLeaderboardEntry playerLeaderboardEntry in result.Leaderboard)
+			{
+				if (playerLeaderboardEntry.Position < 10)
+				{
+					this.listPos.Add(playerLeaderboardEntry.Position + 1);
+					if (playerLeaderboardEntry.DisplayName != null)
+					{
+						this.listName.Add(playerLeaderboardEntry.DisplayName);
+					}
+					else
+					{
+						this.listName.Add(playerLeaderboardEntry.PlayFabId);
+					}
+					this.listId.Add(playerLeaderboardEntry.PlayFabId);
+					this.listVal.Add(playerLeaderboardEntry.StatValue);
+				}
+				UnityEngine.Debug.Log("tourn leaderboard count - " + this.listPos.Count);
+				if (playerLeaderboardEntry.PlayFabId == LoginManager.Instance.playFabID)
+				{
+					youreTop14 = true;
+					UnityEngine.Debug.Log("tourn - found you in top 14 leaderboard");
+				}
+			}
+			if (this.listPos.Count < 10)
+			{
+				UnityEngine.Debug.Log("tourn - less than 10 ppl in bracket");
+				for (int i = 0; i < this.listPos.Count; i++)
+				{
+					this.updateTableCell(this.listCells[i], this.listPos[i], this.listName[i], this.listId[i], this.listVal[i], i);
+				}
+				this.scoresLoaded = true;
+				if (this.pvpActivePanel.activeSelf)
+				{
+					this.openPvpMenu();
+				}
+				return;
+			}
+			if (!youreTop14 && lastDT == onDT)
+			{
+				PlayFabClientAPI.GetLeaderboardAroundPlayer(new GetLeaderboardAroundPlayerRequest
+				{
+					PlayFabId = LoginManager.Instance.playFabID,
+					StatisticName = bString,
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardAroundPlayerResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					UnityEngine.Debug.Log("tourn - loaded near you leaderboard");
+					UnityEngine.Debug.Log("tourn leaderboard count - " + this.listPos.Count);
+					for (int j = 0; j < this.listPos.Count; j++)
+					{
+						this.updateTableCell(this.listCells[j], this.listPos[j], this.listName[j], this.listId[j], this.listVal[j], j);
+					}
+					this.scoresLoaded = true;
+					if (this.pvpActivePanel.activeSelf)
+					{
+						this.openPvpMenu();
+					}
+				}, delegate(PlayFabError error2)
+				{
+					UnityEngine.Debug.Log("tourn - error loading near you leaderboard");
+				}, null, null);
+			}
+			else
+			{
+				PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+				{
+					StatisticName = bString,
+					StartPosition = 10,
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					UnityEngine.Debug.Log("tourn - loaded 10-19 leaderboard");
+					UnityEngine.Debug.Log("tourn leaderboard count - " + this.listPos.Count);
+					for (int j = 0; j < this.listPos.Count; j++)
+					{
+						this.updateTableCell(this.listCells[j], this.listPos[j], this.listName[j], this.listId[j], this.listVal[j], j);
+					}
+					this.scoresLoaded = true;
+					if (this.pvpActivePanel.activeSelf)
+					{
+						this.openPvpMenu();
+					}
+				}, delegate(PlayFabError error2)
+				{
+					UnityEngine.Debug.Log("tourn - error loading 10-19 leaderboard");
+				}, null, null);
+			}
+		}, delegate(PlayFabError error)
+		{
+			UnityEngine.Debug.Log("tourn - error loading top 10 leaderboard");
+		}, null, null);
+	}
+
+	public void clickedScoreTimeToggle()
+	{
+		if (this.showScores)
+		{
+			this.showScores = false;
+			this.toggleButtonText.text = "Show Scores";
+		}
+		else
+		{
+			this.showScores = true;
+			this.toggleButtonText.text = "Show Times";
+		}
+		for (int i = 0; i < this.listPos.Count; i++)
+		{
+			this.updateTableCell(this.listCells[i], this.listPos[i], this.listName[i], this.listId[i], this.listVal[i], i);
+		}
+	}
+
+	private void updateTableCell(GameObject _cell, int _place, string _name, string _id, int _score, int _iVal)
+	{
+		Text component = _cell.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>();
+		Text component2 = _cell.transform.GetChild(1).gameObject.GetComponent<Text>();
+		Text component3 = _cell.transform.GetChild(2).gameObject.GetComponent<Text>();
+		component.text = _place.ToString("n0");
+		component2.text = _name;
+		if (GameManager.Instance.tournamentOnType == 1)
+		{
+			int num = _score / 200000;
+			if (this.showScores)
+			{
+				component3.text = num.ToString("n0");
+			}
+			else
+			{
+				int num2 = _score - num * 200000;
+				TimeSpan timeSpan = TimeSpan.FromSeconds((double)(86400 - num2));
+				component3.text = string.Format("{0:D2}:{1:D2}:{2:D2}", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+			}
+		}
+		else
+		{
+			component3.text = _score.ToString("n0");
+		}
+		if (_id == LoginManager.Instance.playFabID)
+		{
+			this.savedYourPos = _place;
+			int num3;
+			if (_place > this.getBracketPlacements(this.savedYourBracket, 8))
+			{
+				num3 = 8;
+			}
+			else if (_place > this.getBracketPlacements(this.savedYourBracket, 7))
+			{
+				num3 = 7;
+			}
+			else if (_place > this.getBracketPlacements(this.savedYourBracket, 6))
+			{
+				num3 = 6;
+			}
+			else if (_place > this.getBracketPlacements(this.savedYourBracket, 5))
+			{
+				num3 = 5;
+			}
+			else if (_place > this.getBracketPlacements(this.savedYourBracket, 4))
+			{
+				num3 = 4;
+			}
+			else if (_place > this.getBracketPlacements(this.savedYourBracket, 3))
+			{
+				num3 = 3;
+			}
+			else if (_place > this.getBracketPlacements(this.savedYourBracket, 2))
+			{
+				num3 = 2;
+			}
+			else if (_place > this.getBracketPlacements(this.savedYourBracket, 1))
+			{
+				num3 = 1;
+			}
+			else
+			{
+				num3 = 0;
+			}
+			this.rewardAtBg.transform.localPosition = new Vector3(this.rewardAtBg.transform.localPosition.x, -43f - (float)(16 * num3), this.rewardAtBg.transform.localPosition.z);
+			this.rewardAtBg.SetActive(true);
+			this.placeAtBg.transform.localPosition = new Vector3(_cell.transform.localPosition.x, _cell.transform.localPosition.y + 3f, _cell.transform.localPosition.z);
+			this.placeAtBg.SetActive(true);
+		}
+	}
+
+	public void clickedPlayButton()
+	{
+		if (GameManager.Instance.m5Num == 5)
+		{
+			GameManager.Instance.m5CurrVal++;
+			GameManager.Instance.checkMissionStatus();
+		}
+		GameManager.Instance.tournamentActive = true;
+		GameManager.Instance.tournamentBracket = this.savedYourBracket;
+		GameManager.Instance.tournamentClaimedReward = false;
+		GameManager.Instance.tournamentLastDate = GameManager.Instance.currServerTime.ToString("yyyy/MM/dd");
+		GameManager.Instance.tournamentScore = 0;
+		GameManager.Instance.iapTournBoost = false;
+		string statisticName = "Tourn B" + GameManager.Instance.tournamentBracket.ToString();
+		PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest
+		{
+			Statistics = new List<StatisticUpdate>
+			{
+				new StatisticUpdate
+				{
+					StatisticName = statisticName,
+					Value = GameManager.Instance.tournamentScore
+				}
+			}
+		}, delegate(UpdatePlayerStatisticsResult result)
+		{
+		}, delegate(PlayFabError error)
+		{
+		}, null, null);
+		GameManager.Instance.doPrestige(false);
+		UIManager.Instance.closeBlackBg();
+	}
+
+	public void clickedClaimButton()
+	{
+		GameManager.Instance.tournamentClaimedReward = true;
+		GameManager.Instance.iapTournBoost = false;
+		AchievementManager.Instance.listAch[25].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(25);
+		int place;
+		if (this.savedYourPos > this.getBracketPlacements(this.savedYourBracket, 8))
+		{
+			place = 9;
+		}
+		else if (this.savedYourPos > this.getBracketPlacements(this.savedYourBracket, 7))
+		{
+			place = 8;
+		}
+		else if (this.savedYourPos > this.getBracketPlacements(this.savedYourBracket, 6))
+		{
+			place = 7;
+		}
+		else if (this.savedYourPos > this.getBracketPlacements(this.savedYourBracket, 5))
+		{
+			place = 6;
+		}
+		else if (this.savedYourPos > this.getBracketPlacements(this.savedYourBracket, 4))
+		{
+			place = 5;
+		}
+		else if (this.savedYourPos > this.getBracketPlacements(this.savedYourBracket, 3))
+		{
+			place = 4;
+		}
+		else if (this.savedYourPos > this.getBracketPlacements(this.savedYourBracket, 2))
+		{
+			place = 3;
+		}
+		else if (this.savedYourPos > this.getBracketPlacements(this.savedYourBracket, 1))
+		{
+			place = 2;
+		}
+		else
+		{
+			place = 1;
+		}
+		int gemReward = this.getGemReward(this.savedYourBracket, place);
+		int artifactReward = this.getArtifactReward(this.savedYourBracket, place);
+		this.resultsPlaceText.text = this.savedYourPos.ToString("0");
+		this.resultsBracketText.text = this.savedYourBracket.ToString("0");
+		this.resultsGemsText.text = "+" + gemReward.ToString("0") + " gems";
+		this.resultsArtifactsText.text = "+" + artifactReward.ToString("0") + " artifacts";
+		GameManager.Instance.gemsAmt += gemReward;
+		List<int> list = new List<int>();
+		list.Add(0);
+		list.Add(0);
+		list.Add(0);
+		list.Add(0);
+		list.Add(0);
+		list.Add(0);
+		list.Add(0);
+		list.Add(0);
+		list.Add(0);
+		for (int i = 0; i < artifactReward; i++)
+		{
+			int num = UnityEngine.Random.Range(0, 9);
+			List<int> list2;
+			int index;
+			list2 = list; index = num; (list2 )[index ] = list2[index] + 1;
+			if (num == 0)
+			{
+				GameManager.Instance.tournArtLvl1++;
+			}
+			else if (num == 1)
+			{
+				GameManager.Instance.tournArtLvl2++;
+			}
+			else if (num == 2)
+			{
+				GameManager.Instance.tournArtLvl3++;
+			}
+			else if (num == 3)
+			{
+				GameManager.Instance.tournArtLvl4++;
+			}
+			else if (num == 4)
+			{
+				GameManager.Instance.tournArtLvl5++;
+			}
+			else if (num == 5)
+			{
+				GameManager.Instance.tournArtLvl6++;
+			}
+			else if (num == 6)
+			{
+				GameManager.Instance.tournArtLvl7++;
+			}
+			else if (num == 7)
+			{
+				GameManager.Instance.tournArtLvl8++;
+			}
+			else if (num == 8)
+			{
+				GameManager.Instance.tournArtLvl9++;
+			}
+		}
+		int tournArtCollections = GameManager.Instance.tournArtCollections;
+		int num2 = GameManager.Instance.tournArtLvl1 / 5;
+		int num3 = GameManager.Instance.tournArtLvl2 / 5;
+		if (num3 < num2)
+		{
+			num2 = num3;
+		}
+		num3 = GameManager.Instance.tournArtLvl3 / 5;
+		if (num3 < num2)
+		{
+			num2 = num3;
+		}
+		num3 = GameManager.Instance.tournArtLvl4 / 5;
+		if (num3 < num2)
+		{
+			num2 = num3;
+		}
+		num3 = GameManager.Instance.tournArtLvl5 / 5;
+		if (num3 < num2)
+		{
+			num2 = num3;
+		}
+		num3 = GameManager.Instance.tournArtLvl6 / 5;
+		if (num3 < num2)
+		{
+			num2 = num3;
+		}
+		num3 = GameManager.Instance.tournArtLvl7 / 5;
+		if (num3 < num2)
+		{
+			num2 = num3;
+		}
+		num3 = GameManager.Instance.tournArtLvl8 / 5;
+		if (num3 < num2)
+		{
+			num2 = num3;
+		}
+		num3 = GameManager.Instance.tournArtLvl9 / 5;
+		if (num3 < num2)
+		{
+			num2 = num3;
+		}
+		GameManager.Instance.tournArtCollections = num2;
+		float num4 = -40f;
+		float num5 = 40f;
+		int num6 = GameManager.Instance.tournArtCollections - tournArtCollections;
+		UnityEngine.Debug.Log("curr coll = " + GameManager.Instance.tournArtCollections);
+		UnityEngine.Debug.Log("old coll = " + tournArtCollections);
+		if (num6 > 0)
+		{
+			this.collectionsCell.transform.GetChild(0).gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = "x" + num6;
+			int num7 = 1;
+			for (int j = 0; j < num6; j++)
+			{
+				num7 *= 10;
+			}
+			this.collectionsCell.transform.GetChild(3).gameObject.GetComponent<Text>().text = "+" + num7 + "x";
+			RectTransform component = this.collectionsCell.GetComponent<RectTransform>();
+			component.anchoredPosition = new Vector2(component.anchoredPosition.x, num4);
+			num4 -= 85f;
+			num5 += 85f;
+			RectTransform component2 = this.resultsContent.GetComponent<RectTransform>();
+			component2.sizeDelta = new Vector2(component2.sizeDelta.x, num5);
+			this.collectionsCell.SetActive(true);
+		}
+		else
+		{
+			this.collectionsCell.SetActive(false);
+		}
+		for (int k = 0; k < num6; k++)
+		{
+			GameManager.Instance.tournArtCollectionsBonus *= 10.0;
+		}
+		for (int l = 0; l < list.Count; l++)
+		{
+			int num8 = list[l];
+			int num9 = 0;
+			if (l == 0)
+			{
+				num9 = 750 * num8;
+			}
+			else if (l == 1)
+			{
+				num9 = 750 * num8;
+			}
+			else if (l == 2)
+			{
+				num9 = 300 * num8;
+			}
+			else if (l == 3)
+			{
+				num9 = 1000 * num8;
+			}
+			else if (l == 4)
+			{
+				num9 = 500 * num8;
+			}
+			else if (l == 5)
+			{
+				num9 = 300 * num8;
+			}
+			else if (l == 6)
+			{
+				num9 = 1250 * num8;
+			}
+			else if (l == 7)
+			{
+				num9 = 1250 * num8;
+			}
+			else if (l == 8)
+			{
+				num9 = 1250 * num8;
+			}
+			if (num8 > 0)
+			{
+				this.resultsCells[l].transform.GetChild(0).gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = "x" + num8;
+				this.resultsCells[l].transform.GetChild(3).gameObject.GetComponent<Text>().text = "+" + num9.ToString("0") + "%";
+				RectTransform component3 = this.resultsCells[l].GetComponent<RectTransform>();
+				component3.anchoredPosition = new Vector2(component3.anchoredPosition.x, num4);
+				num4 -= 85f;
+				num5 += 85f;
+				RectTransform component4 = this.resultsContent.GetComponent<RectTransform>();
+				component4.sizeDelta = new Vector2(component4.sizeDelta.x, num5);
+				this.resultsCells[l].SetActive(true);
+			}
+			else
+			{
+				this.resultsCells[l].SetActive(false);
+			}
+		}
+		this.pvpActivePanel.SetActive(false);
+		this.pvpResultsPanel.SetActive(true);
+		SoundManager.Instance.playReward();
+		DataManager.Instance.saveData(true);
+		this.updateButtonText();
+	}
+
+	public void collectResultsButton()
+	{
+		SoundManager.Instance.playReward();
+		UIManager.Instance.closeBlackBg();
+	}
+
+	private void Update()
+	{
+		if (GameManager.Instance.tournamentActive)
+		{
+			this.lastUploadTimer += Time.deltaTime;
+			if (this.lastUploadTimer >= 30f)
+			{
+				this.lastUploadTimer = 0f;
+				string statisticName = "Tourn B" + GameManager.Instance.tournamentBracket.ToString();
+				int value = GameManager.Instance.tournamentScore;
+				if (GameManager.Instance.isBanned)
+				{
+					value = 0;
+				}
+				PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest
+				{
+					Statistics = new List<StatisticUpdate>
+					{
+						new StatisticUpdate
+						{
+							StatisticName = statisticName,
+							Value = value
+						}
+					}
+				}, delegate(UpdatePlayerStatisticsResult result)
+				{
+				}, delegate(PlayFabError error)
+				{
+				}, null, null);
+			}
+		}
+		this.lastUpdateTimer += Time.deltaTime;
+		if (this.lastUpdateTimer >= 30f)
+		{
+			this.lastUpdateTimer = 0f;
+			this.scoresLoaded = false;
+			this.updateButtonText();
+		}
+	}
+
+	private int getGemReward(int _bracket, int _place)
+	{
+		int result = 0;
+		if (_bracket == 1)
+		{
+			if (_place == 1)
+			{
+				result = 1125;
+			}
+			else if (_place == 2)
+			{
+				result = 940;
+			}
+			else if (_place == 3)
+			{
+				result = 750;
+			}
+			else if (_place == 4)
+			{
+				result = 675;
+			}
+			else if (_place == 5)
+			{
+				result = 600;
+			}
+			else if (_place == 6)
+			{
+				result = 525;
+			}
+			else if (_place == 7)
+			{
+				result = 450;
+			}
+			else if (_place == 8)
+			{
+				result = 375;
+			}
+			else if (_place == 9)
+			{
+				result = 300;
+			}
+		}
+		else if (_bracket == 2)
+		{
+			if (_place == 1)
+			{
+				result = 1025;
+			}
+			else if (_place == 2)
+			{
+				result = 825;
+			}
+			else if (_place == 3)
+			{
+				result = 725;
+			}
+			else if (_place == 4)
+			{
+				result = 620;
+			}
+			else if (_place == 5)
+			{
+				result = 515;
+			}
+			else if (_place == 6)
+			{
+				result = 410;
+			}
+			else if (_place == 7)
+			{
+				result = 310;
+			}
+			else if (_place == 8)
+			{
+				result = 205;
+			}
+			else if (_place == 9)
+			{
+				result = 105;
+			}
+		}
+		else if (_bracket == 3)
+		{
+			if (_place == 1)
+			{
+				result = 940;
+			}
+			else if (_place == 2)
+			{
+				result = 750;
+			}
+			else if (_place == 3)
+			{
+				result = 655;
+			}
+			else if (_place == 4)
+			{
+				result = 560;
+			}
+			else if (_place == 5)
+			{
+				result = 470;
+			}
+			else if (_place == 6)
+			{
+				result = 375;
+			}
+			else if (_place == 7)
+			{
+				result = 280;
+			}
+			else if (_place == 8)
+			{
+				result = 190;
+			}
+			else if (_place == 9)
+			{
+				result = 95;
+			}
+		}
+		else if (_bracket == 4)
+		{
+			if (_place == 1)
+			{
+				result = 845;
+			}
+			else if (_place == 2)
+			{
+				result = 675;
+			}
+			else if (_place == 3)
+			{
+				result = 590;
+			}
+			else if (_place == 4)
+			{
+				result = 500;
+			}
+			else if (_place == 5)
+			{
+				result = 425;
+			}
+			else if (_place == 6)
+			{
+				result = 340;
+			}
+			else if (_place == 7)
+			{
+				result = 255;
+			}
+			else if (_place == 8)
+			{
+				result = 170;
+			}
+			else if (_place == 9)
+			{
+				result = 85;
+			}
+		}
+		else if (_bracket == 5)
+		{
+			if (_place == 1)
+			{
+				result = 750;
+			}
+			else if (_place == 2)
+			{
+				result = 600;
+			}
+			else if (_place == 3)
+			{
+				result = 525;
+			}
+			else if (_place == 4)
+			{
+				result = 450;
+			}
+			else if (_place == 5)
+			{
+				result = 375;
+			}
+			else if (_place == 6)
+			{
+				result = 300;
+			}
+			else if (_place == 7)
+			{
+				result = 225;
+			}
+			else if (_place == 8)
+			{
+				result = 150;
+			}
+			else if (_place == 9)
+			{
+				result = 75;
+			}
+		}
+		else if (_bracket == 6)
+		{
+			if (_place == 1)
+			{
+				result = 655;
+			}
+			else if (_place == 2)
+			{
+				result = 525;
+			}
+			else if (_place == 3)
+			{
+				result = 460;
+			}
+			else if (_place == 4)
+			{
+				result = 395;
+			}
+			else if (_place == 5)
+			{
+				result = 330;
+			}
+			else if (_place == 6)
+			{
+				result = 260;
+			}
+			else if (_place == 7)
+			{
+				result = 200;
+			}
+			else if (_place == 8)
+			{
+				result = 130;
+			}
+			else if (_place == 9)
+			{
+				result = 70;
+			}
+		}
+		else if (_bracket == 7)
+		{
+			if (_place == 1)
+			{
+				result = 565;
+			}
+			else if (_place == 2)
+			{
+				result = 450;
+			}
+			else if (_place == 3)
+			{
+				result = 395;
+			}
+			else if (_place == 4)
+			{
+				result = 340;
+			}
+			else if (_place == 5)
+			{
+				result = 280;
+			}
+			else if (_place == 6)
+			{
+				result = 225;
+			}
+			else if (_place == 7)
+			{
+				result = 170;
+			}
+			else if (_place == 8)
+			{
+				result = 115;
+			}
+			else if (_place == 9)
+			{
+				result = 60;
+			}
+		}
+		else if (_bracket == 8)
+		{
+			if (_place == 1)
+			{
+				result = 470;
+			}
+			else if (_place == 2)
+			{
+				result = 375;
+			}
+			else if (_place == 3)
+			{
+				result = 330;
+			}
+			else if (_place == 4)
+			{
+				result = 280;
+			}
+			else if (_place == 5)
+			{
+				result = 235;
+			}
+			else if (_place == 6)
+			{
+				result = 190;
+			}
+			else if (_place == 7)
+			{
+				result = 140;
+			}
+			else if (_place == 8)
+			{
+				result = 95;
+			}
+			else if (_place == 9)
+			{
+				result = 55;
+			}
+		}
+		else if (_bracket == 9)
+		{
+			if (_place == 1)
+			{
+				result = 375;
+			}
+			else if (_place == 2)
+			{
+				result = 300;
+			}
+			else if (_place == 3)
+			{
+				result = 265;
+			}
+			else if (_place == 4)
+			{
+				result = 225;
+			}
+			else if (_place == 5)
+			{
+				result = 190;
+			}
+			else if (_place == 6)
+			{
+				result = 150;
+			}
+			else if (_place == 7)
+			{
+				result = 115;
+			}
+			else if (_place == 8)
+			{
+				result = 75;
+			}
+			else if (_place == 9)
+			{
+				result = 50;
+			}
+		}
+		return result;
+	}
+
+	private int getArtifactReward(int _bracket, int _place)
+	{
+		int result = 0;
+		if (_bracket == 1)
+		{
+			if (_place == 1)
+			{
+				result = 25;
+			}
+			else if (_place == 2)
+			{
+				result = 20;
+			}
+			else if (_place == 3)
+			{
+				result = 16;
+			}
+			else if (_place == 4)
+			{
+				result = 13;
+			}
+			else if (_place == 5)
+			{
+				result = 11;
+			}
+			else if (_place == 6)
+			{
+				result = 10;
+			}
+			else if (_place == 7)
+			{
+				result = 9;
+			}
+			else if (_place == 8)
+			{
+				result = 8;
+			}
+			else if (_place == 9)
+			{
+				result = 7;
+			}
+		}
+		else if (_bracket == 2)
+		{
+			if (_place == 1)
+			{
+				result = 15;
+			}
+			else if (_place == 2)
+			{
+				result = 12;
+			}
+			else if (_place == 3)
+			{
+				result = 10;
+			}
+			else if (_place == 4)
+			{
+				result = 8;
+			}
+			else if (_place == 5)
+			{
+				result = 6;
+			}
+			else if (_place == 6)
+			{
+				result = 6;
+			}
+			else if (_place == 7)
+			{
+				result = 5;
+			}
+			else if (_place == 8)
+			{
+				result = 5;
+			}
+			else if (_place == 9)
+			{
+				result = 4;
+			}
+		}
+		else if (_bracket == 3)
+		{
+			if (_place == 1)
+			{
+				result = 12;
+			}
+			else if (_place == 2)
+			{
+				result = 9;
+			}
+			else if (_place == 3)
+			{
+				result = 8;
+			}
+			else if (_place == 4)
+			{
+				result = 7;
+			}
+			else if (_place == 5)
+			{
+				result = 6;
+			}
+			else if (_place == 6)
+			{
+				result = 5;
+			}
+			else if (_place == 7)
+			{
+				result = 5;
+			}
+			else if (_place == 8)
+			{
+				result = 4;
+			}
+			else if (_place == 9)
+			{
+				result = 4;
+			}
+		}
+		else if (_bracket == 4)
+		{
+			if (_place == 1)
+			{
+				result = 10;
+			}
+			else if (_place == 2)
+			{
+				result = 8;
+			}
+			else if (_place == 3)
+			{
+				result = 7;
+			}
+			else if (_place == 4)
+			{
+				result = 6;
+			}
+			else if (_place == 5)
+			{
+				result = 5;
+			}
+			else if (_place == 6)
+			{
+				result = 5;
+			}
+			else if (_place == 7)
+			{
+				result = 4;
+			}
+			else if (_place == 8)
+			{
+				result = 4;
+			}
+			else if (_place == 9)
+			{
+				result = 3;
+			}
+		}
+		else if (_bracket == 5)
+		{
+			if (_place == 1)
+			{
+				result = 9;
+			}
+			else if (_place == 2)
+			{
+				result = 7;
+			}
+			else if (_place == 3)
+			{
+				result = 6;
+			}
+			else if (_place == 4)
+			{
+				result = 5;
+			}
+			else if (_place == 5)
+			{
+				result = 5;
+			}
+			else if (_place == 6)
+			{
+				result = 4;
+			}
+			else if (_place == 7)
+			{
+				result = 4;
+			}
+			else if (_place == 8)
+			{
+				result = 3;
+			}
+			else if (_place == 9)
+			{
+				result = 3;
+			}
+		}
+		else if (_bracket == 6)
+		{
+			if (_place == 1)
+			{
+				result = 8;
+			}
+			else if (_place == 2)
+			{
+				result = 6;
+			}
+			else if (_place == 3)
+			{
+				result = 5;
+			}
+			else if (_place == 4)
+			{
+				result = 5;
+			}
+			else if (_place == 5)
+			{
+				result = 4;
+			}
+			else if (_place == 6)
+			{
+				result = 4;
+			}
+			else if (_place == 7)
+			{
+				result = 3;
+			}
+			else if (_place == 8)
+			{
+				result = 3;
+			}
+			else if (_place == 9)
+			{
+				result = 2;
+			}
+		}
+		else if (_bracket == 7)
+		{
+			if (_place == 1)
+			{
+				result = 7;
+			}
+			else if (_place == 2)
+			{
+				result = 5;
+			}
+			else if (_place == 3)
+			{
+				result = 4;
+			}
+			else if (_place == 4)
+			{
+				result = 4;
+			}
+			else if (_place == 5)
+			{
+				result = 3;
+			}
+			else if (_place == 6)
+			{
+				result = 3;
+			}
+			else if (_place == 7)
+			{
+				result = 3;
+			}
+			else if (_place == 8)
+			{
+				result = 2;
+			}
+			else if (_place == 9)
+			{
+				result = 2;
+			}
+		}
+		else if (_bracket == 8)
+		{
+			if (_place == 1)
+			{
+				result = 6;
+			}
+			else if (_place == 2)
+			{
+				result = 4;
+			}
+			else if (_place == 3)
+			{
+				result = 3;
+			}
+			else if (_place == 4)
+			{
+				result = 3;
+			}
+			else if (_place == 5)
+			{
+				result = 2;
+			}
+			else if (_place == 6)
+			{
+				result = 2;
+			}
+			else if (_place == 7)
+			{
+				result = 2;
+			}
+			else if (_place == 8)
+			{
+				result = 1;
+			}
+			else if (_place == 9)
+			{
+				result = 1;
+			}
+		}
+		else if (_bracket == 9)
+		{
+			if (_place == 1)
+			{
+				result = 5;
+			}
+			else if (_place == 2)
+			{
+				result = 3;
+			}
+			else if (_place == 3)
+			{
+				result = 2;
+			}
+			else if (_place == 4)
+			{
+				result = 2;
+			}
+			else if (_place == 5)
+			{
+				result = 2;
+			}
+			else if (_place == 6)
+			{
+				result = 1;
+			}
+			else if (_place == 7)
+			{
+				result = 1;
+			}
+			else if (_place == 8)
+			{
+				result = 1;
+			}
+			else if (_place == 9)
+			{
+				result = 0;
+			}
+		}
+		return result;
+	}
+
+	public int getBracketPlacements(int bracketNum, int placeNum)
+	{
+		if (bracketNum == 9 || bracketNum == 8)
+		{
+			if (placeNum == 8)
+			{
+				return 250;
+			}
+			if (placeNum == 7)
+			{
+				return 100;
+			}
+			if (placeNum == 6)
+			{
+				return 50;
+			}
+			if (placeNum == 5)
+			{
+				return 25;
+			}
+			if (placeNum == 4)
+			{
+				return 10;
+			}
+			if (placeNum == 3)
+			{
+				return 5;
+			}
+			if (placeNum == 2)
+			{
+				return 3;
+			}
+			return 1;
+		}
+		else if (bracketNum == 7 || bracketNum == 6)
+		{
+			if (placeNum == 8)
+			{
+				return 150;
+			}
+			if (placeNum == 7)
+			{
+				return 75;
+			}
+			if (placeNum == 6)
+			{
+				return 35;
+			}
+			if (placeNum == 5)
+			{
+				return 15;
+			}
+			if (placeNum == 4)
+			{
+				return 8;
+			}
+			if (placeNum == 3)
+			{
+				return 5;
+			}
+			if (placeNum == 2)
+			{
+				return 3;
+			}
+			return 1;
+		}
+		else if (bracketNum == 5 || bracketNum == 4)
+		{
+			if (placeNum == 8)
+			{
+				return 100;
+			}
+			if (placeNum == 7)
+			{
+				return 50;
+			}
+			if (placeNum == 6)
+			{
+				return 25;
+			}
+			if (placeNum == 5)
+			{
+				return 10;
+			}
+			if (placeNum == 4)
+			{
+				return 5;
+			}
+			if (placeNum == 3)
+			{
+				return 3;
+			}
+			if (placeNum == 2)
+			{
+				return 2;
+			}
+			return 1;
+		}
+		else if (bracketNum == 3 || bracketNum == 2)
+		{
+			if (placeNum == 8)
+			{
+				return 50;
+			}
+			if (placeNum == 7)
+			{
+				return 25;
+			}
+			if (placeNum == 6)
+			{
+				return 15;
+			}
+			if (placeNum == 5)
+			{
+				return 7;
+			}
+			if (placeNum == 4)
+			{
+				return 5;
+			}
+			if (placeNum == 3)
+			{
+				return 3;
+			}
+			if (placeNum == 2)
+			{
+				return 2;
+			}
+			return 1;
+		}
+		else
+		{
+			if (placeNum == 8)
+			{
+				return 25;
+			}
+			if (placeNum == 7)
+			{
+				return 15;
+			}
+			if (placeNum == 6)
+			{
+				return 10;
+			}
+			if (placeNum == 5)
+			{
+				return 7;
+			}
+			if (placeNum == 4)
+			{
+				return 5;
+			}
+			if (placeNum == 3)
+			{
+				return 3;
+			}
+			if (placeNum == 2)
+			{
+				return 2;
+			}
+			return 1;
+		}
+	}
+
+	public static TournamentManager Instance;
+
+	private const int day1 = 0;
+
+	private const int day2 = 3;
+
+	private bool scoresLoaded;
+
+	public GameObject uiButton;
+
+	public Text uiButtonText;
+
+	public GameObject pvpActivePanel;
+
+	public GameObject pvpNextPanel;
+
+	public Text nextTournTimeText;
+
+	public GameObject pvpLoadingPanel;
+
+	public GameObject pvpNotConnectedPanel;
+
+	public GameObject pvpForgotToHostPanel;
+
+	public GameObject pvpHelpPanel;
+
+	public Text rewardBracketTitleText;
+
+	public Text rewardPlaceText;
+
+	public Text rewardGemsText;
+
+	public Text rewardArtsText;
+
+	public GameObject rewardAtBg;
+
+	public GameObject placeAtBg;
+
+	public GameObject boostButton;
+
+	public GameObject joinButton;
+
+	public GameObject cantJoinButton;
+
+	public Text cantJoinReqText;
+
+	public GameObject claimButton;
+
+	public Text timeRemainingText;
+
+	public GameObject pvpResultsPanel;
+
+	public Text resultsPlaceText;
+
+	public Text resultsBracketText;
+
+	public Text resultsGemsText;
+
+	public Text resultsArtifactsText;
+
+	public GameObject resultsContent;
+
+	public List<GameObject> resultsCells;
+
+	public Text leaderboardTitle;
+
+	public GameObject collectionsCell;
+
+	public List<GameObject> listCells;
+
+	private List<int> listPos = new List<int>();
+
+	private List<string> listName = new List<string>();
+
+	private List<string> listId = new List<string>();
+
+	private List<int> listVal = new List<int>();
+
+	private int savedYourPos;
+
+	private int savedYourBracket;
+
+	private float lastUpdateTimer;
+
+	private float lastUploadTimer;
+
+	private bool showScores;
+
+	public Text toggleButtonText;
+}

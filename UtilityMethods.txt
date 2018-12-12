@@ -1,0 +1,23 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public static class UtilityMethods
+{
+	public static Quaternion SmoothlyLook(Transform fromTransform, Vector3 toVector3)
+	{
+		if (fromTransform.position == toVector3)
+		{
+			return fromTransform.localRotation;
+		}
+		Quaternion localRotation = fromTransform.localRotation;
+		Quaternion b = Quaternion.LookRotation(toVector3 - fromTransform.position);
+		return Quaternion.Slerp(localRotation, b, Time.deltaTime * 10f);
+	}
+
+	public static void MoveUiElementToWorldPosition(RectTransform rectTransform, Vector3 worldPosition)
+	{
+		Vector2 v = Camera.main.WorldToScreenPoint(worldPosition);
+		rectTransform.position = v;
+	}
+}

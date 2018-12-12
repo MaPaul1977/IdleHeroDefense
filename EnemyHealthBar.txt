@@ -1,0 +1,71 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class EnemyHealthBar : MonoBehaviour
+{
+	private void Start()
+	{
+		base.GetComponent<Slider>().minValue = 0f;
+		base.GetComponent<Slider>().maxValue = 1f;
+		this.startPos = base.transform.position;
+	}
+
+	private void initObject()
+	{
+		this.spawnCounter = 0f;
+		base.transform.position = this.startPos;
+		base.gameObject.SetActive(false);
+	}
+
+	private void Update()
+	{
+		if (this.thisEnemy == null)
+		{
+			this.initObject();
+			return;
+		}
+		if (this.thisEnemy.currHp <= 0.0)
+		{
+			this.spawnCounter += Time.deltaTime;
+			if (this.spawnCounter >= 0.5f)
+			{
+				this.initObject();
+				return;
+			}
+		}
+		double num = this.thisEnemy.currHp / this.thisEnemy.maxHp;
+		if (num <= 0.0)
+		{
+			num = 0.0;
+		}
+		base.GetComponent<Slider>().value = (float)num;
+		if (!this.thisEnemy.isBoss)
+		{
+			UtilityMethods.MoveUiElementToWorldPosition(base.GetComponent<RectTransform>(), this.thisEnemy.transform.position + new Vector3(0f, 1.3f, 0f));
+		}
+		else if (!TheUnderground.Instance.playingMiniGame)
+		{
+			if (this.thisEnemy.type == 1)
+			{
+				UtilityMethods.MoveUiElementToWorldPosition(base.GetComponent<RectTransform>(), this.thisEnemy.transform.position + new Vector3(0f, 1.8f, 0f));
+			}
+			else
+			{
+				UtilityMethods.MoveUiElementToWorldPosition(base.GetComponent<RectTransform>(), this.thisEnemy.transform.position + new Vector3(0f, 2.15f, 0f));
+			}
+		}
+		else
+		{
+			UtilityMethods.MoveUiElementToWorldPosition(base.GetComponent<RectTransform>(), this.thisEnemy.transform.position + new Vector3(0f, 1.85f, 0f));
+		}
+	}
+
+	[Header("Automatically Set Attributes")]
+	public Enemy thisEnemy;
+
+	private Vector3 startPos;
+
+	private float spawnCounter;
+}

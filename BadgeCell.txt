@@ -1,0 +1,253 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class BadgeCell : MonoBehaviour
+{
+	private void Start()
+	{
+		this.updateCell();
+	}
+
+	private void OnEnable()
+	{
+		this.updateCell();
+	}
+
+	public void clickedThis()
+	{
+		if (BadgeManager.Instance.selectedTech != this)
+		{
+			BadgeManager.Instance.selectedTech = this;
+		}
+		else
+		{
+			BadgeManager.Instance.selectedTech = null;
+		}
+		BadgeManager.Instance.updateTable();
+	}
+
+	public void updateCell()
+	{
+		switch (this.badgeId)
+		{
+		case 1:
+			this.currLevel = GameManager.Instance.badge1Lvl;
+			this.paidForAmt = GameManager.Instance.badge1PaidFor;
+			this.maxLevel = 9999;
+			this.statText.text = "+" + 250 * this.currLevel + "%";
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 2:
+			this.currLevel = GameManager.Instance.badge2Lvl;
+			this.paidForAmt = GameManager.Instance.badge2PaidFor;
+			this.maxLevel = 15;
+			this.statText.text = "+" + 2 * this.currLevel + "%";
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 3:
+			this.currLevel = GameManager.Instance.badge3Lvl;
+			this.paidForAmt = GameManager.Instance.badge3PaidFor;
+			this.maxLevel = 9999;
+			this.statText.text = "+" + 50 * this.currLevel + "%";
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 4:
+			this.currLevel = GameManager.Instance.badge4Lvl;
+			this.paidForAmt = GameManager.Instance.badge4PaidFor;
+			this.maxLevel = 25;
+			this.statText.text = "+" + 25 * this.currLevel + "%";
+			this.lvlUpCost = 2 * this.currLevel;
+			break;
+		case 5:
+			this.currLevel = GameManager.Instance.badge5Lvl;
+			this.paidForAmt = GameManager.Instance.badge5PaidFor;
+			this.maxLevel = 10;
+			this.statText.text = "+" + this.currLevel;
+			this.lvlUpCost = 2 * this.currLevel;
+			break;
+		case 6:
+			this.currLevel = GameManager.Instance.badge6Lvl;
+			this.paidForAmt = GameManager.Instance.badge6PaidFor;
+			this.maxLevel = 25;
+			this.statText.text = "+" + 25 * this.currLevel + "%";
+			this.lvlUpCost = 2 * this.currLevel;
+			break;
+		case 7:
+			this.currLevel = GameManager.Instance.badge7Lvl;
+			this.paidForAmt = GameManager.Instance.badge7PaidFor;
+			this.maxLevel = 9999;
+			this.statText.text = "+" + 250 * this.currLevel + "%";
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 8:
+			this.currLevel = GameManager.Instance.badge8Lvl;
+			this.paidForAmt = GameManager.Instance.badge8PaidFor;
+			this.maxLevel = 10;
+			this.statText.text = "+" + 2 * this.currLevel + "%";
+			this.lvlUpCost = 2 * this.currLevel;
+			break;
+		case 9:
+			this.currLevel = GameManager.Instance.badge9Lvl;
+			this.paidForAmt = GameManager.Instance.badge9PaidFor;
+			this.maxLevel = 15;
+			this.statText.text = "-" + 3 * this.currLevel + "%";
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 10:
+			this.currLevel = GameManager.Instance.badge10Lvl;
+			this.paidForAmt = GameManager.Instance.badge10PaidFor;
+			this.maxLevel = 15;
+			this.statText.text = "+" + 2 * this.currLevel + "%";
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 11:
+			this.currLevel = GameManager.Instance.badge11Lvl;
+			this.paidForAmt = GameManager.Instance.badge11PaidFor;
+			this.maxLevel = 15;
+			this.statText.text = "+" + 2 * this.currLevel;
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 12:
+			this.currLevel = GameManager.Instance.badge12Lvl;
+			this.paidForAmt = GameManager.Instance.badge12PaidFor;
+			this.maxLevel = 15;
+			this.statText.text = "-" + 3 * this.currLevel + "%";
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 13:
+			this.currLevel = GameManager.Instance.badge13Lvl;
+			this.paidForAmt = GameManager.Instance.badge13PaidFor;
+			this.maxLevel = 10;
+			this.statText.text = "+" + 3 * this.currLevel + "%";
+			this.lvlUpCost = 2 * this.currLevel;
+			break;
+		case 14:
+			this.currLevel = GameManager.Instance.badge14Lvl;
+			this.paidForAmt = GameManager.Instance.badge14PaidFor;
+			this.maxLevel = 2;
+			this.statText.text = "+" + this.currLevel;
+			this.lvlUpCost = 10 * this.currLevel;
+			break;
+		case 15:
+			this.currLevel = GameManager.Instance.badge15Lvl;
+			this.paidForAmt = GameManager.Instance.badge15PaidFor;
+			this.maxLevel = 15;
+			this.statText.text = "+" + 2 * this.currLevel + "%";
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 16:
+			this.currLevel = GameManager.Instance.badge16Lvl;
+			this.paidForAmt = GameManager.Instance.badge16PaidFor;
+			this.maxLevel = 5;
+			this.statText.text = "+" + 2 * this.currLevel + "%";
+			this.lvlUpCost = 2 * this.currLevel;
+			break;
+		case 17:
+			this.currLevel = GameManager.Instance.badge17Lvl;
+			this.paidForAmt = GameManager.Instance.badge17PaidFor;
+			this.maxLevel = 5;
+			this.statText.text = "+" + 2 * this.currLevel + "%";
+			this.lvlUpCost = this.currLevel;
+			break;
+		case 18:
+			this.currLevel = GameManager.Instance.badge18Lvl;
+			this.paidForAmt = GameManager.Instance.badge18PaidFor;
+			this.maxLevel = 5;
+			this.statText.text = "+" + this.currLevel;
+			this.lvlUpCost = 5 * this.currLevel;
+			break;
+		case 19:
+			this.currLevel = GameManager.Instance.badge19Lvl;
+			this.paidForAmt = GameManager.Instance.badge19PaidFor;
+			this.maxLevel = 5;
+			this.statText.text = "+" + this.currLevel;
+			this.lvlUpCost = 7 * this.currLevel;
+			break;
+		case 20:
+			this.currLevel = GameManager.Instance.badge20Lvl;
+			this.paidForAmt = GameManager.Instance.badge20PaidFor;
+			this.maxLevel = 25;
+			this.statText.text = "+" + 10 * this.currLevel + "%";
+			this.lvlUpCost = 2 * this.currLevel;
+			break;
+		case 21:
+			this.currLevel = GameManager.Instance.badge21Lvl;
+			this.paidForAmt = GameManager.Instance.badge21PaidFor;
+			this.maxLevel = 15;
+			this.statText.text = "-" + 3 * this.currLevel + "%";
+			this.lvlUpCost = 2 * this.currLevel;
+			break;
+		case 22:
+			this.currLevel = GameManager.Instance.badge22Lvl;
+			this.paidForAmt = GameManager.Instance.badge22PaidFor;
+			this.maxLevel = 20;
+			this.statText.text = "+" + 10 * this.currLevel + "%";
+			this.lvlUpCost = 2 * this.currLevel;
+			break;
+		case 23:
+			this.currLevel = GameManager.Instance.badge23Lvl;
+			this.paidForAmt = GameManager.Instance.badge23PaidFor;
+			this.maxLevel = 5;
+			this.statText.text = "+" + this.currLevel;
+			this.lvlUpCost = 5 * this.currLevel;
+			break;
+		}
+		this.levelText.text = "Lvl " + this.currLevel;
+		if (this.currLevel < this.maxLevel)
+		{
+			if (GameManager.Instance.medAmt >= this.lvlUpCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.upgButton, "green", false);
+				this.upgButton.GetComponent<Button>().interactable = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.upgButton, "grey", false);
+				this.upgButton.GetComponent<Button>().interactable = false;
+			}
+			this.upgButtonTitle.text = "Lvl +1";
+			this.upgCostText.text = this.lvlUpCost.ToString("n0");
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.upgButton, "grey", false);
+			this.upgButton.GetComponent<Button>().interactable = false;
+			this.upgButtonTitle.text = "Max Lvl";
+			this.upgCostText.text = "N/A";
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	[Header("Manually Set Attributes")]
+	public int badgeId;
+
+	[Header("Automatically Set Attributes")]
+	public Text titleText;
+
+	public Image icon;
+
+	public Text levelText;
+
+	public Text descText;
+
+	public Text statText;
+
+	public GameObject upgButton;
+
+	public Text upgButtonTitle;
+
+	public Text upgCostText;
+
+	public int currLevel;
+
+	public int paidForAmt;
+
+	public int lvlUpCost;
+
+	public int maxLevel;
+}

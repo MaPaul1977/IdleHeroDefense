@@ -1,0 +1,735 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class TechManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		TechManager.Instance = this;
+	}
+
+	private void Start()
+	{
+		this.updateTable();
+	}
+
+	private void OnEnable()
+	{
+		this.updateTable();
+	}
+
+	public void updateTable()
+	{
+		for (int i = 0; i < this.listTechCells.Count; i++)
+		{
+			GameObject gameObject = this.listTechCells[i];
+			TechCell component = gameObject.GetComponent<TechCell>();
+			component.updateCell();
+		}
+		int num = 0;
+		this.newTechCost = 25.0;
+		for (int j = 0; j < this.listTechCells.Count; j++)
+		{
+			GameObject gameObject2 = this.listTechCells[j];
+			TechCell component2 = gameObject2.GetComponent<TechCell>();
+			if (component2.currLevel > 0)
+			{
+				num++;
+				if (num < 5)
+				{
+					this.newTechCost *= 1.5;
+				}
+				else if (num == 5)
+				{
+					this.newTechCost *= 3.0;
+				}
+				else if (num < 10)
+				{
+					this.newTechCost *= 1.75;
+				}
+				else if (num == 10)
+				{
+					this.newTechCost *= 4.0;
+				}
+				else if (num < 15)
+				{
+					this.newTechCost *= 2.0;
+				}
+				else if (num == 15)
+				{
+					this.newTechCost *= 5.0;
+				}
+				else if (num < 20)
+				{
+					this.newTechCost *= 2.25;
+				}
+				else if (num == 20)
+				{
+					this.newTechCost *= 6.0;
+				}
+				else if (num == 25)
+				{
+					this.newTechCost *= 7.0;
+				}
+				else if (num == 30)
+				{
+					this.newTechCost *= 8.0;
+				}
+				else
+				{
+					this.newTechCost *= 2.5;
+				}
+				this.newTechCost = Math.Round(this.newTechCost, 0);
+			}
+		}
+		this.numTechText.text = num + " / " + this.listTechCells.Count;
+		if (num == 0)
+		{
+			this.noTechsText.SetActive(true);
+		}
+		else
+		{
+			this.noTechsText.SetActive(false);
+		}
+		if (num < this.listTechCells.Count)
+		{
+			if (GameManager.Instance.bpAmt >= this.newTechCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.newTechButton, "green", false);
+				this.newTechButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.newTechButton, "grey", false);
+				this.newTechButton.GetComponent<Button>().enabled = false;
+			}
+			this.newTechButtonTitle.text = "Unlock";
+			this.newTechButtonCost.text = UIManager.Instance.convertNumberFormat(this.newTechCost.ToString("0"));
+		}
+		else
+		{
+			this.newTechButtonTitle.text = "Max Techs";
+			this.newTechButtonCost.text = "N/A";
+			UIManager.Instance.changeButtonColorV2(this.newTechButton, "grey", false);
+			this.newTechButton.GetComponent<Button>().enabled = false;
+		}
+		this.savedBps = GameManager.Instance.bpAmt;
+		float num2 = -105f;
+		for (int k = 0; k < this.listTechCells.Count; k++)
+		{
+			GameObject gameObject3 = this.listTechCells[k];
+			TechCell component3 = gameObject3.GetComponent<TechCell>();
+			if (component3.currLevel > 0)
+			{
+				if (component3.currLevel < component3.maxLevel)
+				{
+					RectTransform component4 = gameObject3.GetComponent<RectTransform>();
+					component4.anchoredPosition = new Vector2(component4.anchoredPosition.x, num2);
+					gameObject3.SetActive(true);
+					num2 -= 100f;
+					if (component3 == this.selectedTech)
+					{
+						RectTransform component5 = this.selectedCellBg.GetComponent<RectTransform>();
+						component5.anchoredPosition = new Vector2(component5.anchoredPosition.x, component4.anchoredPosition.y + 2f);
+						this.selectedCellBg.SetActive(true);
+					}
+				}
+			}
+			else
+			{
+				gameObject3.SetActive(false);
+			}
+		}
+		for (int l = 0; l < this.listTechCells.Count; l++)
+		{
+			GameObject gameObject4 = this.listTechCells[l];
+			TechCell component6 = gameObject4.GetComponent<TechCell>();
+			if (component6.currLevel > 0)
+			{
+				if (component6.currLevel >= component6.maxLevel)
+				{
+					RectTransform component7 = gameObject4.GetComponent<RectTransform>();
+					component7.anchoredPosition = new Vector2(component7.anchoredPosition.x, num2);
+					gameObject4.SetActive(true);
+					num2 -= 100f;
+					if (component6 == this.selectedTech)
+					{
+						RectTransform component8 = this.selectedCellBg.GetComponent<RectTransform>();
+						component8.anchoredPosition = new Vector2(component8.anchoredPosition.x, component7.anchoredPosition.y + 2f);
+						this.selectedCellBg.SetActive(true);
+					}
+				}
+			}
+			else
+			{
+				gameObject4.SetActive(false);
+			}
+		}
+		RectTransform component9 = this.tableContent.GetComponent<RectTransform>();
+		component9.sizeDelta = new Vector2(component9.sizeDelta.x, num2 * -1f);
+		if (this.selectedTech == null)
+		{
+			this.selectedCellBg.SetActive(false);
+			this.notSelectedText.SetActive(true);
+		}
+		else
+		{
+			this.selectedCellBg.SetActive(true);
+			this.notSelectedText.SetActive(false);
+			this.updateSelectedPanel();
+		}
+	}
+
+	public void clickedSelectedUpgradeButton()
+	{
+		this.clickedUpgradeButton(this.selectedTech);
+	}
+
+	public void clickedUpgradeButton(TechCell thisCell)
+	{
+		GameManager.Instance.bpAmt -= thisCell.actualCost;
+		switch (thisCell.techId)
+		{
+		case 1:
+			GameManager.Instance.tech1Lvl++;
+			break;
+		case 2:
+			GameManager.Instance.tech2Lvl++;
+			break;
+		case 3:
+			GameManager.Instance.tech3Lvl++;
+			break;
+		case 4:
+			GameManager.Instance.tech4Lvl++;
+			break;
+		case 5:
+			GameManager.Instance.tech5Lvl++;
+			break;
+		case 6:
+			GameManager.Instance.tech6Lvl++;
+			break;
+		case 7:
+			GameManager.Instance.tech7Lvl++;
+			break;
+		case 8:
+			GameManager.Instance.tech8Lvl++;
+			break;
+		case 9:
+			GameManager.Instance.tech9Lvl++;
+			break;
+		case 10:
+			GameManager.Instance.tech10Lvl++;
+			break;
+		case 11:
+			GameManager.Instance.tech11Lvl++;
+			break;
+		case 12:
+			GameManager.Instance.tech12Lvl++;
+			break;
+		case 13:
+			GameManager.Instance.tech13Lvl++;
+			break;
+		case 14:
+			GameManager.Instance.tech14Lvl++;
+			break;
+		case 15:
+			GameManager.Instance.tech15Lvl++;
+			break;
+		case 16:
+			GameManager.Instance.tech16Lvl++;
+			break;
+		case 17:
+			GameManager.Instance.tech17Lvl++;
+			break;
+		case 18:
+			GameManager.Instance.tech18Lvl++;
+			break;
+		case 19:
+			GameManager.Instance.tech19Lvl++;
+			break;
+		case 20:
+			GameManager.Instance.tech20Lvl++;
+			break;
+		case 21:
+			GameManager.Instance.tech21Lvl++;
+			break;
+		case 22:
+			GameManager.Instance.tech22Lvl++;
+			break;
+		case 23:
+			GameManager.Instance.tech23Lvl++;
+			break;
+		case 24:
+			GameManager.Instance.tech24Lvl++;
+			break;
+		case 25:
+			GameManager.Instance.tech25Lvl++;
+			break;
+		case 26:
+			GameManager.Instance.tech26Lvl++;
+			break;
+		case 27:
+			GameManager.Instance.tech27Lvl++;
+			break;
+		case 28:
+			GameManager.Instance.tech28Lvl++;
+			break;
+		case 29:
+			GameManager.Instance.tech29Lvl++;
+			break;
+		case 30:
+			GameManager.Instance.tech30Lvl++;
+			break;
+		}
+		thisCell.updateCell();
+		if (this.selectedTech != null)
+		{
+			this.updateSelectedPanel();
+		}
+	}
+
+	public void updateSelectedPanel()
+	{
+		this.selIcon.sprite = this.selectedTech.icon.sprite;
+		this.selTitle.text = this.selectedTech.titleText.text;
+		this.selLevel.text = "Lvl " + this.selectedTech.currLevel;
+		this.selStat1.text = this.selectedTech.stat1Text.text;
+		this.selStat2.text = this.selectedTech.stat2Text.text;
+		string str = this.selectedTech.stat1Amt.ToString("f2");
+		if (this.selectedTech.stat1Amt % 1f == 0f)
+		{
+			str = this.selectedTech.stat1Amt.ToString("n0");
+		}
+		if (this.selectedTech.techId != 30)
+		{
+			this.selUpgStat1.text = this.selectedTech.stat1PlusMinus + str + "% " + this.selectedTech.stat1Desc;
+		}
+		else
+		{
+			int num = 99;
+			int num2 = 9;
+			this.selUpgStat1.text = string.Concat(new object[]
+			{
+				"+DPS/HP scaled by hero tier\n(t1: +",
+				num,
+				"%  /  t30: +",
+				num2,
+				"%)"
+			});
+		}
+		int num3;
+		if (this.selectedTech.stat2Desc == "all heroes DPS")
+		{
+			num3 = this.selectedTech.stat2Amt + GameManager.Instance.tech27Lvl;
+		}
+		else
+		{
+			num3 = this.selectedTech.stat2Amt + GameManager.Instance.tech28Lvl;
+		}
+		this.selUpgStat2.text = string.Concat(new object[]
+		{
+			"+",
+			num3,
+			"% ",
+			this.selectedTech.stat2Desc
+		});
+		if (this.selectedTech.currLevel < this.selectedTech.maxLevel)
+		{
+			if (GameManager.Instance.bpAmt >= this.selectedTech.actualCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.selUpgButton, "green", false);
+				this.selUpgButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.selUpgButton, "grey", false);
+				this.selUpgButton.GetComponent<Button>().enabled = false;
+			}
+			this.selUpgButtonTitle.text = "Lvl +1";
+			this.selUpgButtonCost.text = UIManager.Instance.convertNumberFormat(this.selectedTech.actualCost.ToString("0"));
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.selUpgButton, "grey", false);
+			this.selUpgButton.GetComponent<Button>().enabled = false;
+			this.selUpgButtonTitle.text = "Max Level";
+			this.selUpgButtonCost.text = "N/A";
+		}
+		double value = this.selectedTech.paidForAmt * 0.75;
+		value = Math.Round(value, 0);
+		this.selSellButtonCost.text = "+" + UIManager.Instance.convertNumberFormat(value.ToString("0"));
+	}
+
+	public void clickedSellButton()
+	{
+		double num = this.selectedTech.paidForAmt * 0.75;
+		num = Math.Round(num, 0);
+		GameManager.Instance.bpAmt += num;
+		AchievementManager.Instance.listAch[15].currAmt -= 1.0;
+		AchievementManager.Instance.checkIfAchComplete(15);
+		switch (this.selectedTech.techId)
+		{
+		case 1:
+			GameManager.Instance.tech1Lvl = 0;
+			GameManager.Instance.tech1PaidFor = 0.0;
+			break;
+		case 2:
+			GameManager.Instance.tech2Lvl = 0;
+			GameManager.Instance.tech2PaidFor = 0.0;
+			break;
+		case 3:
+			GameManager.Instance.tech3Lvl = 0;
+			GameManager.Instance.tech3PaidFor = 0.0;
+			break;
+		case 4:
+			GameManager.Instance.tech4Lvl = 0;
+			GameManager.Instance.tech4PaidFor = 0.0;
+			break;
+		case 5:
+			GameManager.Instance.tech5Lvl = 0;
+			GameManager.Instance.tech5PaidFor = 0.0;
+			break;
+		case 6:
+			GameManager.Instance.tech6Lvl = 0;
+			GameManager.Instance.tech6PaidFor = 0.0;
+			break;
+		case 7:
+			GameManager.Instance.tech7Lvl = 0;
+			GameManager.Instance.tech7PaidFor = 0.0;
+			break;
+		case 8:
+			GameManager.Instance.tech8Lvl = 0;
+			GameManager.Instance.tech8PaidFor = 0.0;
+			break;
+		case 9:
+			GameManager.Instance.tech9Lvl = 0;
+			GameManager.Instance.tech9PaidFor = 0.0;
+			break;
+		case 10:
+			GameManager.Instance.tech10Lvl = 0;
+			GameManager.Instance.tech10PaidFor = 0.0;
+			break;
+		case 11:
+			GameManager.Instance.tech11Lvl = 0;
+			GameManager.Instance.tech11PaidFor = 0.0;
+			break;
+		case 12:
+			GameManager.Instance.tech12Lvl = 0;
+			GameManager.Instance.tech12PaidFor = 0.0;
+			break;
+		case 13:
+			GameManager.Instance.tech13Lvl = 0;
+			GameManager.Instance.tech13PaidFor = 0.0;
+			break;
+		case 14:
+			GameManager.Instance.tech14Lvl = 0;
+			GameManager.Instance.tech14PaidFor = 0.0;
+			break;
+		case 15:
+			GameManager.Instance.tech15Lvl = 0;
+			GameManager.Instance.tech15PaidFor = 0.0;
+			break;
+		case 16:
+			GameManager.Instance.tech16Lvl = 0;
+			GameManager.Instance.tech16PaidFor = 0.0;
+			break;
+		case 17:
+			GameManager.Instance.tech17Lvl = 0;
+			GameManager.Instance.tech17PaidFor = 0.0;
+			break;
+		case 18:
+			GameManager.Instance.tech18Lvl = 0;
+			GameManager.Instance.tech18PaidFor = 0.0;
+			break;
+		case 19:
+			GameManager.Instance.tech19Lvl = 0;
+			GameManager.Instance.tech19PaidFor = 0.0;
+			break;
+		case 20:
+			GameManager.Instance.tech20Lvl = 0;
+			GameManager.Instance.tech20PaidFor = 0.0;
+			break;
+		case 21:
+			GameManager.Instance.tech21Lvl = 0;
+			GameManager.Instance.tech21PaidFor = 0.0;
+			break;
+		case 22:
+			GameManager.Instance.tech22Lvl = 0;
+			GameManager.Instance.tech22PaidFor = 0.0;
+			break;
+		case 23:
+			GameManager.Instance.tech23Lvl = 0;
+			GameManager.Instance.tech23PaidFor = 0.0;
+			break;
+		case 24:
+			GameManager.Instance.tech24Lvl = 0;
+			GameManager.Instance.tech24PaidFor = 0.0;
+			break;
+		case 25:
+			GameManager.Instance.tech25Lvl = 0;
+			GameManager.Instance.tech25PaidFor = 0.0;
+			break;
+		case 26:
+			GameManager.Instance.tech26Lvl = 0;
+			GameManager.Instance.tech26PaidFor = 0.0;
+			break;
+		case 27:
+			GameManager.Instance.tech27Lvl = 0;
+			GameManager.Instance.tech27PaidFor = 0.0;
+			break;
+		case 28:
+			GameManager.Instance.tech28Lvl = 0;
+			GameManager.Instance.tech28PaidFor = 0.0;
+			break;
+		case 29:
+			GameManager.Instance.tech29Lvl = 0;
+			GameManager.Instance.tech29PaidFor = 0.0;
+			break;
+		case 30:
+			GameManager.Instance.tech30Lvl = 0;
+			GameManager.Instance.tech30PaidFor = 0.0;
+			break;
+		}
+		this.selectedTech = null;
+		this.updateTable();
+	}
+
+	public void clickedPurchaseButton()
+	{
+		SoundManager.Instance.playReward();
+		List<TechCell> list = new List<TechCell>();
+		for (int i = 0; i < this.listTechCells.Count; i++)
+		{
+			GameObject gameObject = this.listTechCells[i];
+			TechCell component = gameObject.GetComponent<TechCell>();
+			if (component.currLevel == 0)
+			{
+				list.Add(component);
+			}
+		}
+		AchievementManager.Instance.listAch[15].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(15);
+		if (GameManager.Instance.q1Num == 0 && AchievementManager.Instance.listAch[15].currAmt >= 30.0)
+		{
+			GameManager.Instance.getNewQuest1();
+			GameManager.Instance.getNewQuest2();
+			GameManager.Instance.getNewQuest3();
+			GameManager.Instance.getNewQuest4();
+			GameManager.Instance.getNewQuest5();
+			GameManager.Instance.getNewQuest6();
+		}
+		int index = UnityEngine.Random.Range(0, list.Count);
+		TechCell techCell = list[index];
+		switch (techCell.techId)
+		{
+		case 1:
+			GameManager.Instance.tech1Lvl = 1;
+			GameManager.Instance.tech1PaidFor = this.newTechCost;
+			break;
+		case 2:
+			GameManager.Instance.tech2Lvl = 1;
+			GameManager.Instance.tech2PaidFor = this.newTechCost;
+			break;
+		case 3:
+			GameManager.Instance.tech3Lvl = 1;
+			GameManager.Instance.tech3PaidFor = this.newTechCost;
+			break;
+		case 4:
+			GameManager.Instance.tech4Lvl = 1;
+			GameManager.Instance.tech4PaidFor = this.newTechCost;
+			break;
+		case 5:
+			GameManager.Instance.tech5Lvl = 1;
+			GameManager.Instance.tech5PaidFor = this.newTechCost;
+			break;
+		case 6:
+			GameManager.Instance.tech6Lvl = 1;
+			GameManager.Instance.tech6PaidFor = this.newTechCost;
+			break;
+		case 7:
+			GameManager.Instance.tech7Lvl = 1;
+			GameManager.Instance.tech7PaidFor = this.newTechCost;
+			break;
+		case 8:
+			GameManager.Instance.tech8Lvl = 1;
+			GameManager.Instance.tech8PaidFor = this.newTechCost;
+			break;
+		case 9:
+			GameManager.Instance.tech9Lvl = 1;
+			GameManager.Instance.tech9PaidFor = this.newTechCost;
+			break;
+		case 10:
+			GameManager.Instance.tech10Lvl = 1;
+			GameManager.Instance.tech10PaidFor = this.newTechCost;
+			break;
+		case 11:
+			GameManager.Instance.tech11Lvl = 1;
+			GameManager.Instance.tech11PaidFor = this.newTechCost;
+			break;
+		case 12:
+			GameManager.Instance.tech12Lvl = 1;
+			GameManager.Instance.tech12PaidFor = this.newTechCost;
+			break;
+		case 13:
+			GameManager.Instance.tech13Lvl = 1;
+			GameManager.Instance.tech13PaidFor = this.newTechCost;
+			break;
+		case 14:
+			GameManager.Instance.tech14Lvl = 1;
+			GameManager.Instance.tech14PaidFor = this.newTechCost;
+			break;
+		case 15:
+			GameManager.Instance.tech15Lvl = 1;
+			GameManager.Instance.tech15PaidFor = this.newTechCost;
+			break;
+		case 16:
+			GameManager.Instance.tech16Lvl = 1;
+			GameManager.Instance.tech16PaidFor = this.newTechCost;
+			break;
+		case 17:
+			GameManager.Instance.tech17Lvl = 1;
+			GameManager.Instance.tech17PaidFor = this.newTechCost;
+			break;
+		case 18:
+			GameManager.Instance.tech18Lvl = 1;
+			GameManager.Instance.tech18PaidFor = this.newTechCost;
+			break;
+		case 19:
+			GameManager.Instance.tech19Lvl = 1;
+			GameManager.Instance.tech19PaidFor = this.newTechCost;
+			break;
+		case 20:
+			GameManager.Instance.tech20Lvl = 1;
+			GameManager.Instance.tech20PaidFor = this.newTechCost;
+			break;
+		case 21:
+			GameManager.Instance.tech21Lvl = 1;
+			GameManager.Instance.tech21PaidFor = this.newTechCost;
+			break;
+		case 22:
+			GameManager.Instance.tech22Lvl = 1;
+			GameManager.Instance.tech22PaidFor = this.newTechCost;
+			break;
+		case 23:
+			GameManager.Instance.tech23Lvl = 1;
+			GameManager.Instance.tech23PaidFor = this.newTechCost;
+			break;
+		case 24:
+			GameManager.Instance.tech24Lvl = 1;
+			GameManager.Instance.tech24PaidFor = this.newTechCost;
+			break;
+		case 25:
+			GameManager.Instance.tech25Lvl = 1;
+			GameManager.Instance.tech25PaidFor = this.newTechCost;
+			break;
+		case 26:
+			GameManager.Instance.tech26Lvl = 1;
+			GameManager.Instance.tech26PaidFor = this.newTechCost;
+			break;
+		case 27:
+			GameManager.Instance.tech27Lvl = 1;
+			GameManager.Instance.tech27PaidFor = this.newTechCost;
+			break;
+		case 28:
+			GameManager.Instance.tech28Lvl = 1;
+			GameManager.Instance.tech28PaidFor = this.newTechCost;
+			break;
+		case 29:
+			GameManager.Instance.tech29Lvl = 1;
+			GameManager.Instance.tech29PaidFor = this.newTechCost;
+			break;
+		case 30:
+			GameManager.Instance.tech30Lvl = 1;
+			GameManager.Instance.tech30PaidFor = this.newTechCost;
+			break;
+		}
+		techCell.updateCell();
+		UIManager.Instance.blackbg.SetActive(true);
+		this.newTechPanelTitle.text = techCell.titleText.text;
+		this.newTechPanelIcon.sprite = techCell.icon.sprite;
+		if (techCell.techId != 30)
+		{
+			this.newTechPanelDesc1.text = techCell.stat1Text.text;
+		}
+		else
+		{
+			this.newTechPanelDesc1.text = "+DPS/HP based on hero tier";
+		}
+		this.newTechPanelDesc2.text = techCell.stat2Text.text;
+		this.newTechPanel.SetActive(true);
+		GameManager.Instance.bpAmt -= this.newTechCost;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	private void Update()
+	{
+		if (this.savedBps != GameManager.Instance.bpAmt)
+		{
+			this.updateTable();
+		}
+	}
+
+	public static TechManager Instance;
+
+	public GameObject noTechsText;
+
+	public GameObject notSelectedText;
+
+	public Text numTechText;
+
+	public GameObject newTechButton;
+
+	public Text newTechButtonTitle;
+
+	public Text newTechButtonCost;
+
+	private double newTechCost;
+
+	public List<GameObject> listTechCells;
+
+	public List<Sprite> listTechSprites;
+
+	public GameObject tableContent;
+
+	public TechCell selectedTech;
+
+	public GameObject selectedCellBg;
+
+	private double savedBps;
+
+	public Image selIcon;
+
+	public Text selTitle;
+
+	public Text selLevel;
+
+	public Text selStat1;
+
+	public Text selStat2;
+
+	public Text selUpgStat1;
+
+	public Text selUpgStat2;
+
+	public GameObject selUpgButton;
+
+	public Text selUpgButtonTitle;
+
+	public Text selUpgButtonCost;
+
+	public Text selSellButtonCost;
+
+	public GameObject newTechPanel;
+
+	public Text newTechPanelTitle;
+
+	public Image newTechPanelIcon;
+
+	public Text newTechPanelDesc1;
+
+	public Text newTechPanelDesc2;
+}

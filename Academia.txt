@@ -1,0 +1,39 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class Academia : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	public string saveData()
+	{
+		return JsonUtility.ToJson(this);
+	}
+
+	public void loadData(string _loadData)
+	{
+		if (_loadData != string.Empty)
+		{
+			JsonUtility.FromJsonOverwrite(_loadData, this);
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	public int bookNum;
+
+	public int totalPages;
+
+	public int totalBooks;
+
+	public int totalBonus;
+
+	public int lastBookPages;
+
+	public int nextBookPages;
+}

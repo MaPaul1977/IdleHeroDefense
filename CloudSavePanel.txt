@@ -1,0 +1,185 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using PlayFab;
+using PlayFab.ClientModels;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class CloudSavePanel : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void OnEnable()
+	{
+		if (!LoginManager.Instance.isConnectedPlayfab)
+		{
+			this.notConnectedPanel.SetActive(true);
+			return;
+		}
+		this.notConnectedPanel.SetActive(false);
+		if (LoginManager.Instance.isLoggedInCloud)
+		{
+			this.loggedInPanel.SetActive(true);
+			this.loggedInCredentialsText.text = "Email: " + LoginManager.Instance.playFabUsername + "\nPassword: " + LoginManager.Instance.playFabPassword;
+		}
+		else
+		{
+			this.loggedInPanel.SetActive(false);
+		}
+	}
+
+	public void clickedCreateButton()
+	{
+		this.blackBg.SetActive(true);
+		PlayFabClientAPI.AddUsernamePassword(new AddUsernamePasswordRequest
+		{
+			Username = LoginManager.Instance.playFabID,
+			Email = this.createUserInput.text,
+			Password = this.createPassInput.text
+		}, delegate(AddUsernamePasswordResult result)
+		{
+			this.blackBg.SetActive(false);
+			LoginManager.Instance.isLoggedInCloud = true;
+			LoginManager.Instance.playFabUsername = this.createUserInput.text;
+			LoginManager.Instance.playFabPassword = this.createPassInput.text;
+			this.loggedInPanel.SetActive(true);
+			this.loggedInCredentialsText.text = "Email: " + LoginManager.Instance.playFabUsername + "\nPassword: " + LoginManager.Instance.playFabPassword;
+			PlayerPrefs.SetString("Username", this.createUserInput.text);
+			PlayerPrefs.SetString("Password", this.createPassInput.text);
+			PlayerPrefs.Save();
+		}, delegate(PlayFabError error)
+		{
+			this.blackBg.SetActive(false);
+			this.invalidAccPanel.SetActive(true);
+			if (error.Error == PlayFabErrorCode.AccountAlreadyLinked)
+			{
+				this.invalidAccText.text = "Account has already been linked.";
+			}
+			else if (error.Error == PlayFabErrorCode.EmailAddressNotAvailable)
+			{
+				this.invalidAccText.text = "Email address is not available.";
+			}
+			else if (error.Error == PlayFabErrorCode.InvalidEmailAddress)
+			{
+				this.invalidAccText.text = "Invalid email address.";
+			}
+			else if (error.Error == PlayFabErrorCode.InvalidTitleId)
+			{
+				this.invalidAccText.text = "Invalid Title ID.";
+			}
+			else if (error.Error == PlayFabErrorCode.InvalidUsername)
+			{
+				this.invalidAccText.text = "Invalid username.";
+			}
+			else if (error.Error == PlayFabErrorCode.UsernameNotAvailable)
+			{
+				this.invalidAccText.text = "Username is not available.";
+			}
+			else
+			{
+				this.invalidAccText.text = error.ToString();
+			}
+		}, null, null);
+	}
+
+	public void clickedLoadButton()
+	{
+		this.blackBg.SetActive(true);
+		UnityEngine.Debug.Log("checking load cloud data account credentials...");
+		PlayFabClientAPI.LoginWithEmailAddress(new LoginWithEmailAddressRequest
+		{
+			TitleId = "ED4A",
+			Email = this.loadUserInput.text,
+			Password = this.loadPassInput.text
+		}, delegate(LoginResult result)
+		{
+			UnityEngine.Debug.Log("logged into playfab");
+			PlayerPrefs.SetString("Username", this.loadUserInput.text);
+			PlayerPrefs.SetString("Password", this.loadPassInput.text);
+			PlayerPrefs.SetString("LoadCloudAccount", "X");
+			PlayerPrefs.Save();
+			LoginManager.Instance.gameIsLoaded = false;
+			SceneManager.LoadScene("IntroScene");
+		}, delegate(PlayFabError error)
+		{
+			this.blackBg.SetActive(false);
+			this.invalidAccPanel.SetActive(true);
+			if (error.Error == PlayFabErrorCode.AccountNotFound)
+			{
+				this.invalidAccText.text = "Account not found.";
+			}
+			else if (error.Error == PlayFabErrorCode.InvalidEmailOrPassword)
+			{
+				this.invalidAccText.text = "Invalid email or password.";
+			}
+			else if (error.Error == PlayFabErrorCode.InvalidTitleId)
+			{
+				this.invalidAccText.text = "Invalid Title ID.";
+			}
+			else
+			{
+				this.invalidAccText.text = error.ToString();
+			}
+		}, null, null);
+	}
+
+	public void closeInvalidCloudLogin()
+	{
+		this.invalidAccPanel.SetActive(false);
+	}
+
+	private void Update()
+	{
+		if (this.notConnectedPanel.activeSelf || this.loggedInPanel.activeSelf)
+		{
+			return;
+		}
+		if (this.createUserInput.text.Length >= 6 && this.createUserInput.text.Length <= 60 && this.createPassInput.text.Length >= 6 && this.createPassInput.text.Length <= 16)
+		{
+			this.createAccButton.GetComponent<Button>().enabled = true;
+			UIManager.Instance.changeButtonColorV2(this.createAccButton, "green", true);
+		}
+		else
+		{
+			this.createAccButton.GetComponent<Button>().enabled = false;
+			UIManager.Instance.changeButtonColorV2(this.createAccButton, "grey", true);
+		}
+		if (this.loadUserInput.text.Length >= 6 && this.loadUserInput.text.Length <= 60 && this.loadPassInput.text.Length >= 6 && this.loadPassInput.text.Length <= 16)
+		{
+			this.loadAccButton.GetComponent<Button>().enabled = true;
+			UIManager.Instance.changeButtonColorV2(this.loadAccButton, "green", true);
+		}
+		else
+		{
+			this.loadAccButton.GetComponent<Button>().enabled = false;
+			UIManager.Instance.changeButtonColorV2(this.loadAccButton, "grey", true);
+		}
+	}
+
+	public GameObject blackBg;
+
+	public GameObject notConnectedPanel;
+
+	public GameObject loggedInPanel;
+
+	public Text loggedInCredentialsText;
+
+	public InputField createUserInput;
+
+	public InputField createPassInput;
+
+	public GameObject createAccButton;
+
+	public InputField loadUserInput;
+
+	public InputField loadPassInput;
+
+	public GameObject loadAccButton;
+
+	public GameObject invalidAccPanel;
+
+	public Text invalidAccText;
+}

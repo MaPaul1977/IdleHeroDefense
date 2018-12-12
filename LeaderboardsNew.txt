@@ -1,0 +1,705 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using PlayFab;
+using PlayFab.ClientModels;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class LeaderboardsNew : MonoBehaviour
+{
+	private void Start()
+	{
+		this.onButton = 1;
+	}
+
+	private void OnEnable()
+	{
+		if (LoginManager.Instance.isConnectedPlayfab)
+		{
+			this.notConnectedPanel.SetActive(false);
+			this.refreshTable();
+			return;
+		}
+		this.notConnectedPanel.SetActive(true);
+	}
+
+	public void clickedButton(int _num)
+	{
+		this.onButton = _num;
+		if (this.onButton == 1)
+		{
+			UIManager.Instance.changeButtonColorV2(this.button1, "yellow", true);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.button1, "green", true);
+		}
+		if (this.onButton == 2)
+		{
+			UIManager.Instance.changeButtonColorV2(this.button2, "yellow", true);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.button2, "green", true);
+		}
+		if (this.onButton == 3)
+		{
+			UIManager.Instance.changeButtonColorV2(this.button3, "yellow", true);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.button3, "green", true);
+		}
+		if (this.onButton == 4)
+		{
+			UIManager.Instance.changeButtonColorV2(this.button4, "yellow", true);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.button4, "green", true);
+		}
+		if (this.onButton == 5)
+		{
+			UIManager.Instance.changeButtonColorV2(this.button5, "yellow", true);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.button5, "green", true);
+		}
+		this.refreshTable();
+	}
+
+	private void refreshTable()
+	{
+		if (UIManager.Instance.updateLeaderboardTimer >= 120f)
+		{
+			this.updateLeaderboards();
+			return;
+		}
+		if (this.onButton == 1)
+		{
+			this.leaderboardsTitle.text = "Highest Wave";
+			for (int i = 0; i < this.listHighestWavePos.Count; i++)
+			{
+				this.updateTableCell(this.listCells[i], this.listHighestWavePos[i], this.listHighestWaveName[i], this.listHighestWaveId[i], this.listHighestWaveVal[i]);
+			}
+		}
+		else if (this.onButton == 2)
+		{
+			this.leaderboardsTitle.text = "Commander Level";
+			for (int j = 0; j < this.listCommLvlPos.Count; j++)
+			{
+				this.updateTableCell(this.listCells[j], this.listCommLvlPos[j], this.listCommLvlName[j], this.listCommLvlId[j], this.listCommLvlVal[j]);
+			}
+		}
+		else if (this.onButton == 3)
+		{
+			this.leaderboardsTitle.text = "Total Waves";
+			for (int k = 0; k < this.listTotalWavesPos.Count; k++)
+			{
+				this.updateTableCell(this.listCells[k], this.listTotalWavesPos[k], this.listTotalWavesName[k], this.listTotalWavesId[k], this.listTotalWavesVal[k]);
+			}
+		}
+		else if (this.onButton == 4)
+		{
+			this.leaderboardsTitle.text = "Total Prestiges";
+			for (int l = 0; l < this.listPrestigesPos.Count; l++)
+			{
+				this.updateTableCell(this.listCells[l], this.listPrestigesPos[l], this.listPrestigesName[l], this.listPrestigesId[l], this.listPrestigesVal[l]);
+			}
+		}
+		else if (this.onButton == 5)
+		{
+			this.leaderboardsTitle.text = "Enemies Killed";
+			for (int m = 0; m < this.listEnemiesKilledPos.Count; m++)
+			{
+				this.updateTableCell(this.listCells[m], this.listEnemiesKilledPos[m], this.listEnemiesKilledName[m], this.listEnemiesKilledId[m], this.listEnemiesKilledVal[m]);
+			}
+		}
+		this.loadingPanel.SetActive(false);
+	}
+
+	private void updateLeaderboards()
+	{
+		this.loadingPanel.SetActive(true);
+		UIManager.Instance.updateLeaderboardTimer = 0f;
+		this.loaded1 = false;
+		this.loaded2 = false;
+		this.loaded3 = false;
+		this.loaded4 = false;
+		this.loaded5 = false;
+		this.inTop1 = false;
+		this.inTop2 = false;
+		this.inTop3 = false;
+		this.inTop4 = false;
+		this.inTop5 = false;
+		this.listHighestWavePos.Clear();
+		this.listHighestWaveName.Clear();
+		this.listHighestWaveId.Clear();
+		this.listHighestWaveVal.Clear();
+		this.listCommLvlPos.Clear();
+		this.listCommLvlName.Clear();
+		this.listCommLvlId.Clear();
+		this.listCommLvlVal.Clear();
+		this.listTotalWavesPos.Clear();
+		this.listTotalWavesName.Clear();
+		this.listTotalWavesId.Clear();
+		this.listTotalWavesVal.Clear();
+		this.listPrestigesPos.Clear();
+		this.listPrestigesName.Clear();
+		this.listPrestigesId.Clear();
+		this.listPrestigesVal.Clear();
+		this.listEnemiesKilledPos.Clear();
+		this.listEnemiesKilledName.Clear();
+		this.listEnemiesKilledId.Clear();
+		this.listEnemiesKilledVal.Clear();
+		PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+		{
+			StatisticName = "Highest Wave",
+			StartPosition = 0,
+			MaxResultsCount = new int?(29)
+		}, delegate(GetLeaderboardResult result)
+		{
+			this.seasonText.text = "Season " + result.Version;
+			DateTime dateTime = DateTime.ParseExact(GameManager.Instance.currServerTime.ToString("yyyy/MM/dd"), "yyyy/MM/dd", null);
+			int num = DateTime.DaysInMonth(dateTime.Year, dateTime.Month);
+			this.endSeasonText.text = "Ends in " + (num - dateTime.Day) + " days";
+			foreach (PlayerLeaderboardEntry playerLeaderboardEntry in result.Leaderboard)
+			{
+				if (playerLeaderboardEntry.Position < 25)
+				{
+					this.listHighestWavePos.Add(playerLeaderboardEntry.Position + 1);
+					if (playerLeaderboardEntry.DisplayName != null)
+					{
+						this.listHighestWaveName.Add(playerLeaderboardEntry.DisplayName);
+					}
+					else
+					{
+						this.listHighestWaveName.Add(playerLeaderboardEntry.PlayFabId);
+					}
+					this.listHighestWaveId.Add(playerLeaderboardEntry.PlayFabId);
+					this.listHighestWaveVal.Add(playerLeaderboardEntry.StatValue);
+				}
+				if (playerLeaderboardEntry.PlayFabId == LoginManager.Instance.playFabID)
+				{
+					this.inTop1 = true;
+				}
+			}
+			if (!this.inTop1)
+			{
+				PlayFabClientAPI.GetLeaderboardAroundPlayer(new GetLeaderboardAroundPlayerRequest
+				{
+					PlayFabId = LoginManager.Instance.playFabID,
+					StatisticName = "Highest Wave",
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardAroundPlayerResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listHighestWavePos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listHighestWaveName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listHighestWaveName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listHighestWaveId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listHighestWaveVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded1 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+			else
+			{
+				PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+				{
+					StatisticName = "Highest Wave",
+					StartPosition = 25,
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listHighestWavePos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listHighestWaveName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listHighestWaveName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listHighestWaveId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listHighestWaveVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded1 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+		}, delegate(PlayFabError error)
+		{
+		}, null, null);
+		PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+		{
+			StatisticName = "Commander Level",
+			StartPosition = 0,
+			MaxResultsCount = new int?(29)
+		}, delegate(GetLeaderboardResult result)
+		{
+			foreach (PlayerLeaderboardEntry playerLeaderboardEntry in result.Leaderboard)
+			{
+				if (playerLeaderboardEntry.Position < 25)
+				{
+					this.listCommLvlPos.Add(playerLeaderboardEntry.Position + 1);
+					if (playerLeaderboardEntry.DisplayName != null)
+					{
+						this.listCommLvlName.Add(playerLeaderboardEntry.DisplayName);
+					}
+					else
+					{
+						this.listCommLvlName.Add(playerLeaderboardEntry.PlayFabId);
+					}
+					this.listCommLvlId.Add(playerLeaderboardEntry.PlayFabId);
+					this.listCommLvlVal.Add(playerLeaderboardEntry.StatValue);
+				}
+				if (playerLeaderboardEntry.PlayFabId == LoginManager.Instance.playFabID)
+				{
+					this.inTop3 = true;
+				}
+			}
+			if (!this.inTop3)
+			{
+				PlayFabClientAPI.GetLeaderboardAroundPlayer(new GetLeaderboardAroundPlayerRequest
+				{
+					PlayFabId = LoginManager.Instance.playFabID,
+					StatisticName = "Commander Level",
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardAroundPlayerResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listCommLvlPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listCommLvlName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listCommLvlName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listCommLvlId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listCommLvlVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded3 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+			else
+			{
+				PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+				{
+					StatisticName = "Commander Level",
+					StartPosition = 25,
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listCommLvlPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listCommLvlName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listCommLvlName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listCommLvlId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listCommLvlVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded3 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+		}, delegate(PlayFabError error)
+		{
+		}, null, null);
+		PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+		{
+			StatisticName = "Total Waves",
+			StartPosition = 0,
+			MaxResultsCount = new int?(29)
+		}, delegate(GetLeaderboardResult result)
+		{
+			foreach (PlayerLeaderboardEntry playerLeaderboardEntry in result.Leaderboard)
+			{
+				if (playerLeaderboardEntry.Position < 25)
+				{
+					this.listTotalWavesPos.Add(playerLeaderboardEntry.Position + 1);
+					if (playerLeaderboardEntry.DisplayName != null)
+					{
+						this.listTotalWavesName.Add(playerLeaderboardEntry.DisplayName);
+					}
+					else
+					{
+						this.listTotalWavesName.Add(playerLeaderboardEntry.PlayFabId);
+					}
+					this.listTotalWavesId.Add(playerLeaderboardEntry.PlayFabId);
+					this.listTotalWavesVal.Add(playerLeaderboardEntry.StatValue);
+				}
+				if (playerLeaderboardEntry.PlayFabId == LoginManager.Instance.playFabID)
+				{
+					this.inTop2 = true;
+				}
+			}
+			if (!this.inTop2)
+			{
+				PlayFabClientAPI.GetLeaderboardAroundPlayer(new GetLeaderboardAroundPlayerRequest
+				{
+					PlayFabId = LoginManager.Instance.playFabID,
+					StatisticName = "Total Waves",
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardAroundPlayerResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listTotalWavesPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listTotalWavesName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listTotalWavesName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listTotalWavesId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listTotalWavesVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded2 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+			else
+			{
+				PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+				{
+					StatisticName = "Total Waves",
+					StartPosition = 25,
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listTotalWavesPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listTotalWavesName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listTotalWavesName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listTotalWavesId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listTotalWavesVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded2 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+		}, delegate(PlayFabError error)
+		{
+		}, null, null);
+		PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+		{
+			StatisticName = "Total Prestiges",
+			StartPosition = 0,
+			MaxResultsCount = new int?(29)
+		}, delegate(GetLeaderboardResult result)
+		{
+			foreach (PlayerLeaderboardEntry playerLeaderboardEntry in result.Leaderboard)
+			{
+				if (playerLeaderboardEntry.Position < 25)
+				{
+					this.listPrestigesPos.Add(playerLeaderboardEntry.Position + 1);
+					if (playerLeaderboardEntry.DisplayName != null)
+					{
+						this.listPrestigesName.Add(playerLeaderboardEntry.DisplayName);
+					}
+					else
+					{
+						this.listPrestigesName.Add(playerLeaderboardEntry.PlayFabId);
+					}
+					this.listPrestigesId.Add(playerLeaderboardEntry.PlayFabId);
+					this.listPrestigesVal.Add(playerLeaderboardEntry.StatValue);
+				}
+				if (playerLeaderboardEntry.PlayFabId == LoginManager.Instance.playFabID)
+				{
+					this.inTop4 = true;
+				}
+			}
+			if (!this.inTop4)
+			{
+				PlayFabClientAPI.GetLeaderboardAroundPlayer(new GetLeaderboardAroundPlayerRequest
+				{
+					PlayFabId = LoginManager.Instance.playFabID,
+					StatisticName = "Total Prestiges",
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardAroundPlayerResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listPrestigesPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listPrestigesName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listPrestigesName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listPrestigesId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listPrestigesVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded4 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+			else
+			{
+				PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+				{
+					StatisticName = "Total Prestiges",
+					StartPosition = 25,
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listPrestigesPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listPrestigesName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listPrestigesName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listPrestigesId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listPrestigesVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded4 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+		}, delegate(PlayFabError error)
+		{
+		}, null, null);
+		PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+		{
+			StatisticName = "Enemies Killed",
+			StartPosition = 0,
+			MaxResultsCount = new int?(29)
+		}, delegate(GetLeaderboardResult result)
+		{
+			foreach (PlayerLeaderboardEntry playerLeaderboardEntry in result.Leaderboard)
+			{
+				if (playerLeaderboardEntry.Position < 25)
+				{
+					this.listEnemiesKilledPos.Add(playerLeaderboardEntry.Position + 1);
+					if (playerLeaderboardEntry.DisplayName != null)
+					{
+						this.listEnemiesKilledName.Add(playerLeaderboardEntry.DisplayName);
+					}
+					else
+					{
+						this.listEnemiesKilledName.Add(playerLeaderboardEntry.PlayFabId);
+					}
+					this.listEnemiesKilledId.Add(playerLeaderboardEntry.PlayFabId);
+					this.listEnemiesKilledVal.Add(playerLeaderboardEntry.StatValue);
+				}
+				if (playerLeaderboardEntry.PlayFabId == LoginManager.Instance.playFabID)
+				{
+					this.inTop5 = true;
+				}
+			}
+			if (!this.inTop5)
+			{
+				PlayFabClientAPI.GetLeaderboardAroundPlayer(new GetLeaderboardAroundPlayerRequest
+				{
+					PlayFabId = LoginManager.Instance.playFabID,
+					StatisticName = "Enemies Killed",
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardAroundPlayerResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listEnemiesKilledPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listEnemiesKilledName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listEnemiesKilledName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listEnemiesKilledId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listEnemiesKilledVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded5 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+			else
+			{
+				PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+				{
+					StatisticName = "Enemies Killed",
+					StartPosition = 25,
+					MaxResultsCount = new int?(9)
+				}, delegate(GetLeaderboardResult result2)
+				{
+					foreach (PlayerLeaderboardEntry playerLeaderboardEntry2 in result2.Leaderboard)
+					{
+						this.listEnemiesKilledPos.Add(playerLeaderboardEntry2.Position + 1);
+						if (playerLeaderboardEntry2.DisplayName != null)
+						{
+							this.listEnemiesKilledName.Add(playerLeaderboardEntry2.DisplayName);
+						}
+						else
+						{
+							this.listEnemiesKilledName.Add(playerLeaderboardEntry2.PlayFabId);
+						}
+						this.listEnemiesKilledId.Add(playerLeaderboardEntry2.PlayFabId);
+						this.listEnemiesKilledVal.Add(playerLeaderboardEntry2.StatValue);
+					}
+					this.loaded5 = true;
+				}, delegate(PlayFabError error2)
+				{
+				}, null, null);
+			}
+		}, delegate(PlayFabError error)
+		{
+		}, null, null);
+	}
+
+	private void updateTableCell(GameObject _cell, int _place, string _name, string _id, int _score)
+	{
+		Text component = _cell.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>();
+		Text component2 = _cell.transform.GetChild(1).gameObject.GetComponent<Text>();
+		Text component3 = _cell.transform.GetChild(2).gameObject.GetComponent<Text>();
+		component.text = _place.ToString("n0");
+		component2.text = _name;
+		component3.text = _score.ToString("n0");
+		if (_id == LoginManager.Instance.playFabID)
+		{
+			this.youCell.transform.localPosition = new Vector3(_cell.transform.localPosition.x, _cell.transform.localPosition.y + 3f, _cell.transform.localPosition.z);
+		}
+	}
+
+	private void Update()
+	{
+		if (this.loaded1 && this.loaded2 && this.loaded3 && this.loaded4 && this.loaded5 && this.loadingPanel.activeSelf)
+		{
+			this.refreshTable();
+		}
+	}
+
+	public GameObject notConnectedPanel;
+
+	public GameObject loadingPanel;
+
+	public Text seasonText;
+
+	public Text endSeasonText;
+
+	public GameObject button1;
+
+	public GameObject button2;
+
+	public GameObject button3;
+
+	public GameObject button4;
+
+	public GameObject button5;
+
+	private int onButton;
+
+	public Text leaderboardsTitle;
+
+	public GameObject youCell;
+
+	public List<GameObject> listCells;
+
+	private bool loaded1;
+
+	private bool loaded2;
+
+	private bool loaded3;
+
+	private bool loaded4;
+
+	private bool loaded5;
+
+	private bool inTop1;
+
+	private bool inTop2;
+
+	private bool inTop3;
+
+	private bool inTop4;
+
+	private bool inTop5;
+
+	private List<int> listHighestWavePos = new List<int>();
+
+	private List<string> listHighestWaveName = new List<string>();
+
+	private List<string> listHighestWaveId = new List<string>();
+
+	private List<int> listHighestWaveVal = new List<int>();
+
+	private List<int> listCommLvlPos = new List<int>();
+
+	private List<string> listCommLvlName = new List<string>();
+
+	private List<string> listCommLvlId = new List<string>();
+
+	private List<int> listCommLvlVal = new List<int>();
+
+	private List<int> listTotalWavesPos = new List<int>();
+
+	private List<string> listTotalWavesName = new List<string>();
+
+	private List<string> listTotalWavesId = new List<string>();
+
+	private List<int> listTotalWavesVal = new List<int>();
+
+	private List<int> listPrestigesPos = new List<int>();
+
+	private List<string> listPrestigesName = new List<string>();
+
+	private List<string> listPrestigesId = new List<string>();
+
+	private List<int> listPrestigesVal = new List<int>();
+
+	private List<int> listEnemiesKilledPos = new List<int>();
+
+	private List<string> listEnemiesKilledName = new List<string>();
+
+	private List<string> listEnemiesKilledId = new List<string>();
+
+	private List<int> listEnemiesKilledVal = new List<int>();
+}

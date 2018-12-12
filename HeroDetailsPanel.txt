@@ -1,0 +1,1612 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HeroDetailsPanel : MonoBehaviour
+{
+	private void Start()
+	{
+		this.expSlider.minValue = 0f;
+		this.expSlider.maxValue = 1f;
+		this.updateTable();
+	}
+
+	private void OnEnable()
+	{
+		this.expSlider.minValue = 0f;
+		this.expSlider.maxValue = 1f;
+		this.updateTable();
+	}
+
+	public void updateTable()
+	{
+		this.savedHero = this.thisHero;
+		this.heroIcon.sprite = this.thisHero.getHeroIcon();
+		this.heroName.text = this.thisHero.heroName;
+		this.heroLevel.text = string.Concat(new object[]
+		{
+			"Level: ",
+			this.thisHero.level,
+			"\nHero #",
+			this.thisHero.tier
+		});
+		if (this.thisHero.level > 0)
+		{
+			if (this.thisHero.isActiveHero)
+			{
+				if (GameManager.Instance.activeHeroes.Count == 1)
+				{
+					this.cantTagButton.SetActive(true);
+					this.tagButton.SetActive(false);
+					this.cantTagTitleText.text = "Tag Out";
+					this.cantTagDescText.text = "Only Active Hero";
+				}
+				else if (GameManager.Instance.numAliveHeroes == 1 && this.thisHero.currHp > 0.0)
+				{
+					this.cantTagButton.SetActive(true);
+					this.tagButton.SetActive(false);
+					this.cantTagTitleText.text = "Tag Out";
+					this.cantTagDescText.text = "Only Living Hero";
+				}
+				else
+				{
+					this.cantTagButton.SetActive(false);
+					this.tagButton.SetActive(true);
+					this.tagTitleText.text = "Tag Out";
+					UIManager.Instance.changeButtonColorV2(this.tagButton, "red", true);
+				}
+			}
+			else if (GameManager.Instance.activeHeroes.Count == 5)
+			{
+				this.cantTagButton.SetActive(true);
+				this.tagButton.SetActive(false);
+				this.cantTagTitleText.text = "Tag In";
+				this.cantTagDescText.text = "Max 5 Heroes";
+			}
+			else
+			{
+				this.cantTagButton.SetActive(false);
+				this.tagButton.SetActive(true);
+				this.tagTitleText.text = "Tag In";
+				UIManager.Instance.changeButtonColorV2(this.tagButton, "green", true);
+			}
+		}
+		else
+		{
+			this.cantTagButton.SetActive(true);
+			this.tagButton.SetActive(false);
+			this.cantTagTitleText.text = "Tag In";
+			this.cantTagDescText.text = "Hero Not Employed";
+		}
+		this.savedAliveHeroes = GameManager.Instance.numAliveHeroes;
+		this.savedActiveHeroesAmt = GameManager.Instance.activeHeroes.Count;
+		this.evolveLvlText.text = "Evolution Level " + this.thisHero.evolveLvl;
+		this.evolveExpSlider.value = (float)(this.thisHero.evolveCurrExp - this.thisHero.evolveLastExp) / (float)(this.thisHero.evolveNextExp - this.thisHero.evolveLastExp);
+		if (this.expSlider.value >= 1f)
+		{
+			this.expSlider.value = 1f;
+		}
+		this.evolveExpText.text = UIManager.Instance.convertNumberFormat((this.thisHero.evolveCurrExp - this.thisHero.evolveLastExp).ToString("0")) + "/" + UIManager.Instance.convertNumberFormat((this.thisHero.evolveNextExp - this.thisHero.evolveLastExp).ToString("0")) + " exp";
+		this.evolveBonusText.text = "+" + (this.thisHero.evolveEffect * 100f).ToString("n0") + "% DPS/HP";
+		if (this.thisHero.equipCurrExp > 0)
+		{
+			this.expSlider.value = (float)(this.thisHero.equipCurrExp - this.thisHero.equipLastExp) / (float)(this.thisHero.equipNextExp - this.thisHero.equipLastExp);
+			if (this.expSlider.value >= 1f)
+			{
+				this.expSlider.value = 1f;
+			}
+		}
+		else
+		{
+			this.expSlider.value = 0f;
+		}
+		this.expText.text = string.Concat(new object[]
+		{
+			this.thisHero.equipCurrExp - this.thisHero.equipLastExp,
+			"/",
+			this.thisHero.equipNextExp - this.thisHero.equipLastExp,
+			" exp"
+		});
+		this.weapon.GetComponent<Image>().sprite = EquipmentManager.Instance.listBackgrounds[this.thisHero.wepRarity];
+		if (this.thisHero.type == 1)
+		{
+			this.weapon.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = EquipmentManager.Instance.listMeleeWeapons[this.thisHero.wepNum];
+		}
+		else if (this.thisHero.type == 2)
+		{
+			this.weapon.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = EquipmentManager.Instance.listRangeWeapons[this.thisHero.wepNum];
+		}
+		else if (this.thisHero.type == 3)
+		{
+			this.weapon.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = EquipmentManager.Instance.listMageWeapons[this.thisHero.wepNum];
+		}
+		this.weapon.transform.GetChild(1).gameObject.GetComponent<Image>().sprite = EquipmentManager.Instance.listBorders[this.thisHero.wepRarity];
+		this.weapon.transform.GetChild(2).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = this.thisHero.wepLevel.ToString();
+		this.updateEquipButton(this.knife, this.thisHero.knifeRarity, EquipmentManager.Instance.listKnifes[this.thisHero.knifeNum], this.thisHero.knifeLevel);
+		this.updateEquipButton(this.bracers, this.thisHero.bracersRarity, EquipmentManager.Instance.listBracers[this.thisHero.bracersNum], this.thisHero.bracersLevel);
+		this.updateEquipButton(this.gauntlets, this.thisHero.gauntletsRarity, EquipmentManager.Instance.listGauntlets[this.thisHero.gauntletsNum], this.thisHero.gauntletsLevel);
+		this.updateEquipButton(this.shield, this.thisHero.shieldRarity, EquipmentManager.Instance.listShields[this.thisHero.shieldNum], this.thisHero.shieldLevel);
+		this.updateEquipButton(this.cloak, this.thisHero.cloakRarity, EquipmentManager.Instance.listCloaks[this.thisHero.cloakNum], this.thisHero.cloakLevel);
+		this.updateEquipButton(this.boots, this.thisHero.bootsRarity, EquipmentManager.Instance.listBoots[this.thisHero.bootsNum], this.thisHero.bootsLevel);
+		this.updateEquipButton(this.belt, this.thisHero.beltRarity, EquipmentManager.Instance.listBelts[this.thisHero.beltNum], this.thisHero.beltLevel);
+		this.updateEquipButton(this.necklace, this.thisHero.necklaceRarity, EquipmentManager.Instance.listNecklaces[this.thisHero.necklaceNum], this.thisHero.necklaceLevel);
+		this.updateEquipButton(this.ring, this.thisHero.ringRarity, EquipmentManager.Instance.listRings[this.thisHero.ringNum], this.thisHero.ringLevel);
+		float num = 1f + (float)GameManager.Instance.badge20Lvl * 0.1f;
+		if (this.selectedEquip == 0)
+		{
+			this.overviewPanel.SetActive(true);
+			this.selectedPanel.SetActive(false);
+			this.selectedYellowBg.SetActive(false);
+			this.overviewText1.text = string.Concat(new object[]
+			{
+				"DPS: +",
+				((float)(this.thisHero.wepPower * 25) * num).ToString("n0"),
+				"%\nCrit Dmg: +",
+				this.thisHero.knifePower * 10,
+				"%\nCrit Chance: +",
+				((float)this.thisHero.bracersPower * 0.05f).ToString("f2"),
+				"%\nAtt Speed: +",
+				((float)this.thisHero.gauntletsPower * 0.05f).ToString("f2"),
+				"%\nMove Speed: +",
+				((float)this.thisHero.bootsPower * 0.1f).ToString("f2"),
+				"%"
+			});
+			this.overviewText2.text = string.Concat(new object[]
+			{
+				"HP: +",
+				((float)(this.thisHero.shieldPower * 25) * num).ToString("n0"),
+				"%\nMana: +",
+				this.thisHero.cloakPower,
+				"%\n"
+			});
+			if (this.thisHero.type == 1)
+			{
+				Text text = this.overviewText2;
+				string text2 = text.text;
+				text.text = string.Concat(new string[]
+				{
+					text2,
+					"Evade Chance: +",
+					((float)this.thisHero.beltPower * 0.05f).ToString("f2"),
+					"%\nSplash Chance: +",
+					((float)this.thisHero.necklacePower * 0.05f).ToString("f2"),
+					"%\nHeal Chance: +",
+					((float)this.thisHero.ringPower * 0.05f).ToString("f2"),
+					"%"
+				});
+			}
+			else if (this.thisHero.type == 2)
+			{
+				Text text3 = this.overviewText2;
+				string text2 = text3.text;
+				text3.text = string.Concat(new object[]
+				{
+					text2,
+					"Range: +",
+					((float)this.thisHero.beltPower * 0.2f).ToString("f2"),
+					"%\nGold Drop: +",
+					this.thisHero.necklacePower * 20,
+					"%\nChest Gold: +",
+					this.thisHero.ringPower * 5,
+					"%"
+				});
+			}
+			else if (this.thisHero.type == 3)
+			{
+				Text text4 = this.overviewText2;
+				string text2 = text4.text;
+				text4.text = string.Concat(new string[]
+				{
+					text2,
+					"Skill CD: -",
+					((float)this.thisHero.beltPower * 0.1f).ToString("f2"),
+					"%\nMana Cost: -",
+					((float)this.thisHero.necklacePower * 0.1f).ToString("f2"),
+					"%\nMana Regen: +",
+					((float)this.thisHero.ringPower * 0.1f).ToString("f2"),
+					"%"
+				});
+			}
+		}
+		else
+		{
+			this.overviewPanel.SetActive(false);
+			this.selectedPanel.SetActive(true);
+			this.selectedYellowBg.SetActive(true);
+			if (this.selectedEquip == 1)
+			{
+				this.selectedYellowBg.transform.position = this.weapon.transform.position;
+				this.selectedTitleText.text = "Primary Weapon";
+				this.setRarityText(this.thisHero.wepRarity);
+				this.selectedStatsText.text = string.Concat(new object[]
+				{
+					"Power: ",
+					this.thisHero.wepPower,
+					"  /  Level: ",
+					this.thisHero.wepLevel,
+					"\nDPS: +",
+					((float)(this.thisHero.wepPower * 25) * num).ToString("n0"),
+					"%"
+				});
+				Text text5 = this.selectedStatsText;
+				text5.text += this.getReforgeStats("wep");
+				if (this.thisHero.wepLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.wepPower, this.thisHero.wepLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("wep");
+				}
+			}
+			else if (this.selectedEquip == 2)
+			{
+				this.selectedYellowBg.transform.position = this.knife.transform.position;
+				this.selectedTitleText.text = "Secondary Weapon";
+				this.setRarityText(this.thisHero.knifeRarity);
+				this.selectedStatsText.text = string.Concat(new object[]
+				{
+					"Power: ",
+					this.thisHero.knifePower,
+					"  /  Level: ",
+					this.thisHero.knifeLevel,
+					"\nCrit Dmg: +",
+					this.thisHero.knifePower * 10,
+					"%"
+				});
+				Text text6 = this.selectedStatsText;
+				text6.text += this.getReforgeStats("knife");
+				if (this.thisHero.knifeLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.knifePower, this.thisHero.knifeLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("knife");
+				}
+			}
+			else if (this.selectedEquip == 3)
+			{
+				this.selectedYellowBg.transform.position = this.bracers.transform.position;
+				this.selectedTitleText.text = "Bracers";
+				this.setRarityText(this.thisHero.bracersRarity);
+				this.selectedStatsText.text = string.Concat(new object[]
+				{
+					"Power: ",
+					this.thisHero.bracersPower,
+					"  /  Level: ",
+					this.thisHero.bracersLevel,
+					"\nCrit Chance: +",
+					((float)this.thisHero.bracersPower * 0.05f).ToString("f2"),
+					"%"
+				});
+				Text text7 = this.selectedStatsText;
+				text7.text += this.getReforgeStats("bracers");
+				if (this.thisHero.bracersLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.bracersPower, this.thisHero.bracersLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("bracers");
+				}
+			}
+			else if (this.selectedEquip == 4)
+			{
+				this.selectedYellowBg.transform.position = this.gauntlets.transform.position;
+				this.selectedTitleText.text = "Gauntlets";
+				this.setRarityText(this.thisHero.gauntletsRarity);
+				this.selectedStatsText.text = string.Concat(new object[]
+				{
+					"Power: ",
+					this.thisHero.gauntletsPower,
+					"  /  Level: ",
+					this.thisHero.gauntletsLevel,
+					"\nAttack Speed: +",
+					((float)this.thisHero.gauntletsPower * 0.05f).ToString("f2"),
+					"%"
+				});
+				Text text8 = this.selectedStatsText;
+				text8.text += this.getReforgeStats("gauntlets");
+				if (this.thisHero.gauntletsLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.gauntletsPower, this.thisHero.gauntletsLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("gauntlets");
+				}
+			}
+			else if (this.selectedEquip == 5)
+			{
+				this.selectedYellowBg.transform.position = this.shield.transform.position;
+				this.selectedTitleText.text = "Shield";
+				this.setRarityText(this.thisHero.shieldRarity);
+				this.selectedStatsText.text = string.Concat(new object[]
+				{
+					"Power: ",
+					this.thisHero.shieldPower,
+					"  /  Level: ",
+					this.thisHero.shieldLevel,
+					"\nHP: +",
+					((float)(this.thisHero.shieldPower * 25) * num).ToString("n0"),
+					"%"
+				});
+				Text text9 = this.selectedStatsText;
+				text9.text += this.getReforgeStats("shield");
+				if (this.thisHero.shieldLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.shieldPower, this.thisHero.shieldLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("shield");
+				}
+			}
+			else if (this.selectedEquip == 6)
+			{
+				this.selectedYellowBg.transform.position = this.cloak.transform.position;
+				this.selectedTitleText.text = "Cloak";
+				this.setRarityText(this.thisHero.cloakRarity);
+				this.selectedStatsText.text = string.Concat(new object[]
+				{
+					"Power: ",
+					this.thisHero.cloakPower,
+					"  /  Level: ",
+					this.thisHero.cloakLevel,
+					"\nMana: +",
+					this.thisHero.cloakPower,
+					"%"
+				});
+				Text text10 = this.selectedStatsText;
+				text10.text += this.getReforgeStats("cloak");
+				if (this.thisHero.cloakLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.cloakPower, this.thisHero.cloakLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("cloak");
+				}
+			}
+			else if (this.selectedEquip == 7)
+			{
+				this.selectedYellowBg.transform.position = this.boots.transform.position;
+				this.selectedTitleText.text = "Boots";
+				this.setRarityText(this.thisHero.bootsRarity);
+				this.selectedStatsText.text = string.Concat(new object[]
+				{
+					"Power: ",
+					this.thisHero.bootsPower,
+					"  /  Level: ",
+					this.thisHero.bootsLevel,
+					"\nMove Speed: +",
+					((float)this.thisHero.bootsPower * 0.1f).ToString("f2"),
+					"%"
+				});
+				Text text11 = this.selectedStatsText;
+				text11.text += this.getReforgeStats("boots");
+				if (this.thisHero.bootsLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.bootsPower, this.thisHero.bootsLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("boots");
+				}
+			}
+			else if (this.selectedEquip == 8)
+			{
+				this.selectedYellowBg.transform.position = this.belt.transform.position;
+				this.selectedTitleText.text = "Belt";
+				this.setRarityText(this.thisHero.beltRarity);
+				if (this.thisHero.type == 1)
+				{
+					this.selectedStatsText.text = string.Concat(new object[]
+					{
+						"Power: ",
+						this.thisHero.beltPower,
+						"  /  Level: ",
+						this.thisHero.beltLevel,
+						"\nEvade Chance: +",
+						((float)this.thisHero.beltPower * 0.05f).ToString("f2"),
+						"%"
+					});
+				}
+				else if (this.thisHero.type == 2)
+				{
+					this.selectedStatsText.text = string.Concat(new object[]
+					{
+						"Power: ",
+						this.thisHero.beltPower,
+						"  /  Level: ",
+						this.thisHero.beltLevel,
+						"\nRange: +",
+						((float)this.thisHero.beltPower * 0.2f).ToString("f2"),
+						"%"
+					});
+				}
+				else if (this.thisHero.type == 3)
+				{
+					this.selectedStatsText.text = string.Concat(new object[]
+					{
+						"Power: ",
+						this.thisHero.beltPower,
+						"  /  Level: ",
+						this.thisHero.beltLevel,
+						"\nSkill Cooldown: -",
+						((float)this.thisHero.beltPower * 0.1f).ToString("f2"),
+						"%"
+					});
+				}
+				Text text12 = this.selectedStatsText;
+				text12.text += this.getReforgeStats("belt");
+				if (this.thisHero.beltLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.beltPower, this.thisHero.beltLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("belt");
+				}
+			}
+			else if (this.selectedEquip == 9)
+			{
+				this.selectedYellowBg.transform.position = this.necklace.transform.position;
+				this.selectedTitleText.text = "Necklace";
+				this.setRarityText(this.thisHero.necklaceRarity);
+				if (this.thisHero.type == 1)
+				{
+					this.selectedStatsText.text = string.Concat(new object[]
+					{
+						"Power: ",
+						this.thisHero.necklacePower,
+						"  /  Level: ",
+						this.thisHero.necklaceLevel,
+						"\nSplash Chance: +",
+						((float)this.thisHero.necklacePower * 0.05f).ToString("f2"),
+						"%"
+					});
+				}
+				else if (this.thisHero.type == 2)
+				{
+					this.selectedStatsText.text = string.Concat(new object[]
+					{
+						"Power: ",
+						this.thisHero.necklacePower,
+						"  /  Level: ",
+						this.thisHero.necklaceLevel,
+						"\nGold Drop: +",
+						this.thisHero.necklacePower * 20,
+						"%"
+					});
+				}
+				else if (this.thisHero.type == 3)
+				{
+					this.selectedStatsText.text = string.Concat(new object[]
+					{
+						"Power: ",
+						this.thisHero.necklacePower,
+						"  /  Level: ",
+						this.thisHero.necklaceLevel,
+						"\nMana Cost: -",
+						((float)this.thisHero.necklacePower * 0.1f).ToString("f2"),
+						"%"
+					});
+				}
+				Text text13 = this.selectedStatsText;
+				text13.text += this.getReforgeStats("necklace");
+				if (this.thisHero.necklaceLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.necklacePower, this.thisHero.necklaceLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("necklace");
+				}
+			}
+			else if (this.selectedEquip == 10)
+			{
+				this.selectedYellowBg.transform.position = this.ring.transform.position;
+				this.selectedTitleText.text = "Ring";
+				this.setRarityText(this.thisHero.ringRarity);
+				if (this.thisHero.type == 1)
+				{
+					this.selectedStatsText.text = string.Concat(new object[]
+					{
+						"Power: ",
+						this.thisHero.ringPower,
+						"  /  Level: ",
+						this.thisHero.ringLevel,
+						"\nHeal Chance: +",
+						((float)this.thisHero.ringPower * 0.05f).ToString("f2"),
+						"%"
+					});
+				}
+				else if (this.thisHero.type == 2)
+				{
+					this.selectedStatsText.text = string.Concat(new object[]
+					{
+						"Power: ",
+						this.thisHero.ringPower,
+						"  /  Level: ",
+						this.thisHero.ringLevel,
+						"\nChest Gold: +",
+						this.thisHero.ringPower * 5,
+						"%"
+					});
+				}
+				else if (this.thisHero.type == 3)
+				{
+					this.selectedStatsText.text = string.Concat(new object[]
+					{
+						"Power: ",
+						this.thisHero.ringPower,
+						"  /  Level: ",
+						this.thisHero.ringLevel,
+						"\nMana Regen: +",
+						((float)this.thisHero.ringPower * 0.1f).ToString("f2"),
+						"%"
+					});
+				}
+				Text text14 = this.selectedStatsText;
+				text14.text += this.getReforgeStats("ring");
+				if (this.thisHero.ringLevel < 100)
+				{
+					this.upgradeButton.SetActive(true);
+					this.reforgeButton.SetActive(false);
+					this.updateEquipUpgradeButton(this.thisHero.ringPower, this.thisHero.ringLevel);
+				}
+				else
+				{
+					this.upgradeButton.SetActive(false);
+					this.reforgeButton.SetActive(true);
+					this.updateReforgeButton("ring");
+				}
+			}
+		}
+		this.savedExp = this.thisHero.equipCurrExp;
+		this.savedScraps = GameManager.Instance.scrapsAmt;
+		this.skill1Title.text = this.thisHero.getSkillTexts(1, 1);
+		this.skill1Desc.text = this.thisHero.getSkillTexts(1, 2);
+		if (this.thisHero.activeSkillAutocastNum == 1)
+		{
+			this.skill1AutoCheck.SetActive(true);
+		}
+		else
+		{
+			this.skill1AutoCheck.SetActive(false);
+		}
+		this.skill2Title.text = this.thisHero.getSkillTexts(2, 1);
+		this.skill2Desc.text = this.thisHero.getSkillTexts(2, 2);
+		if (this.thisHero.activeSkillAutocastNum == 2)
+		{
+			this.skill2AutoCheck.SetActive(true);
+		}
+		else
+		{
+			this.skill2AutoCheck.SetActive(false);
+		}
+		this.skill3Title.text = this.thisHero.getSkillTexts(3, 1);
+		this.skill3Desc.text = this.thisHero.getSkillTexts(3, 2) + " Always active.";
+		if (this.thisHero.battleStyle == 0)
+		{
+			this.stance1Check.SetActive(true);
+		}
+		else
+		{
+			this.stance1Check.SetActive(false);
+		}
+		if (this.thisHero.battleStyle == 1)
+		{
+			this.stance2Check.SetActive(true);
+		}
+		else
+		{
+			this.stance2Check.SetActive(false);
+		}
+		if (this.thisHero.battleStyle == 2)
+		{
+			this.stance3Check.SetActive(true);
+		}
+		else
+		{
+			this.stance3Check.SetActive(false);
+		}
+		if (this.thisHero.battleStyle == 3)
+		{
+			this.stance4Check.SetActive(true);
+		}
+		else
+		{
+			this.stance4Check.SetActive(false);
+		}
+		this.traitName.text = this.thisHero.getTraitTitle();
+		this.traitDesc.text = this.thisHero.getTraitDesc3();
+		this.traitLevel.text = this.thisHero.nextTraitLvl.ToString("n0");
+		this.typeIcon.sprite = this.thisHero.getTypeIcon();
+		if (this.thisHero.type == 1)
+		{
+			this.typeText.text = "Type: Melee";
+			this.typeDesc.text = "Strong vs. Range (+25% dmg)\nWeak vs. Mage (-25% dmg)";
+		}
+		else if (this.thisHero.type == 2)
+		{
+			this.typeText.text = "Type: Range";
+			this.typeDesc.text = "Strong vs. Mage (+25% dmg)\nWeak vs. Melee (-25% dmg)";
+		}
+		else
+		{
+			this.typeText.text = "Type: Mage";
+			this.typeDesc.text = "Strong vs. Melee (+25% dmg)\nWeak vs. Range (-25% dmg)";
+		}
+		this.statsText1.text = "Damage Per Sec (DPS):\n" + UIManager.Instance.convertNumberFormat(this.thisHero.getActDps(this.thisHero.baseDps, true).ToString("0"));
+		this.statsText2.text = "Actual Damage Dealt:\n" + UIManager.Instance.convertNumberFormat(this.thisHero.getActDmg(true).ToString("0"));
+		this.statsText3.text = "Critical Hit Damage:\n" + UIManager.Instance.convertNumberFormat(this.thisHero.getCritDmg(true).ToString("0"));
+		this.statsText4.text = "Critical Hit Chance:\n" + this.thisHero.getCritChance(true).ToString("f2") + "%";
+		this.statsText5.text = "Attack Speed:\n" + this.thisHero.getActAttSpeed(true).ToString("f2") + "s";
+		this.statsText6.text = "Max Health (HP):\n" + UIManager.Instance.convertNumberFormat(this.thisHero.getActMaxHp(this.thisHero.baseDps).ToString("0"));
+		this.statsText7.text = "Max Mana:\n" + this.thisHero.getActMaxMana();
+		this.statsText8.text = "Mana Regen:\n" + this.thisHero.getActManaRegen(true).ToString("f1") + "s";
+		this.statsText9.text = "Range:\n" + this.thisHero.getActRange(true).ToString("f2") + "m";
+		float num2 = 2f + (2f - this.thisHero.baseAttSpeed);
+		float num3 = 1f;
+		num3 += (float)this.thisHero.bootsPower * 0.001f;
+		num3 += (float)GameManager.Instance.badge16Lvl * 0.02f;
+		num2 *= num3;
+		this.statsText10.text = "Movement Speed:\n" + num2.ToString("f2") + "m / s";
+	}
+
+	public void clickedSwapButton()
+	{
+		if (this.thisHero.isActiveHero)
+		{
+			GameManager.Instance.activeHeroes.Remove(this.thisHero);
+			if (this.thisHero.currHp > 0.0)
+			{
+				GameManager.Instance.numAliveHeroes--;
+			}
+			this.thisHero.isActiveHero = false;
+			this.thisHero.stopHeroAttStuff();
+			this.thisHero.transform.position = new Vector3(0f, 30f, 0f);
+			if (this.thisHero == GameManager.Instance.selectedHero)
+			{
+				GameManager.Instance.selectedHero = null;
+			}
+		}
+		else
+		{
+			GameManager.Instance.activeHeroes.Add(this.thisHero);
+			if (this.thisHero.currHp > 0.0)
+			{
+				GameManager.Instance.numAliveHeroes++;
+			}
+			this.thisHero.isActiveHero = true;
+			int num = 0;
+			for (int i = 0; i < GameManager.Instance.activeHeroes.Count; i++)
+			{
+				if (this.thisHero == GameManager.Instance.activeHeroes[i])
+				{
+					num = i;
+				}
+			}
+			if (num == 0)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(0f, 4f);
+			}
+			else if (num == 1)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(-1.5f, 5f);
+			}
+			else if (num == 2)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(1.5f, 5f);
+			}
+			else if (num == 3)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(-1.5f, 3f);
+			}
+			else if (num == 4)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(1.5f, 3f);
+			}
+			if (GameManager.Instance.onMapNum == 7)
+			{
+				this.thisHero.gameObject.transform.position = this.thisHero.gameObject.transform.position - new Vector3(0f, 0.75f);
+			}
+			this.thisHero.targetPosition = this.thisHero.gameObject.transform.position;
+		}
+		HeroTable.Instance.updateTable();
+		this.updateTable();
+	}
+
+	public void clickedEquipButton(int _equipNum)
+	{
+		if (this.selectedEquip != _equipNum)
+		{
+			this.selectedEquip = _equipNum;
+		}
+		else
+		{
+			this.selectedEquip = 0;
+		}
+		this.updateTable();
+	}
+
+	private void updateEquipButton(GameObject _gameObject, int _rareNum, Sprite _icon, int _level)
+	{
+		_gameObject.GetComponent<Image>().sprite = EquipmentManager.Instance.listBackgrounds[_rareNum];
+		_gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = _icon;
+		_gameObject.transform.GetChild(1).gameObject.GetComponent<Image>().sprite = EquipmentManager.Instance.listBorders[_rareNum];
+		_gameObject.transform.GetChild(2).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = _level.ToString();
+	}
+
+	private void setRarityText(int _rareNum)
+	{
+		if (_rareNum == 0)
+		{
+			this.selectedRarityText.text = "(Empty)";
+			this.selectedRarityText.color = Color.black;
+		}
+		else if (_rareNum == 1)
+		{
+			this.selectedRarityText.text = "(Common)";
+			this.selectedRarityText.color = Color.gray;
+		}
+		else if (_rareNum == 2)
+		{
+			this.selectedRarityText.text = "(Uncommon)";
+			this.selectedRarityText.color = UIManager.colorGreen;
+		}
+		else if (_rareNum == 3)
+		{
+			this.selectedRarityText.text = "(Rare)";
+			this.selectedRarityText.color = UIManager.colorRare;
+		}
+		else if (_rareNum == 4)
+		{
+			this.selectedRarityText.text = "(Ultra Rare)";
+			this.selectedRarityText.color = UIManager.colorUltra;
+		}
+		else if (_rareNum == 5)
+		{
+			this.selectedRarityText.text = "(Legendary)";
+			this.selectedRarityText.color = UIManager.colorLegendary;
+		}
+		else if (_rareNum == 6)
+		{
+			this.selectedRarityText.text = "(Mythic)";
+			this.selectedRarityText.color = UIManager.colorLegendary;
+		}
+		else if (_rareNum == 7)
+		{
+			this.selectedRarityText.text = "(Celestial)";
+			this.selectedRarityText.color = Color.red;
+		}
+	}
+
+	private void updateEquipUpgradeButton(int _powerLvl, int _equipLvl)
+	{
+		int num = 100;
+		int num2 = (_equipLvl + 1) * (1 + (_equipLvl + 1) / 100);
+		if (num2 == 0)
+		{
+			num2 = 1;
+		}
+		float num3 = 1f + (float)GameManager.Instance.badge20Lvl * 0.1f;
+		if (this.selectedEquip == 1)
+		{
+			float num4 = (float)(this.thisHero.wepPower * 25) * num3;
+			float num5 = (float)((this.thisHero.wepPower + 1) * 25) * num3;
+			float num6 = num5 - num4;
+			this.upgradeButtonDesc.text = "DPS\n+" + num6.ToString("n0") + "%";
+		}
+		else if (this.selectedEquip == 2)
+		{
+			int num7 = this.thisHero.knifePower * 10;
+			int num8 = (this.thisHero.knifePower + 1) * 10;
+			int num9 = num8 - num7;
+			this.upgradeButtonDesc.text = "Crit Dmg\n+" + num9.ToString("n0") + "%";
+		}
+		else if (this.selectedEquip == 3)
+		{
+			float num10 = (float)this.thisHero.bracersPower * 0.05f;
+			float num11 = (float)(this.thisHero.bracersPower + 1) * 0.05f;
+			float num12 = num11 - num10;
+			this.upgradeButtonDesc.text = "Crit Chance\n+" + num12.ToString("f2") + "%";
+		}
+		else if (this.selectedEquip == 4)
+		{
+			float num13 = (float)this.thisHero.gauntletsPower * 0.05f;
+			float num14 = (float)(this.thisHero.gauntletsPower + 1) * 0.05f;
+			float num15 = num14 - num13;
+			this.upgradeButtonDesc.text = "Attack Speed\n+" + num15.ToString("f2") + "%";
+		}
+		else if (this.selectedEquip == 5)
+		{
+			float num16 = (float)(this.thisHero.shieldPower * 25) * num3;
+			float num17 = (float)((this.thisHero.shieldPower + 1) * 25) * num3;
+			float num18 = num17 - num16;
+			this.upgradeButtonDesc.text = "Max HP\n+" + num18.ToString("n0") + "%";
+		}
+		else if (this.selectedEquip == 6)
+		{
+			int cloakPower = this.thisHero.cloakPower;
+			int num19 = this.thisHero.cloakPower + 1;
+			int num20 = num19 - cloakPower;
+			this.upgradeButtonDesc.text = "Max Mana\n+" + num20.ToString("n0") + "%";
+		}
+		else if (this.selectedEquip == 7)
+		{
+			float num21 = (float)this.thisHero.bootsPower * 0.1f;
+			float num22 = (float)(this.thisHero.bootsPower + 1) * 0.1f;
+			float num23 = num22 - num21;
+			this.upgradeButtonDesc.text = "Move Speed\n+" + num23.ToString("f2") + "%";
+		}
+		else if (this.selectedEquip == 8)
+		{
+			if (this.thisHero.type == 1)
+			{
+				float num24 = (float)this.thisHero.beltPower * 0.05f;
+				float num25 = (float)(this.thisHero.beltPower + 1) * 0.05f;
+				float num26 = num25 - num24;
+				this.upgradeButtonDesc.text = "Evade Chance\n+" + num26.ToString("f2") + "%";
+			}
+			else if (this.thisHero.type == 2)
+			{
+				float num27 = (float)this.thisHero.beltPower * 0.2f;
+				float num28 = (float)(this.thisHero.beltPower + 1) * 0.2f;
+				float num29 = num28 - num27;
+				this.upgradeButtonDesc.text = "Range\n+" + num29.ToString("f2") + "%";
+			}
+			else if (this.thisHero.type == 3)
+			{
+				float num30 = (float)this.thisHero.beltPower * 0.1f;
+				float num31 = (float)(this.thisHero.beltPower + 1) * 0.1f;
+				float num32 = num31 - num30;
+				this.upgradeButtonDesc.text = "Skill Cooldown\n-" + num32.ToString("f2") + "%";
+			}
+		}
+		else if (this.selectedEquip == 9)
+		{
+			if (this.thisHero.type == 1)
+			{
+				float num33 = (float)this.thisHero.necklacePower * 0.05f;
+				float num34 = (float)(this.thisHero.necklacePower + 1) * 0.05f;
+				float num35 = num34 - num33;
+				this.upgradeButtonDesc.text = "Splash Chance\n+" + num35.ToString("f2") + "%";
+			}
+			else if (this.thisHero.type == 2)
+			{
+				int num36 = this.thisHero.necklacePower * 20;
+				int num37 = (this.thisHero.necklacePower + 1) * 20;
+				int num38 = num37 - num36;
+				this.upgradeButtonDesc.text = "Gold Drop\n+" + num38.ToString("n0") + "%";
+			}
+			else if (this.thisHero.type == 3)
+			{
+				float num39 = (float)this.thisHero.necklacePower * 0.1f;
+				float num40 = (float)(this.thisHero.necklacePower + 1) * 0.1f;
+				float num41 = num40 - num39;
+				this.upgradeButtonDesc.text = "Mana Cost\n-" + num41.ToString("f2") + "%";
+			}
+		}
+		else if (this.selectedEquip == 10)
+		{
+			if (this.thisHero.type == 1)
+			{
+				float num42 = (float)this.thisHero.ringPower * 0.05f;
+				float num43 = (float)(this.thisHero.ringPower + 1) * 0.05f;
+				float num44 = num43 - num42;
+				this.upgradeButtonDesc.text = "Heal Chance\n+" + num44.ToString("f2") + "%";
+			}
+			else if (this.thisHero.type == 2)
+			{
+				int num45 = this.thisHero.ringPower * 5;
+				int num46 = (this.thisHero.ringPower + 1) * 5;
+				int num47 = num46 - num45;
+				this.upgradeButtonDesc.text = "Chest Gold\n+" + num47.ToString("n0") + "%";
+			}
+			else if (this.thisHero.type == 3)
+			{
+				float num48 = (float)this.thisHero.ringPower * 0.1f;
+				float num49 = (float)(this.thisHero.ringPower + 1) * 0.1f;
+				float num50 = num49 - num48;
+				this.upgradeButtonDesc.text = "Mana Regen\n+" + num50.ToString("f2") + "%";
+			}
+		}
+		if (_powerLvl > 0)
+		{
+			if (_equipLvl < num)
+			{
+				this.upgradeButtonTitle.text = "Lvl +1";
+				this.upgradeButtonCost.text = num2.ToString();
+				if (GameManager.Instance.scrapsAmt >= num2)
+				{
+					this.upgradeButton.GetComponent<Button>().enabled = true;
+					UIManager.Instance.changeButtonColorV2(this.upgradeButton, "green", false);
+				}
+				else
+				{
+					this.upgradeButton.GetComponent<Button>().enabled = false;
+					UIManager.Instance.changeButtonColorV2(this.upgradeButton, "grey", false);
+				}
+			}
+			else
+			{
+				this.upgradeButton.GetComponent<Button>().enabled = false;
+				UIManager.Instance.changeButtonColorV2(this.upgradeButton, "grey", false);
+				this.upgradeButtonTitle.text = "Max Level";
+				this.upgradeButtonCost.text = "N/A";
+			}
+		}
+		else
+		{
+			this.upgradeButton.GetComponent<Button>().enabled = false;
+			UIManager.Instance.changeButtonColorV2(this.upgradeButton, "grey", false);
+			this.upgradeButtonTitle.text = "Lvl +1";
+			this.upgradeButtonCost.text = "N/A";
+		}
+	}
+
+	public void clickedEquipUpgradeButton()
+	{
+		int num = 0;
+		if (this.selectedEquip == 1)
+		{
+			num = this.thisHero.wepLevel;
+			this.thisHero.wepLevel++;
+			this.thisHero.wepPower++;
+		}
+		else if (this.selectedEquip == 2)
+		{
+			num = this.thisHero.knifeLevel;
+			this.thisHero.knifeLevel++;
+			this.thisHero.knifePower++;
+		}
+		else if (this.selectedEquip == 3)
+		{
+			num = this.thisHero.bracersLevel;
+			this.thisHero.bracersLevel++;
+			this.thisHero.bracersPower++;
+		}
+		else if (this.selectedEquip == 4)
+		{
+			num = this.thisHero.gauntletsLevel;
+			this.thisHero.gauntletsLevel++;
+			this.thisHero.gauntletsPower++;
+		}
+		else if (this.selectedEquip == 5)
+		{
+			num = this.thisHero.shieldLevel;
+			this.thisHero.shieldLevel++;
+			this.thisHero.shieldPower++;
+		}
+		else if (this.selectedEquip == 6)
+		{
+			num = this.thisHero.cloakLevel;
+			this.thisHero.cloakLevel++;
+			this.thisHero.cloakPower++;
+		}
+		else if (this.selectedEquip == 7)
+		{
+			num = this.thisHero.bootsLevel;
+			this.thisHero.bootsLevel++;
+			this.thisHero.bootsPower++;
+		}
+		else if (this.selectedEquip == 8)
+		{
+			num = this.thisHero.beltLevel;
+			this.thisHero.beltLevel++;
+			this.thisHero.beltPower++;
+		}
+		else if (this.selectedEquip == 9)
+		{
+			num = this.thisHero.necklaceLevel;
+			this.thisHero.necklaceLevel++;
+			this.thisHero.necklacePower++;
+		}
+		else if (this.selectedEquip == 10)
+		{
+			num = this.thisHero.ringLevel;
+			this.thisHero.ringLevel++;
+			this.thisHero.ringPower++;
+		}
+		num++;
+		int num2 = num * (1 + num / 100);
+		if (num2 == 0)
+		{
+			num2 = 1;
+		}
+		GameManager.Instance.scrapsAmt -= num2;
+		this.updateTable();
+	}
+
+	public void updateReforgeButton(string equipType)
+	{
+		if (equipType == "wep")
+		{
+			this.refCost = 500 + 100 * this.thisHero.wepRefLvl;
+		}
+		else if (equipType == "knife")
+		{
+			this.refCost = 500 + 100 * this.thisHero.knifeRefLvl;
+		}
+		else if (equipType == "bracers")
+		{
+			this.refCost = 500 + 100 * this.thisHero.bracersRefLvl;
+		}
+		else if (equipType == "gauntlets")
+		{
+			this.refCost = 500 + 100 * this.thisHero.gauntletsRefLvl;
+		}
+		else if (equipType == "shield")
+		{
+			this.refCost = 500 + 100 * this.thisHero.shieldRefLvl;
+		}
+		else if (equipType == "cloak")
+		{
+			this.refCost = 500 + 100 * this.thisHero.cloakRefLvl;
+		}
+		else if (equipType == "boots")
+		{
+			this.refCost = 500 + 100 * this.thisHero.bootsRefLvl;
+		}
+		else if (equipType == "belt")
+		{
+			this.refCost = 500 + 100 * this.thisHero.beltRefLvl;
+		}
+		else if (equipType == "necklace")
+		{
+			this.refCost = 500 + 100 * this.thisHero.necklaceRefLvl;
+		}
+		else if (equipType == "ring")
+		{
+			this.refCost = 500 + 100 * this.thisHero.ringRefLvl;
+		}
+		if (this.refCost >= 2500)
+		{
+			this.refCost = 2500;
+		}
+		this.reforgeButtonCost.text = this.refCost.ToString("0");
+		if (GameManager.Instance.scrapsAmt >= this.refCost)
+		{
+			this.reforgeButton.GetComponent<Button>().enabled = true;
+			UIManager.Instance.changeButtonColorV2(this.reforgeButton, "green", false);
+		}
+		else
+		{
+			this.reforgeButton.GetComponent<Button>().enabled = false;
+			UIManager.Instance.changeButtonColorV2(this.reforgeButton, "grey", false);
+		}
+	}
+
+	public string getReforgeStats(string equipType)
+	{
+		string empty = string.Empty;
+		int num = 0;
+		float num2 = 0f;
+		if (equipType == "wep")
+		{
+			num = this.thisHero.wepRefNum;
+			num2 = this.thisHero.wepRefAmt;
+		}
+		else if (equipType == "knife")
+		{
+			num = this.thisHero.knifeRefNum;
+			num2 = this.thisHero.knifeRefAmt;
+		}
+		else if (equipType == "bracers")
+		{
+			num = this.thisHero.bracersRefNum;
+			num2 = this.thisHero.bracersRefAmt;
+		}
+		else if (equipType == "gauntlets")
+		{
+			num = this.thisHero.gauntletsRefNum;
+			num2 = this.thisHero.gauntletsRefAmt;
+		}
+		else if (equipType == "shield")
+		{
+			num = this.thisHero.shieldRefNum;
+			num2 = this.thisHero.shieldRefAmt;
+		}
+		else if (equipType == "cloak")
+		{
+			num = this.thisHero.cloakRefNum;
+			num2 = this.thisHero.cloakRefAmt;
+		}
+		else if (equipType == "boots")
+		{
+			num = this.thisHero.bootsRefNum;
+			num2 = this.thisHero.bootsRefAmt;
+		}
+		else if (equipType == "belt")
+		{
+			num = this.thisHero.beltRefNum;
+			num2 = this.thisHero.beltRefAmt;
+		}
+		else if (equipType == "necklace")
+		{
+			num = this.thisHero.necklaceRefNum;
+			num2 = this.thisHero.necklaceRefAmt;
+		}
+		else if (equipType == "ring")
+		{
+			num = this.thisHero.ringRefNum;
+			num2 = this.thisHero.ringRefAmt;
+		}
+		if (num2 == 0f)
+		{
+			return string.Empty;
+		}
+		string text = string.Empty;
+		string text2 = string.Empty;
+		string text3 = string.Empty;
+		string text4 = "%";
+		switch (num)
+		{
+		case 0:
+			text = "DPS";
+			text2 = "+";
+			text3 = num2.ToString("n0");
+			break;
+		case 1:
+			text = "Max HP";
+			text2 = "+";
+			text3 = num2.ToString("n0");
+			break;
+		case 2:
+			text = "Crit Dmg";
+			text2 = "+";
+			text3 = num2.ToString("n0");
+			break;
+		case 3:
+			text = "Crit Chance";
+			text2 = "+";
+			text3 = num2.ToString("f2");
+			break;
+		case 4:
+			text = "Attack Speed";
+			text2 = "+";
+			text3 = num2.ToString("f2");
+			break;
+		case 5:
+			text = "Gold Drop";
+			text2 = "+";
+			text3 = num2.ToString("n0");
+			break;
+		case 6:
+			text = "Chest Gold";
+			text2 = "+";
+			text3 = num2.ToString("n0");
+			break;
+		case 7:
+			text = "Chest Chance";
+			text2 = "+";
+			text3 = num2.ToString("f2");
+			break;
+		case 8:
+			text = "Mana Regen";
+			text2 = "+";
+			text3 = num2.ToString("f2");
+			break;
+		case 9:
+			text = "Max Mana";
+			text2 = "+";
+			text3 = num2.ToString("n0");
+			break;
+		case 10:
+			text = "HP Steal Chance";
+			text2 = "+";
+			text3 = num2.ToString("f2");
+			break;
+		case 11:
+			text = "Skill Cooldown";
+			text2 = "-";
+			text3 = num2.ToString("f2");
+			break;
+		case 12:
+			text = "Skill Duration";
+			text2 = "+";
+			text3 = num2.ToString("f1");
+			text4 = "s";
+			break;
+		case 13:
+			text = "Evade Chance";
+			text2 = "+";
+			text3 = num2.ToString("f2");
+			break;
+		case 14:
+			text = "Splash Chance";
+			text2 = "+";
+			text3 = num2.ToString("f2");
+			break;
+		case 15:
+			text = "Mana Cost";
+			text2 = "-";
+			text3 = num2.ToString("f2");
+			break;
+		}
+		return string.Concat(new string[]
+		{
+			"\n",
+			text,
+			": ",
+			text2,
+			text3,
+			text4
+		});
+	}
+
+	public void clickedReforgeButton()
+	{
+		GameManager.Instance.scrapsAmt -= this.refCost;
+		if (GameManager.Instance.q2Num == 4)
+		{
+			GameManager.Instance.q2CurrVal++;
+			GameManager.Instance.checkQuestStatus();
+		}
+		int num = UnityEngine.Random.Range(0, 16);
+		float num2 = 0f;
+		switch (num)
+		{
+		case 0:
+			num2 = (float)UnityEngine.Random.Range(1000, 5000);
+			break;
+		case 1:
+			num2 = (float)UnityEngine.Random.Range(1000, 5000);
+			break;
+		case 2:
+			num2 = (float)UnityEngine.Random.Range(500, 2500);
+			break;
+		case 3:
+			num2 = UnityEngine.Random.Range(0.5f, 2.5f);
+			break;
+		case 4:
+			num2 = UnityEngine.Random.Range(0.5f, 2.5f);
+			break;
+		case 5:
+			num2 = (float)UnityEngine.Random.Range(250, 1250);
+			break;
+		case 6:
+			num2 = (float)UnityEngine.Random.Range(100, 500);
+			break;
+		case 7:
+			num2 = UnityEngine.Random.Range(0.25f, 1.25f);
+			break;
+		case 8:
+			num2 = UnityEngine.Random.Range(1f, 5f);
+			break;
+		case 9:
+			num2 = (float)UnityEngine.Random.Range(25, 125);
+			break;
+		case 10:
+			num2 = UnityEngine.Random.Range(0.5f, 2.5f);
+			break;
+		case 11:
+			num2 = UnityEngine.Random.Range(1f, 5f);
+			break;
+		case 12:
+			num2 = UnityEngine.Random.Range(0.5f, 2.5f);
+			break;
+		case 13:
+			num2 = UnityEngine.Random.Range(0.5f, 2.5f);
+			break;
+		case 14:
+			num2 = UnityEngine.Random.Range(0.5f, 2.5f);
+			break;
+		case 15:
+			num2 = UnityEngine.Random.Range(0.5f, 2.5f);
+			break;
+		}
+		if (this.selectedEquip == 1)
+		{
+			this.thisHero.wepRefLvl++;
+			this.thisHero.wepRefNum = num;
+			this.thisHero.wepRefAmt = num2;
+		}
+		else if (this.selectedEquip == 2)
+		{
+			this.thisHero.knifeRefLvl++;
+			this.thisHero.knifeRefNum = num;
+			this.thisHero.knifeRefAmt = num2;
+		}
+		else if (this.selectedEquip == 3)
+		{
+			this.thisHero.bracersRefLvl++;
+			this.thisHero.bracersRefNum = num;
+			this.thisHero.bracersRefAmt = num2;
+		}
+		else if (this.selectedEquip == 4)
+		{
+			this.thisHero.gauntletsRefLvl++;
+			this.thisHero.gauntletsRefNum = num;
+			this.thisHero.gauntletsRefAmt = num2;
+		}
+		else if (this.selectedEquip == 5)
+		{
+			this.thisHero.shieldRefLvl++;
+			this.thisHero.shieldRefNum = num;
+			this.thisHero.shieldRefAmt = num2;
+		}
+		else if (this.selectedEquip == 6)
+		{
+			this.thisHero.cloakRefLvl++;
+			this.thisHero.cloakRefNum = num;
+			this.thisHero.cloakRefAmt = num2;
+		}
+		else if (this.selectedEquip == 7)
+		{
+			this.thisHero.bootsRefLvl++;
+			this.thisHero.bootsRefNum = num;
+			this.thisHero.bootsRefAmt = num2;
+		}
+		else if (this.selectedEquip == 8)
+		{
+			this.thisHero.beltRefLvl++;
+			this.thisHero.beltRefNum = num;
+			this.thisHero.beltRefAmt = num2;
+		}
+		else if (this.selectedEquip == 9)
+		{
+			this.thisHero.necklaceRefLvl++;
+			this.thisHero.necklaceRefNum = num;
+			this.thisHero.necklaceRefAmt = num2;
+		}
+		else if (this.selectedEquip == 10)
+		{
+			this.thisHero.ringRefLvl++;
+			this.thisHero.ringRefNum = num;
+			this.thisHero.ringRefAmt = num2;
+		}
+		DataManager.Instance.saveData(false);
+		this.updateTable();
+	}
+
+	public void clickedSkill1Auto()
+	{
+		if (this.thisHero.activeSkillAutocastNum != 1)
+		{
+			this.thisHero.activeSkillAutocastNum = 1;
+		}
+		else
+		{
+			this.thisHero.activeSkillAutocastNum = 0;
+		}
+		this.updateTable();
+	}
+
+	public void clickedSkill2Auto()
+	{
+		if (this.thisHero.activeSkillAutocastNum != 2)
+		{
+			this.thisHero.activeSkillAutocastNum = 2;
+		}
+		else
+		{
+			this.thisHero.activeSkillAutocastNum = 0;
+		}
+		this.updateTable();
+	}
+
+	public void clickedCombatStanceButton(int _stanceNum)
+	{
+		this.thisHero.battleStyle = _stanceNum;
+		this.updateTable();
+	}
+
+	private void Update()
+	{
+		if (this.savedHero != this.thisHero)
+		{
+			this.updateTable();
+			return;
+		}
+		if (this.savedAliveHeroes != GameManager.Instance.numAliveHeroes || this.savedActiveHeroesAmt != GameManager.Instance.activeHeroes.Count)
+		{
+			this.updateTable();
+			return;
+		}
+		if (this.thisHero.equipCurrExp != this.savedExp || GameManager.Instance.scrapsAmt != this.savedScraps)
+		{
+			this.updateTable();
+			return;
+		}
+	}
+
+	[Header("This Hero")]
+	public Hero thisHero;
+
+	private Hero savedHero;
+
+	[Header("Overview Panel")]
+	public Image heroIcon;
+
+	public Text heroName;
+
+	public Text heroLevel;
+
+	public GameObject cantTagButton;
+
+	public Text cantTagTitleText;
+
+	public Text cantTagDescText;
+
+	public GameObject tagButton;
+
+	public Text tagTitleText;
+
+	private int savedActiveHeroesAmt;
+
+	private int savedAliveHeroes;
+
+	[Header("Evolve Panel")]
+	public Text evolveLvlText;
+
+	public Slider evolveExpSlider;
+
+	public Text evolveExpText;
+
+	public Text evolveBonusText;
+
+	[Header("Equipment Panel")]
+	public Slider expSlider;
+
+	public Text expText;
+
+	public GameObject weapon;
+
+	public GameObject knife;
+
+	public GameObject bracers;
+
+	public GameObject gauntlets;
+
+	public GameObject shield;
+
+	public GameObject cloak;
+
+	public GameObject boots;
+
+	public GameObject belt;
+
+	public GameObject necklace;
+
+	public GameObject ring;
+
+	public GameObject overviewPanel;
+
+	public Text overviewText1;
+
+	public Text overviewText2;
+
+	private int selectedEquip;
+
+	public GameObject selectedYellowBg;
+
+	public GameObject selectedPanel;
+
+	public Text selectedTitleText;
+
+	public Text selectedRarityText;
+
+	public Text selectedStatsText;
+
+	public GameObject upgradeButton;
+
+	public Text upgradeButtonCost;
+
+	public Text upgradeButtonTitle;
+
+	public Text upgradeButtonDesc;
+
+	public GameObject reforgeButton;
+
+	public Text reforgeButtonCost;
+
+	private int refCost;
+
+	private int savedExp;
+
+	private int savedScraps;
+
+	[Header("Active Skills Panel")]
+	public Text skill1Title;
+
+	public Text skill1Desc;
+
+	public GameObject skill1AutoCheck;
+
+	public Text skill2Title;
+
+	public Text skill2Desc;
+
+	public GameObject skill2AutoCheck;
+
+	[Header("Passive Ability Panel")]
+	public Text skill3Title;
+
+	public Text skill3Desc;
+
+	[Header("Combat Stance Panel")]
+	public GameObject stance1Check;
+
+	public GameObject stance2Check;
+
+	public GameObject stance3Check;
+
+	public GameObject stance4Check;
+
+	[Header("Next Trait Panel")]
+	public Text traitName;
+
+	public Text traitDesc;
+
+	public Text traitLevel;
+
+	[Header("Attributes Panel")]
+	public Image typeIcon;
+
+	public Text typeText;
+
+	public Text typeDesc;
+
+	[Header("Misc Stats Panel")]
+	public Text statsText1;
+
+	public Text statsText2;
+
+	public Text statsText3;
+
+	public Text statsText4;
+
+	public Text statsText5;
+
+	public Text statsText6;
+
+	public Text statsText7;
+
+	public Text statsText8;
+
+	public Text statsText9;
+
+	public Text statsText10;
+}

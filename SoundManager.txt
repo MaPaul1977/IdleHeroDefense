@@ -1,0 +1,151 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class SoundManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		SoundManager.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	public void playSwordDraw()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.swordDraw, 2f);
+		}
+	}
+
+	public void playDeath()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.death, 3f);
+		}
+	}
+
+	public void playEvilLaugh()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.evilLaugh, 1f);
+		}
+	}
+
+	public void playReward()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.reward, 1f);
+		}
+	}
+
+	public void playChest()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.chest, 1f);
+		}
+	}
+
+	public void playCoin()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.coin, 1f);
+		}
+	}
+
+	public void playBoss()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.boss, 0.5f);
+		}
+	}
+
+	public void playPrestige()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.prestige, 1f);
+		}
+	}
+
+	public void playSpawn()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.spawn, 0.35f);
+		}
+	}
+
+	public void playSkill1()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.skill1, 1f);
+		}
+	}
+
+	public void playSkill2()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.skill2, 1f);
+		}
+	}
+
+	public void playHit()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.normalHit, 1f);
+		}
+	}
+
+	public void playCrit()
+	{
+		if (GameManager.Instance.settingsSoundFx)
+		{
+			base.GetComponent<AudioSource>().PlayOneShot(this.critHit, 1f);
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	public static SoundManager Instance;
+
+	public AudioClip death;
+
+	public AudioClip reward;
+
+	public AudioClip chest;
+
+	public AudioClip coin;
+
+	public AudioClip boss;
+
+	public AudioClip prestige;
+
+	public AudioClip spawn;
+
+	public AudioClip skill1;
+
+	public AudioClip skill2;
+
+	public AudioClip normalHit;
+
+	public AudioClip critHit;
+
+	public AudioClip evilLaugh;
+
+	public AudioClip swordDraw;
+}

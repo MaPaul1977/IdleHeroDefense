@@ -1,0 +1,1994 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Advertisements;
+using UnityEngine.UI;
+
+public class UIManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		UIManager.Instance = this;
+	}
+
+	private void Start()
+	{
+		if (!Advertisement.isInitialized)
+		{
+			Advertisement.Initialize(this.gameId);
+		}
+		this.updateLeaderboardTimer = 120f;
+		this.updAggStats();
+		this.updateFarmWaveButton();
+		if (GameManager.Instance.showRatePanel)
+		{
+			GameManager.Instance.showRatePanel = false;
+			this.rateMePanel.SetActive(true);
+		}
+	}
+
+	public void clickedTutMuteSounds()
+	{
+		if (!this.tutMute)
+		{
+			this.tutMute = true;
+			this.tutMuteCheck.SetActive(true);
+			GameManager.Instance.settingsBgMusic = false;
+			GameManager.Instance.settingsSoundFx = false;
+			MusicManager.Instance.GetComponent<AudioSource>().enabled = false;
+			MusicManager.Instance.songNameText.text = "Nothing...";
+		}
+		else
+		{
+			this.tutMute = false;
+			this.tutMuteCheck.SetActive(false);
+			GameManager.Instance.settingsBgMusic = true;
+			GameManager.Instance.settingsSoundFx = true;
+			MusicManager.Instance.GetComponent<AudioSource>().enabled = true;
+			MusicManager.Instance.playMusic();
+		}
+	}
+
+	public void doTutorialScreensV2()
+	{
+		this.tutCommPanel.interactable = false;
+		this.tutFarmWave.SetActive(false);
+		this.tutHero1ActiveButton.interactable = false;
+		this.tutHeroUpg.interactable = false;
+		this.tutTourney.SetActive(false);
+		this.tutUG.SetActive(false);
+		this.tutPirates.SetActive(false);
+		this.tutSettings.interactable = false;
+		this.tutIaps.interactable = false;
+		this.tutAch.interactable = false;
+		this.tutTech.interactable = false;
+		this.tutInv.interactable = false;
+		this.tutv2Pause = true;
+		this.tutv2Bg.SetActive(true);
+		this.onTutNum++;
+		switch (this.onTutNum)
+		{
+		case 1:
+			this.tutv2Panel1.SetActive(true);
+			break;
+		case 2:
+			this.tutv2Panel1.SetActive(false);
+			this.tutv2Panel2.SetActive(true);
+			break;
+		case 3:
+			this.tutv2Bg.SetActive(false);
+			this.tutv2Panel2.SetActive(false);
+			this.tutv2Pause = false;
+			EnemyManager.Instance.needNewWave = true;
+			break;
+		case 4:
+			this.tutv2Panel3.SetActive(true);
+			this.tutUpgradesButtonParent = this.tutUpgradesButton.transform.parent.gameObject;
+			this.tutUpgradesButton.transform.SetParent(this.tutv2Bg.transform, true);
+			this.tutHeroUpg.interactable = true;
+			this.tutv2ArrowToUpgMenu.SetActive(true);
+			break;
+		case 5:
+			this.tutUpgradesButton.transform.SetParent(this.tutUpgradesButtonParent.transform, true);
+			this.tutv2Panel3.SetActive(false);
+			this.tutv2Panel4.SetActive(true);
+			this.tutv2ArrowToUpgMenu.SetActive(false);
+			this.tutv2ArrowToLvlButton.SetActive(true);
+			break;
+		case 6:
+			this.tutv2Panel4.SetActive(false);
+			this.tutv2Panel5.SetActive(true);
+			this.tutv2ArrowToLvlButton.SetActive(false);
+			break;
+		case 7:
+			this.tutLvlUpButton.transform.SetParent(this.tutLvlUpButtonParent.transform, true);
+			this.tutv2Bg.SetActive(false);
+			this.tutv2Panel5.SetActive(false);
+			this.exitMainMenu();
+			this.tutv2Pause = false;
+			break;
+		case 8:
+			this.tutv2Panel6.SetActive(true);
+			this.tutActiveHeroButtonParent = this.tutActiveHeroButton.transform.parent.gameObject;
+			this.tutActiveHeroButton.transform.SetParent(this.tutv2Bg.transform, true);
+			this.tutHero1ActiveButton.interactable = true;
+			this.tutv2ArrowToActiveHero.SetActive(true);
+			break;
+		case 9:
+			this.tutv2Panel6.SetActive(false);
+			this.tutv2Panel7.SetActive(true);
+			this.tutSpellButtonParent = this.tutSpellButton.transform.parent.gameObject;
+			this.tutSpellButton.transform.SetParent(this.tutv2Bg.transform, true);
+			this.tutv2ArrowToActiveHero.SetActive(false);
+			this.tutv2ArrowToSkill.SetActive(true);
+			break;
+		case 10:
+			this.tutActiveHeroButton.transform.SetParent(this.tutActiveHeroButtonParent.transform, true);
+			this.tutSpellButton.transform.SetParent(this.tutSpellButtonParent.transform, true);
+			GameManager.Instance.selectedHero = null;
+			this.tutv2ArrowToSkill.SetActive(false);
+			this.tutv2Bg.SetActive(false);
+			this.tutv2Panel7.SetActive(false);
+			this.tutv2Pause = false;
+			break;
+		case 11:
+			this.tutv2Panel8.SetActive(true);
+			break;
+		case 12:
+			this.tutv2Panel8.SetActive(false);
+			this.tutv2Panel9.SetActive(true);
+			break;
+		case 13:
+			this.tutv2Panel9.SetActive(false);
+			this.tutv2Panel10.SetActive(true);
+			break;
+		case 14:
+			this.tutv2Bg.SetActive(false);
+			this.tutv2Panel10.SetActive(false);
+			this.tutv2Pause = false;
+			this.tutCommPanel.interactable = true;
+			this.tutFarmWave.SetActive(true);
+			this.tutHero1ActiveButton.interactable = true;
+			this.tutHeroUpg.interactable = true;
+			this.tutTourney.SetActive(true);
+			this.tutUG.SetActive(true);
+			this.tutPirates.SetActive(true);
+			this.tutSettings.interactable = true;
+			this.tutIaps.interactable = true;
+			this.tutAch.interactable = true;
+			this.tutTech.interactable = true;
+			this.tutInv.interactable = true;
+			SoundManager.Instance.playReward();
+			GameManager.Instance.doneTutorial = true;
+			DataManager.Instance.saveData(true);
+			break;
+		}
+	}
+
+	public bool canClickMap()
+	{
+		return !UIManager.Instance.menu.activeSelf && !UIManager.Instance.blackbg.activeSelf && !UIManager.Instance.deathBlackBg.activeSelf && !GameManager.Instance.prestigePause;
+	}
+
+	public void clickedFarmWaveButton()
+	{
+		if (GameManager.Instance.isFarmingWave)
+		{
+			GameManager.Instance.isFarmingWave = false;
+		}
+		else
+		{
+			GameManager.Instance.isFarmingWave = true;
+		}
+		this.updateFarmWaveButton();
+	}
+
+	public void updateFarmWaveButton()
+	{
+		if (GameManager.Instance.isFarmingWave)
+		{
+			this.farmWaveCheck.SetActive(true);
+			this.changeButtonColorV2(this.farmWaveButton, "red", true);
+		}
+		else
+		{
+			this.farmWaveCheck.SetActive(false);
+			this.changeButtonColorV2(this.farmWaveButton, "green", true);
+		}
+	}
+
+	public void openHeroMenu()
+	{
+		this.menu.SetActive(true);
+		this.heroMenu.SetActive(true);
+		if (this.onTutNum == 4)
+		{
+			UIManager.Instance.doTutorialScreensV2();
+		}
+	}
+
+	public void openSettingsMenu()
+	{
+		this.menu.SetActive(true);
+		this.settingsMenu.SetActive(true);
+	}
+
+	public void openIAPMenu()
+	{
+		this.closeIapSaleMessage();
+		this.menu.SetActive(true);
+		this.iapMenu.SetActive(true);
+	}
+
+	public void openAchMenu()
+	{
+		this.menu.SetActive(true);
+		this.achMenu.SetActive(true);
+	}
+
+	public void openTechMenu()
+	{
+		this.menu.SetActive(true);
+		this.techMenu.SetActive(true);
+	}
+
+	public void openInvMenu()
+	{
+		this.menu.SetActive(true);
+		this.invMenu.SetActive(true);
+	}
+
+	public void clickedHeaderButton(GameObject thisButton)
+	{
+		GameObject gameObject = thisButton.transform.parent.gameObject;
+		GameObject gameObject2 = gameObject.transform.parent.gameObject;
+		int num = gameObject.transform.childCount - 1;
+		for (int i = 0; i < num; i++)
+		{
+			GameObject gameObject3 = gameObject.transform.GetChild(i).gameObject;
+			if (gameObject3 == thisButton)
+			{
+				this.changeButtonColorV2(gameObject3, "yellow", true);
+				gameObject2.transform.GetChild(i).gameObject.SetActive(true);
+			}
+			else
+			{
+				this.changeButtonColorV2(gameObject3, "green", true);
+				gameObject2.transform.GetChild(i).gameObject.SetActive(false);
+			}
+		}
+	}
+
+	public void exitMainMenu()
+	{
+		this.heroMenu.SetActive(false);
+		this.settingsMenu.SetActive(false);
+		this.iapMenu.SetActive(false);
+		this.achMenu.SetActive(false);
+		this.techMenu.SetActive(false);
+		this.invMenu.SetActive(false);
+		this.menu.SetActive(false);
+		this.updAggStats();
+	}
+
+	public void openPrestigePanel()
+	{
+		this.blackbg.SetActive(true);
+		this.prestigePanel.SetActive(true);
+	}
+
+	public void clickedOpenPrestigeHelp()
+	{
+		this.prestigeHelpMenu.SetActive(true);
+	}
+
+	public void clickedExitPrestigeHelp()
+	{
+		this.prestigeHelpMenu.SetActive(false);
+	}
+
+	public void closeBlackBg()
+	{
+		for (int i = 0; i < this.blackbg.transform.childCount; i++)
+		{
+			this.blackbg.transform.GetChild(i).gameObject.SetActive(false);
+		}
+		this.blackbg.SetActive(false);
+		this.updAggStats();
+	}
+
+	public void closeIapPanel()
+	{
+		this.iapBlackBg.SetActive(false);
+		this.iapPurchasing.SetActive(false);
+		this.iapFailed.SetActive(false);
+		this.iapSuccessful.SetActive(false);
+	}
+
+	public void openPrestigeTutPanel()
+	{
+		this.tutv2Pause = true;
+		this.exitMainMenu();
+		this.tutPrestigePanel.SetActive(true);
+	}
+
+	public void closePrestigeTutPanel()
+	{
+		this.tutv2Pause = false;
+		this.tutPrestigePanel.SetActive(false);
+	}
+
+	public void closeNewUpdatePanel()
+	{
+		this.newUpdatePanel.SetActive(false);
+	}
+
+	public void checkOfflineGold()
+	{
+		if (LoginManager.Instance.isConnectedPlayfab && GameManager.Instance.doneTutorial)
+		{
+			DateTime d = Convert.ToDateTime(GameManager.Instance.lastPlayTime);
+			UnityEngine.Debug.Log("old date = " + GameManager.Instance.lastPlayTime);
+			UnityEngine.Debug.Log("new date = " + GameManager.Instance.currServerTime);
+			int num = (int)(GameManager.Instance.currServerTime - d).TotalSeconds;
+			UnityEngine.Debug.Log("offline time = " + num);
+			if (num <= 86400000 && num >= 150 && !this.isWatchingAd)
+			{
+				this.doOfflineGold(num);
+			}
+			GameManager.Instance.lastPlayTime = Convert.ToString(GameManager.Instance.currServerTime);
+		}
+	}
+
+	public void doOfflineGold(int timeAwaySecs)
+	{
+		this.saveOfflineSecs = timeAwaySecs;
+		this.totalOfflineGoldAmt = 0.0;
+		int num = timeAwaySecs / 10;
+		double num2 = GameManager.Instance.getActGoldDrop(false, true) * (double)num;
+		float num3 = (float)num * (GameManager.Instance.getChestChance(true) * 0.01f);
+		int num4 = (int)num3;
+		double num5 = GameManager.Instance.getActChestGold(false, true) * (double)num4;
+		float num6 = (float)num * ((float)GameManager.Instance.tech25Lvl * 0.25f * 0.01f);
+		int num7 = (int)num6 * 5;
+		double num8 = GameManager.Instance.getActChestGold(false, true) * (double)num7;
+		this.totalOfflineGoldAmt = num2 + num5 + num8;
+		this.totalOfflineGoldAmt *= (double)(1f + (float)GameManager.Instance.tech20Lvl * 0.04f);
+		if (GameManager.Instance.settings2xGameSpeed)
+		{
+			this.totalOfflineGoldAmt *= 2.0;
+		}
+		if (GameManager.Instance.iapSkipAds)
+		{
+			this.totalOfflineGoldAmt *= 2.0;
+		}
+		this.offlineGoldBlackBg.SetActive(true);
+		this.offlineGoldPanel.SetActive(true);
+		TimeSpan timeSpan = TimeSpan.FromSeconds((double)timeAwaySecs);
+		if (timeAwaySecs >= 86400)
+		{
+			this.offlineGoldTime.text = string.Format("{0:D1}d {1:D1}h {2:D1}m {3:D1}s", new object[]
+			{
+				timeSpan.Days,
+				timeSpan.Hours,
+				timeSpan.Minutes,
+				timeSpan.Seconds
+			});
+		}
+		else if (timeAwaySecs >= 3600)
+		{
+			this.offlineGoldTime.text = string.Format("{0:D1}h {1:D1}m {2:D1}s", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+		}
+		else if (timeAwaySecs >= 60)
+		{
+			this.offlineGoldTime.text = string.Format("{0:D1}m {1:D1}s", timeSpan.Minutes, timeSpan.Seconds);
+		}
+		else
+		{
+			this.offlineGoldTime.text = string.Format("{0:D1}s", timeSpan.Seconds);
+		}
+		this.offlineGoldStats.text = string.Concat(new string[]
+		{
+			"Killed ",
+			num.ToString("n0"),
+			" enemies\nEarned ",
+			this.convertNumberFormat(this.totalOfflineGoldAmt.ToString("0")),
+			" gold"
+		});
+		SoundManager.Instance.playReward();
+	}
+
+	public void closeOfflineBlackBg()
+	{
+		this.offlineGoldBlackBg.SetActive(false);
+		this.offlineGoldPanel.SetActive(false);
+		this.offlineAdPanel.SetActive(false);
+		this.offlineAdRewardPanel.SetActive(false);
+	}
+
+	public void collectOfflineGold()
+	{
+		GameManager.Instance.goldAmt += this.totalOfflineGoldAmt;
+		SoundManager.Instance.playReward();
+		this.closeOfflineBlackBg();
+		if (Advertisement.IsReady("rewardedVideo") && !GameManager.Instance.iapSkipAds && this.saveOfflineSecs >= 900)
+		{
+			this.offlineGoldBlackBg.SetActive(true);
+			this.offlineAdPanel.SetActive(true);
+			this.offlineAdBonusAmt.text = "+" + this.convertNumberFormat(this.totalOfflineGoldAmt.ToString("0")) + " bonus gold!";
+		}
+	}
+
+	public void clickedVideoAdButton()
+	{
+		this.blackbg.SetActive(true);
+		this.videoAdsButton.SetActive(false);
+		this.videoAdTimer = 0f;
+		this.rewardSprite = null;
+		this.rewardString = string.Empty;
+		int max = 2;
+		if (GameManager.Instance.statPrestiges > 0)
+		{
+			max = 4;
+		}
+		if (GameManager.Instance.q1Num > 0)
+		{
+			max = 5;
+		}
+		this.videoAdRewardType = UnityEngine.Random.Range(0, max);
+		if (this.videoAdRewardType == 0)
+		{
+			this.rewardSprite = this.goldIcon;
+			this.rewardString = " Gold";
+			int num = 175;
+			double num2 = GameManager.Instance.getActGoldDrop(false, true) * (double)num;
+			float num3 = (float)num * (GameManager.Instance.getChestChance(true) * 0.01f);
+			int num4 = (int)num3;
+			double num5 = GameManager.Instance.getActChestGold(false, true) * (double)num4;
+			float num6 = (float)num * ((float)GameManager.Instance.tech25Lvl * 0.25f * 0.01f);
+			int num7 = (int)num6 * 5;
+			double num8 = GameManager.Instance.getActChestGold(false, true) * (double)num7;
+			this.videoAdRewardAmt = num2 + num5 + num8;
+		}
+		else if (this.videoAdRewardType == 1)
+		{
+			this.rewardSprite = this.gemsIcon;
+			this.rewardString = " Gems";
+			this.videoAdRewardAmt = 20.0;
+		}
+		else if (this.videoAdRewardType == 2)
+		{
+			this.rewardSprite = this.bpsIcon;
+			this.rewardString = " Blueprints";
+			float num9;
+			if (GameManager.Instance.statHighestWave > 2500)
+			{
+				num9 = 0.15f;
+			}
+			else if (GameManager.Instance.statHighestWave > 1000)
+			{
+				num9 = 0.175f;
+			}
+			else if (GameManager.Instance.statHighestWave > 500)
+			{
+				num9 = 0.2f;
+			}
+			else if (GameManager.Instance.statHighestWave > 150)
+			{
+				num9 = 0.225f;
+			}
+			else
+			{
+				num9 = 0.25f;
+			}
+			int num10 = GameManager.Instance.statHighestWave;
+			if (num10 < 50)
+			{
+				num10 = 50;
+			}
+			this.videoAdRewardAmt = GameManager.Instance.getPrestigeGems(num10) * (double)num9;
+			this.videoAdRewardAmt = Math.Round(this.videoAdRewardAmt, 0);
+		}
+		else if (this.videoAdRewardType == 3)
+		{
+			this.rewardSprite = this.spsIcon;
+			this.rewardString = " Skillpoints";
+			float num11;
+			if (GameManager.Instance.statHighestWave > 2500)
+			{
+				num11 = 0.25f;
+			}
+			else if (GameManager.Instance.statHighestWave > 1000)
+			{
+				num11 = 0.275f;
+			}
+			else if (GameManager.Instance.statHighestWave > 500)
+			{
+				num11 = 0.3f;
+			}
+			else if (GameManager.Instance.statHighestWave > 150)
+			{
+				num11 = 0.325f;
+			}
+			else
+			{
+				num11 = 0.35f;
+			}
+			int num12 = GameManager.Instance.statHighestWave;
+			if (num12 < 50)
+			{
+				num12 = 50;
+			}
+			this.videoAdRewardAmt = (double)GameManager.Instance.getPrestigeSkillpointAmt(num12) * (double)num11;
+			this.videoAdRewardAmt = Math.Round(this.videoAdRewardAmt, 0);
+			if (this.videoAdRewardAmt < 1.0)
+			{
+				this.videoAdRewardAmt = 1.0;
+			}
+		}
+		else if (this.videoAdRewardType == 4)
+		{
+			this.rewardSprite = this.emeraldsIcon;
+			this.rewardString = " Emeralds";
+			this.videoAdRewardAmt = 3.0;
+			if (GameManager.Instance.iap3xEmeralds)
+			{
+				this.videoAdRewardAmt = 9.0;
+			}
+		}
+		if (GameManager.Instance.iap2xAdRewards)
+		{
+			this.videoAdRewardAmt *= 2.0;
+		}
+		if (GameManager.Instance.iapSkipAds)
+		{
+			this.showAdReward();
+			return;
+		}
+		this.videoAdsPanel1.SetActive(true);
+		this.videoAdsPanel1Icon1.sprite = this.rewardSprite;
+		this.videoAdsPanel1Icon2.sprite = this.rewardSprite;
+		this.videoAdsPanel1RewardText.text = "+" + this.convertNumberFormat(this.videoAdRewardAmt.ToString("0")) + this.rewardString;
+		this.videoAdsPanel1Slider.minValue = 0f;
+		this.videoAdsPanel1Slider.maxValue = 5f;
+		this.videoAdsPanel1Slider.value = (float)GameManager.Instance.videoAdOnNum;
+		this.videoAdsPanel1SliderText.text = GameManager.Instance.videoAdOnNum + " / 5";
+		this.videoAdsPanel1PermText.text = "+" + GameManager.Instance.videoAdBoost * 25 + "%";
+	}
+
+	public void clickedWatchVideoAdButton(bool adIsForOfflineGold)
+	{
+		this.videoAdIsForOfflineGold = adIsForOfflineGold;
+		this.isWatchingAd = true;
+		if (!this.videoAdIsForOfflineGold)
+		{
+			this.closeBlackBg();
+		}
+		else
+		{
+			this.closeOfflineBlackBg();
+		}
+		if (Advertisement.IsReady("rewardedVideo"))
+		{
+			Advertisement.Show("rewardedVideo", new ShowOptions
+			{
+				resultCallback = new Action<ShowResult>(this.HandleShowResult)
+			});
+		}
+	}
+
+	private void HandleShowResult(ShowResult result)
+	{
+		if (this.videoAdIsForOfflineGold)
+		{
+			this.show2xOfflineBonus();
+		}
+		else
+		{
+			this.showAdReward();
+		}
+	}
+
+	private void show2xOfflineBonus()
+	{
+		this.offlineGoldBlackBg.SetActive(true);
+		this.offlineAdRewardPanel.SetActive(true);
+		this.offlineAdRewardAmt.text = "+" + this.convertNumberFormat(this.totalOfflineGoldAmt.ToString("0")) + " bonus gold!";
+	}
+
+	public void collectOfflineAdGold()
+	{
+		GameManager.Instance.goldAmt += this.totalOfflineGoldAmt;
+		this.isWatchingAd = false;
+		SoundManager.Instance.playReward();
+		this.closeOfflineBlackBg();
+	}
+
+	public void showAdReward()
+	{
+		this.blackbg.SetActive(true);
+		this.videoAdsPanel2.SetActive(true);
+		this.videoAdsPanel2Icon1.sprite = this.rewardSprite;
+		this.videoAdsPanel2Icon2.sprite = this.rewardSprite;
+		this.videoAdsPanel2RewardText.text = "+" + this.convertNumberFormat(this.videoAdRewardAmt.ToString("0")) + this.rewardString;
+		GameManager.Instance.videoAdOnNum++;
+		if (GameManager.Instance.videoAdOnNum >= 5)
+		{
+			GameManager.Instance.videoAdOnNum = 0;
+			GameManager.Instance.videoAdBoost++;
+			this.videoAdsPanel2Sub1.SetActive(false);
+			this.videoAdsPanel2Sub2.SetActive(true);
+			this.videoAdsPanel2Sub2PermText.text = "+" + GameManager.Instance.videoAdBoost * 25 + "%";
+		}
+		else
+		{
+			this.videoAdsPanel2Sub1.SetActive(true);
+			this.videoAdsPanel2Sub2.SetActive(false);
+			this.videoAdsPanel2Sub1Slider.minValue = 0f;
+			this.videoAdsPanel2Sub1Slider.maxValue = 5f;
+			this.videoAdsPanel2Sub1Slider.value = (float)GameManager.Instance.videoAdOnNum;
+			this.videoAdsPanel2Sub1SliderText.text = GameManager.Instance.videoAdOnNum + " / 5";
+			this.videoAdsPanel2Sub1PermText.text = "+" + GameManager.Instance.videoAdBoost * 25 + "%";
+		}
+	}
+
+	public void clickedCollectAdReward()
+	{
+		this.isWatchingAd = false;
+		if (GameManager.Instance.m2Num == 5)
+		{
+			GameManager.Instance.m2CurrVal++;
+			GameManager.Instance.checkMissionStatus();
+		}
+		this.videoAdsWatchedThisSession++;
+		GameManager.Instance.statAdsWatched++;
+		SoundManager.Instance.playReward();
+		this.closeBlackBg();
+		if (this.videoAdRewardType == 0)
+		{
+			GameManager.Instance.goldAmt += this.videoAdRewardAmt;
+		}
+		else if (this.videoAdRewardType == 1)
+		{
+			GameManager.Instance.gemsAmt += (int)this.videoAdRewardAmt;
+		}
+		else if (this.videoAdRewardType == 2)
+		{
+			GameManager.Instance.bpAmt += this.videoAdRewardAmt;
+		}
+		else if (this.videoAdRewardType == 3)
+		{
+			GameManager.Instance.spAmt += (int)this.videoAdRewardAmt;
+		}
+		else if (this.videoAdRewardType == 4)
+		{
+			GameManager.Instance.medAmt += (int)this.videoAdRewardAmt;
+		}
+		DataManager.Instance.saveData(false);
+	}
+
+	public void checkDailyBonus()
+	{
+		DateTime t = DateTime.ParseExact(GameManager.Instance.currServerTime.ToString("yyyy/MM/dd"), "yyyy/MM/dd", null);
+		DateTime t2 = DateTime.ParseExact(GameManager.Instance.lastDailyDate, "yyyy/MM/dd", null);
+		if (t > t2 && GameManager.Instance.doneTutorial)
+		{
+			this.dailyBonusButton.SetActive(true);
+			this.videoAdsButton.SetActive(false);
+		}
+	}
+
+	public void clickedDailyBonusButton()
+	{
+		this.blackbg.SetActive(true);
+		this.dailyBonusButton.SetActive(false);
+		this.dailyBonusPanel.SetActive(true);
+		SoundManager.Instance.playReward();
+		DateTime d = DateTime.ParseExact(GameManager.Instance.currServerTime.ToString("yyyy/MM/dd"), "yyyy/MM/dd", null);
+		DateTime d2 = DateTime.ParseExact(GameManager.Instance.lastDailyDate, "yyyy/MM/dd", null);
+		if ((d - d2).Days == 1)
+		{
+			GameManager.Instance.consecDaysPlayed++;
+		}
+		else
+		{
+			GameManager.Instance.consecDaysPlayed = 1;
+		}
+		int num = GameManager.Instance.consecDaysPlayed;
+		if (num > 10)
+		{
+			num = 10;
+		}
+		int num2 = 500;
+		double num3 = GameManager.Instance.getActGoldDrop(false, true) * (double)num2;
+		float num4 = (float)num2 * (GameManager.Instance.getChestChance(true) * 0.01f);
+		int num5 = (int)num4;
+		double num6 = GameManager.Instance.getActChestGold(false, true) * (double)num5;
+		float num7 = (float)num2 * ((float)GameManager.Instance.tech25Lvl * 0.25f * 0.01f);
+		int num8 = (int)num7 * 5;
+		double num9 = GameManager.Instance.getActChestGold(false, true) * (double)num8;
+		double num10 = num3 + num6 + num9;
+		num10 *= (double)num;
+		GameManager.Instance.goldAmt += num10;
+		int num11 = 15 * num;
+		GameManager.Instance.gemsAmt += num11;
+		int num12 = 75 * num;
+		for (int i = 0; i < GameManager.Instance.activeHeroes.Count; i++)
+		{
+			Hero hero = GameManager.Instance.activeHeroes[i];
+			hero.equipCurrExp += num12;
+			if (hero.equipCurrExp >= hero.equipNextExp)
+			{
+				EquipmentManager.Instance.getNewEquip(hero);
+			}
+			hero.evolveCurrExp += num12;
+			if (hero.evolveCurrExp >= hero.evolveNextExp)
+			{
+				hero.evolveHero();
+			}
+			if (GameManager.Instance.q5Num == 4)
+			{
+				GameManager.Instance.q5CurrVal += num12;
+				GameManager.Instance.checkQuestStatus();
+			}
+		}
+		int amt = 25 * num;
+		GameManager.Instance.addNewCommExp(amt);
+		this.dailyBonusConsecDaysText.text = "Consecutive Days Played: " + GameManager.Instance.consecDaysPlayed;
+		this.dailyBonusMultiplierText.text = num + "x Multiplier";
+		this.dailyBonusRewardsText.text = string.Concat(new string[]
+		{
+			"+",
+			this.convertNumberFormat(num10.ToString("0")),
+			" gold\n+",
+			num11.ToString("n0"),
+			" gems\n+",
+			amt.ToString("n0"),
+			" commander exp\n+",
+			num12.ToString("n0"),
+			" active hero exp"
+		});
+		GameManager.Instance.lastDailyDate = GameManager.Instance.currServerTime.ToString("yyyy/MM/dd");
+	}
+
+	public void openTournBoostPanel()
+	{
+		this.tournPanel.SetActive(true);
+		if (Application.platform != RuntimePlatform.WebGLPlayer)
+		{
+			this.mobileTournIAPButton.SetActive(true);
+			this.kongTournIAPButton.SetActive(false);
+		}
+		else
+		{
+			this.mobileTournIAPButton.SetActive(false);
+			this.kongTournIAPButton.SetActive(true);
+		}
+	}
+
+	public void closeTournBoostPanel()
+	{
+		this.tournPanel.SetActive(false);
+	}
+
+	public void rateButtonClicked()
+	{
+		this.closeRateScreen();
+		GameManager.Instance.hasRatedYet = true;
+		if (Application.platform == RuntimePlatform.IPhonePlayer)
+		{
+			Application.OpenURL("itms-apps://itunes.apple.com/app/id1404480807");
+		}
+		else if (Application.platform == RuntimePlatform.Android)
+		{
+			Application.OpenURL("market://details?id=com.ironhorsegames.idleherodefensefantasydefensetd");
+		}
+		else if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+		}
+	}
+
+	public void closeRateScreen()
+	{
+		this.rateMePanel.SetActive(false);
+	}
+
+	public void redditButtonClicked()
+	{
+		if (Application.platform == RuntimePlatform.IPhonePlayer)
+		{
+			Application.OpenURL("http://www.reddit.com/r/IdleHeroDefense");
+		}
+		else if (Application.platform == RuntimePlatform.Android)
+		{
+			Application.OpenURL("http://www.reddit.com/r/IdleHeroDefense");
+		}
+		else if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			Application.ExternalEval("window.open(\"http://www.reddit.com/r/IdleHeroDefense\")");
+		}
+	}
+
+	public void facebookButtonClicked()
+	{
+		if (Application.platform == RuntimePlatform.IPhonePlayer)
+		{
+			Application.OpenURL("https://www.facebook.com/IdleHeroDefense/");
+		}
+		else if (Application.platform == RuntimePlatform.Android)
+		{
+			Application.OpenURL("https://www.facebook.com/IdleHeroDefense/");
+		}
+		else if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			Application.ExternalEval("window.open(\"https://www.facebook.com/IdleHeroDefense\")");
+		}
+	}
+
+	public void twitterButtonClicked()
+	{
+		if (Application.platform == RuntimePlatform.IPhonePlayer)
+		{
+			Application.OpenURL("https://twitter.com/tbizapps");
+		}
+		else if (Application.platform == RuntimePlatform.Android)
+		{
+			Application.OpenURL("https://twitter.com/tbizapps");
+		}
+		else if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			Application.ExternalEval("window.open(\"https://twitter.com/tbizapps\")");
+		}
+	}
+
+	public void discordButtonClicked()
+	{
+		if (Application.platform == RuntimePlatform.IPhonePlayer)
+		{
+			Application.OpenURL("https://discord.gg/fpqSzDS");
+		}
+		else if (Application.platform == RuntimePlatform.Android)
+		{
+			Application.OpenURL("https://discord.gg/fpqSzDS");
+		}
+		else if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			Application.ExternalEval("window.open(\"https://discord.gg/fpqSzDS\")");
+		}
+		this.closeDiscordPanel();
+	}
+
+	public void closeIapSaleMessage()
+	{
+		this.iapSaleMessage.SetActive(false);
+	}
+
+	public void closeDiscordPanel()
+	{
+		this.discordPanel.SetActive(false);
+	}
+
+	public void clickedDoNotShowDiscordButton()
+	{
+		GameManager.Instance.showDiscordPanel = false;
+		this.closeDiscordPanel();
+	}
+
+	public void changeButtonColorV2(GameObject _button, string color, bool full)
+	{
+		Sprite sprite = null;
+		if (color == "green")
+		{
+			if (full)
+			{
+				sprite = this.button_green_full;
+			}
+			else
+			{
+				sprite = this.button_green_half;
+			}
+		}
+		else if (color == "red")
+		{
+			if (full)
+			{
+				sprite = this.button_red_full;
+			}
+			else
+			{
+				sprite = this.button_red_half;
+			}
+		}
+		else if (color == "grey")
+		{
+			if (full)
+			{
+				sprite = this.button_grey_full;
+			}
+			else
+			{
+				sprite = this.button_grey_half;
+			}
+		}
+		else if (color == "yellow")
+		{
+			if (full)
+			{
+				sprite = this.button_yellow_full;
+			}
+			else
+			{
+				sprite = this.button_yellow_half;
+			}
+		}
+		else if (color == "blue")
+		{
+			if (full)
+			{
+				sprite = this.button_blue_full;
+			}
+			else
+			{
+				sprite = this.button_blue_half;
+			}
+		}
+		_button.GetComponent<Image>().sprite = sprite;
+	}
+
+	public string convertNumberFormat(string inputNumString)
+	{
+		double num = double.Parse(inputNumString);
+		if (GameManager.Instance.settingScientificNotation && num >= 1E+15)
+		{
+			return num.ToString("0.00E+0");
+		}
+		string text = "1";
+		int num2 = (inputNumString.Length - 1) / 3;
+		for (int i = 0; i < num2; i++)
+		{
+			text += "000";
+		}
+		double num3 = double.Parse(text);
+		double num4 = num / num3;
+		string text2 = string.Empty;
+		if (num2 > 0)
+		{
+			text2 = num4.ToString("n2");
+		}
+		else
+		{
+			text2 = num4.ToString("n0");
+		}
+		if (num2 != 0)
+		{
+			if (num2 == 1)
+			{
+				text2 += "K";
+			}
+			else if (num2 == 2)
+			{
+				text2 += "M";
+			}
+			else if (num2 == 3)
+			{
+				text2 += "B";
+			}
+			else if (num2 == 4)
+			{
+				text2 += "T";
+			}
+			else
+			{
+				string text3 = "abcdefghijklmnopqrstuvwxyz";
+				int num5 = (num2 - 5) / 26;
+				text2 += text3[num5];
+				text2 += text3[num2 - 5 - num5 * 26];
+			}
+		}
+		return text2;
+	}
+
+	public string bigNum()
+	{
+		return string.Empty;
+	}
+
+	public void updAggStats()
+	{
+		double num = 0.0;
+		double num2 = 0.0;
+		for (int i = 0; i < GameManager.Instance.activeHeroes.Count; i++)
+		{
+			num += GameManager.Instance.activeHeroes[i].getActDps(GameManager.Instance.activeHeroes[i].baseDps, true);
+			num2 += GameManager.Instance.activeHeroes[i].getActMaxHp(GameManager.Instance.activeHeroes[i].baseDps);
+		}
+		this.aggHeroDPS.text = this.convertNumberFormat(num.ToString("0"));
+		this.aggHeroHP.text = this.convertNumberFormat(num2.ToString("0"));
+	}
+
+	private double getNextTechCost()
+	{
+		double num = 25.0;
+		int num2 = 0;
+		if (GameManager.Instance.tech1Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech2Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech3Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech4Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech5Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech6Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech7Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech8Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech9Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech10Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech11Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech12Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech13Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech14Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech15Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech16Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech17Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech18Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech19Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech20Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech21Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech22Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech23Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech24Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech25Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech26Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech27Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech28Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech29Lvl > 0)
+		{
+			num2++;
+		}
+		if (GameManager.Instance.tech30Lvl > 0)
+		{
+			num2++;
+		}
+		if (num2 > 0)
+		{
+			for (int i = 1; i <= num2; i++)
+			{
+				if (i < 5)
+				{
+					num *= 1.5;
+				}
+				else if (i == 5)
+				{
+					num *= 3.0;
+				}
+				else if (i < 10)
+				{
+					num *= 1.75;
+				}
+				else if (i == 10)
+				{
+					num *= 4.0;
+				}
+				else if (i < 15)
+				{
+					num *= 2.0;
+				}
+				else if (i == 15)
+				{
+					num *= 5.0;
+				}
+				else if (i < 20)
+				{
+					num *= 2.25;
+				}
+				else if (i == 20)
+				{
+					num *= 6.0;
+				}
+				else if (i == 25)
+				{
+					num *= 7.0;
+				}
+				else if (i == 30)
+				{
+					num *= 8.0;
+				}
+				else
+				{
+					num *= 2.5;
+				}
+				num = Math.Round(num, 0);
+			}
+		}
+		if (num2 == 30)
+		{
+			num = 1E+308;
+		}
+		return num;
+	}
+
+	private int getNextBadgeCost()
+	{
+		int num = 2;
+		int num2 = 0;
+		if (GameManager.Instance.badge1Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge2Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge3Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge4Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge5Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge6Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge7Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge8Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge9Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge10Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge11Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge12Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge13Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge14Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge15Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge16Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge17Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge18Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge19Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge20Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge21Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge22Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (GameManager.Instance.badge23Lvl > 0)
+		{
+			num2++;
+			num += 2;
+		}
+		if (num2 == 23)
+		{
+			num = 999999;
+		}
+		return num;
+	}
+
+	public GameObject getPoolObject(List<GameObject> _poolList)
+	{
+		GameObject result = null;
+		for (int i = 0; i < _poolList.Count; i++)
+		{
+			if (!_poolList[i].activeSelf)
+			{
+				result = _poolList[i];
+				break;
+			}
+		}
+		return result;
+	}
+
+	private void Update()
+	{
+		this.goldAmtBigText.text = this.convertNumberFormat(GameManager.Instance.goldAmt.ToString("0"));
+		this.goldAmtText.text = this.convertNumberFormat(GameManager.Instance.goldAmt.ToString("0"));
+		this.bpAmtText.text = this.convertNumberFormat(GameManager.Instance.bpAmt.ToString("0"));
+		this.scrapsAmtText.text = this.convertNumberFormat(GameManager.Instance.scrapsAmt.ToString("0"));
+		this.spAmtText.text = this.convertNumberFormat(GameManager.Instance.spAmt.ToString("0"));
+		this.medAmtText.text = GameManager.Instance.medAmt.ToString("n0");
+		this.gemsAmtText.text = GameManager.Instance.gemsAmt.ToString("n0");
+		this.updAggStatsTimer += Time.deltaTime;
+		if (this.updAggStatsTimer >= 5f)
+		{
+			this.updAggStatsTimer = 0f;
+			this.updAggStats();
+		}
+		if (GameManager.Instance.doneTutorial && GameManager.Instance.statHighestWave >= 25 && LoginManager.Instance.isConnectedPlayfab && GameManager.Instance.currServerTime.DayOfWeek == DayOfWeek.Friday && !this.showedIapSaleMessage)
+		{
+			this.showedIapSaleMessage = true;
+			this.iapSaleMessage.SetActive(true);
+			int num = (int)(GameManager.Instance.currServerTime.AddDays(1.0).Date - GameManager.Instance.currServerTime).TotalSeconds;
+			TimeSpan timeSpan = TimeSpan.FromSeconds((double)num);
+			this.iapSaleMessageTime.text = "Hurry, this sale ends in\n" + string.Format("{0:D1}h {1:D1}m", timeSpan.Hours, timeSpan.Minutes) + "!";
+		}
+		if (GameManager.Instance.settingsHpManaBars)
+		{
+			this.heroBarsParent.SetActive(true);
+			this.enemyBarsParent.SetActive(true);
+		}
+		else
+		{
+			this.heroBarsParent.SetActive(false);
+			this.enemyBarsParent.SetActive(false);
+		}
+		if (this.notifIconMissions.activeSelf || this.notifIconAchievements.activeSelf || this.notifIconQuests.activeSelf)
+		{
+			this.notifIconMain.SetActive(true);
+		}
+		else
+		{
+			this.notifIconMain.SetActive(false);
+		}
+		if (this.savedBps != GameManager.Instance.bpAmt)
+		{
+			this.savedBps = GameManager.Instance.bpAmt;
+			double nextTechCost = this.getNextTechCost();
+			if (GameManager.Instance.bpAmt >= nextTechCost)
+			{
+				this.notifIconTech.SetActive(true);
+				this.notifIconTechSub.SetActive(true);
+			}
+			else
+			{
+				this.notifIconTech.SetActive(false);
+				this.notifIconTechSub.SetActive(false);
+			}
+		}
+		if (this.savedEmeralds != GameManager.Instance.medAmt)
+		{
+			this.savedEmeralds = GameManager.Instance.medAmt;
+			int nextBadgeCost = this.getNextBadgeCost();
+			if (GameManager.Instance.medAmt >= nextBadgeCost)
+			{
+				this.notifIconBadge.SetActive(true);
+				this.notifIconBadgeSub.SetActive(true);
+			}
+			else
+			{
+				this.notifIconBadge.SetActive(false);
+				this.notifIconBadgeSub.SetActive(false);
+			}
+		}
+		if (LoginManager.Instance.isConnectedPlayfab)
+		{
+			this.uniqueIdentifierText.text = "> Server ID: " + LoginManager.Instance.playFabID;
+		}
+		else
+		{
+			this.uniqueIdentifierText.text = "> Server ID: n/a (not connected to server)";
+		}
+		TimeSpan timeSpan2 = TimeSpan.FromSeconds((double)GameManager.Instance.statCurrPrestigeTime);
+		if (GameManager.Instance.statCurrPrestigeTime >= 86400)
+		{
+			this.prestigeTimeText.text = "Time: " + string.Format("{0:D1}d {1:D1}h {2:D1}m {3:D1}s", new object[]
+			{
+				timeSpan2.Days,
+				timeSpan2.Hours,
+				timeSpan2.Minutes,
+				timeSpan2.Seconds
+			});
+		}
+		else if (GameManager.Instance.statCurrPrestigeTime >= 3600)
+		{
+			this.prestigeTimeText.text = "Time: " + string.Format("{0:D1}h {1:D1}m {2:D1}s", timeSpan2.Hours, timeSpan2.Minutes, timeSpan2.Seconds);
+		}
+		else if (GameManager.Instance.statCurrPrestigeTime >= 60)
+		{
+			this.prestigeTimeText.text = "Time: " + string.Format("{0:D1}m {1:D1}s", timeSpan2.Minutes, timeSpan2.Seconds);
+		}
+		else
+		{
+			this.prestigeTimeText.text = "Time: " + string.Format("{0:D1}s", timeSpan2.Seconds);
+		}
+		if (!GameManager.Instance.doneTutorial)
+		{
+			return;
+		}
+		if (!TheUnderground.Instance.loadingMiniGame && !TheUnderground.Instance.playingMiniGame && !PirateRaid.Instance.loadingMiniGame && !PirateRaid.Instance.playingMiniGame)
+		{
+			TheUnderground.Instance.uiButton.SetActive(true);
+			TournamentManager.Instance.uiButton.SetActive(true);
+			PirateRaid.Instance.uiButton.SetActive(true);
+			this.heroMenuButton.enabled = true;
+			this.heroStopIcon.SetActive(false);
+			this.farmWaveButton.SetActive(true);
+		}
+		else
+		{
+			TheUnderground.Instance.uiButton.SetActive(false);
+			TournamentManager.Instance.uiButton.SetActive(false);
+			PirateRaid.Instance.uiButton.SetActive(false);
+			this.heroMenuButton.enabled = false;
+			this.heroStopIcon.SetActive(true);
+			this.farmWaveButton.SetActive(false);
+		}
+		this.updateLeaderboardTimer += Time.deltaTime;
+		if (GameManager.Instance.doneTutorial)
+		{
+			float num2 = 250f;
+			if (GameManager.Instance.statMoneySpent >= 10)
+			{
+				num2 = 350f;
+			}
+			if (this.videoAdTimer < num2)
+			{
+				this.videoAdTimer += Time.deltaTime;
+			}
+			else if (!this.videoAdsButton.activeSelf)
+			{
+				if (!this.dailyBonusButton.activeSelf)
+				{
+					if (GameManager.Instance.iapSkipAds)
+					{
+						this.videoAdsButton.SetActive(true);
+					}
+					else if (Advertisement.IsReady("rewardedVideo"))
+					{
+						this.videoAdsButton.SetActive(true);
+					}
+					else
+					{
+						this.videoAdTimer = num2 - 60f;
+					}
+				}
+				else
+				{
+					this.videoAdTimer = num2 - 60f;
+				}
+			}
+		}
+		if (Application.platform == RuntimePlatform.Android && Input.GetKeyDown(KeyCode.Escape))
+		{
+			if (this.blackbg.activeSelf)
+			{
+				this.closeBlackBg();
+			}
+			else if (this.menu.activeSelf)
+			{
+				this.exitMainMenu();
+			}
+			else
+			{
+				Application.Quit();
+			}
+		}
+	}
+
+	public static UIManager Instance;
+
+	public static Color colorGreen = new Color(0.294117659f, 0.7254902f, 0.294117659f);
+
+	public static Color colorRed = new Color(1f, 0f, 0f);
+
+	public static Color colorYellow = new Color(1f, 1f, 0.294117659f);
+
+	public static Color colorDarkYellow = new Color(0.882352948f, 0.882352948f, 0.09803922f);
+
+	public static Color colorOrange = new Color(1f, 0.607843161f, 0f);
+
+	public static Color colorDarkOrange = new Color(0.882352948f, 0.5882353f, 0f);
+
+	public static Color colorLightOrange = new Color(1f, 0.784313738f, 0f);
+
+	public static Color colorBlue = new Color(0f, 0.5882353f, 1f);
+
+	public static Color colorBlack = new Color(0.294117659f, 0.294117659f, 0.294117659f);
+
+	public static Color colorGrey = new Color(0.6862745f, 0.6862745f, 0.6862745f);
+
+	public static Color colorCyan = new Color(0f, 1f, 1f);
+
+	public static Color colorWhite = new Color(1f, 1f, 1f);
+
+	public static Color colorWhiteFaded = new Color(1f, 1f, 1f, 0.5882353f);
+
+	public static Color colorPurple = new Color(0f, 0.5882353f, 1f);
+
+	public static Color colorRare = new Color(0.627451f, 0.882352948f, 1f);
+
+	public static Color colorUltra = new Color(0.294117659f, 0.7647059f, 1f);
+
+	public static Color colorLegendary = new Color(0.294117659f, 0.490196079f, 0.784313738f);
+
+	public bool saveIsLoaded;
+
+	[Header("Resource Texts")]
+	public Text goldAmtBigText;
+
+	public Text goldAmtText;
+
+	public Text bpAmtText;
+
+	public Text scrapsAmtText;
+
+	public Text spAmtText;
+
+	public Text medAmtText;
+
+	public Text gemsAmtText;
+
+	[Header("Maps")]
+	public List<GameObject> listMaps;
+
+	[Header("Main Buttons/Panels")]
+	public GameObject menu;
+
+	public GameObject heroMenu;
+
+	public GameObject settingsMenu;
+
+	public GameObject iapMenu;
+
+	public GameObject achMenu;
+
+	public GameObject techMenu;
+
+	public GameObject invMenu;
+
+	public Button heroMenuButton;
+
+	public GameObject heroStopIcon;
+
+	[Header("Commander Menu")]
+	public List<Sprite> listCommIcons;
+
+	public List<string> listCommNames;
+
+	public SpecialtyCell iapCommClass1;
+
+	public SpecialtyCell iapCommClass2;
+
+	public SpecialtyCell iapCommClass3;
+
+	[Header("Active Heroes")]
+	public Text aggHeroDPS;
+
+	public Text aggHeroHP;
+
+	public Sprite activeHeroBg;
+
+	public Sprite activeHeroSelected;
+
+	[Header("Prestige Menu")]
+	public GameObject prestigeHelpMenu;
+
+	[Header("Commander/Selected Hero/Selected Skill Panels")]
+	public GameObject updateCommPanel;
+
+	public GameObject commExpTextPrefab;
+
+	public GameObject commNotifIcon;
+
+	[Header("Hero/Equip Tables")]
+	public GameObject heroTableContent;
+
+	public GameObject heroDetailsPanelNone;
+
+	public GameObject heroDetailsPanel;
+
+	public GameObject heroDetailsPanelBar;
+
+	[Header("Notifications")]
+	public GameObject notifIconMain;
+
+	public GameObject notifIconAchievements;
+
+	public GameObject notifIconMissions;
+
+	public GameObject notifIconQuests;
+
+	public GameObject notifIconTech;
+
+	public GameObject notifIconTechSub;
+
+	public GameObject notifIconBadge;
+
+	public GameObject notifIconBadgeSub;
+
+	public GameObject iapSaleMessage;
+
+	public Text iapSaleMessageTime;
+
+	private bool showedIapSaleMessage;
+
+	[Header("IAP Panels")]
+	public GameObject iapBlackBg;
+
+	public GameObject iapPurchasing;
+
+	public GameObject iapSuccessful;
+
+	public GameObject iapFailed;
+
+	[Header("IAP Ad Boost")]
+	public GameObject iap2xAdBoostPanel;
+
+	public GameObject iap2xAdBoostActiveStars;
+
+	[Header("Offline Gold")]
+	public GameObject offlineGoldBlackBg;
+
+	public GameObject offlineGoldPanel;
+
+	public Text offlineGoldTime;
+
+	public Text offlineGoldStats;
+
+	private double totalOfflineGoldAmt;
+
+	public GameObject offlineAdPanel;
+
+	public Text offlineAdBonusAmt;
+
+	public GameObject offlineAdRewardPanel;
+
+	public Text offlineAdRewardAmt;
+
+	[Header("Daily Bonus")]
+	public GameObject dailyBonusButton;
+
+	public GameObject dailyBonusPanel;
+
+	public Text dailyBonusConsecDaysText;
+
+	public Text dailyBonusMultiplierText;
+
+	public Text dailyBonusRewardsText;
+
+	[Header("Video Ads")]
+	public GameObject videoAdsButton;
+
+	public GameObject videoAdsPanel1;
+
+	public Image videoAdsPanel1Icon1;
+
+	public Image videoAdsPanel1Icon2;
+
+	public Text videoAdsPanel1RewardText;
+
+	public Slider videoAdsPanel1Slider;
+
+	public Text videoAdsPanel1SliderText;
+
+	public Text videoAdsPanel1PermText;
+
+	public GameObject videoAdsPanel2;
+
+	public Image videoAdsPanel2Icon1;
+
+	public Image videoAdsPanel2Icon2;
+
+	public Text videoAdsPanel2RewardText;
+
+	public GameObject videoAdsPanel2Sub1;
+
+	public Slider videoAdsPanel2Sub1Slider;
+
+	public Text videoAdsPanel2Sub1SliderText;
+
+	public Text videoAdsPanel2Sub1PermText;
+
+	public GameObject videoAdsPanel2Sub2;
+
+	public Text videoAdsPanel2Sub2PermText;
+
+	private bool isWatchingAd;
+
+	private bool videoAdIsForOfflineGold;
+
+	private int videoAdsWatchedThisSession;
+
+	private int videoAdRewardType;
+
+	public double videoAdRewardAmt;
+
+	private Sprite rewardSprite;
+
+	private string rewardString;
+
+	[Header("Resource Icons")]
+	public Sprite goldIcon;
+
+	public Sprite bpsIcon;
+
+	public Sprite spsIcon;
+
+	public Sprite emeraldsIcon;
+
+	public Sprite gemsIcon;
+
+	[Header("Misc Stuff")]
+	public GameObject blackbg;
+
+	public GameObject deathBlackBg;
+
+	public Image deathImage;
+
+	public GameObject deathUpgradeText;
+
+	public GameObject prestigePanel;
+
+	public GameObject prestigeWhiteBg;
+
+	public GameObject rateMePanel;
+
+	public Text uniqueIdentifierText;
+
+	public GameObject updateGameText;
+
+	public Text prestigeTimeText;
+
+	public GameObject discordPanel;
+
+	[Header("Tourney Boost")]
+	public GameObject tournPanel;
+
+	public GameObject mobileTournIAPButton;
+
+	public GameObject kongTournIAPButton;
+
+	[Header("Health/Mana Bars Prefabs")]
+	public GameObject heroBarsParent;
+
+	public GameObject heroHpSliderPrefab;
+
+	public GameObject heroManaSliderPrefab;
+
+	public GameObject enemyBarsParent;
+
+	[Header("Object Pools")]
+	public List<GameObject> poolRangeProjectiles;
+
+	public List<GameObject> poolMageProjectiles;
+
+	public List<GameObject> poolGoldDrop;
+
+	public List<GameObject> poolChestDrop;
+
+	public List<GameObject> poolGoldDropParticles;
+
+	public List<GameObject> poolChestDropParticles;
+
+	public List<GameObject> poolBloodHit;
+
+	public List<GameObject> poolCritHit;
+
+	public List<GameObject> poolHealParticles;
+
+	[Header("UI Pools")]
+	public List<GameObject> poolGoldText;
+
+	public List<GameObject> poolDmgText;
+
+	public List<GameObject> poolEnemyHpBar;
+
+	public List<GameObject> poolBossHpBar;
+
+	[Header("Text Prefabs")]
+	public GameObject dmgTextParent;
+
+	[Header("Particles")]
+	public GameObject particlesParent;
+
+	public GameObject particlesSkill1;
+
+	public GameObject particlesSkill2;
+
+	public GameObject particlesSplashHit;
+
+	public GameObject particlesEnemyHeal;
+
+	public GameObject particlesRevive;
+
+	public GameObject particlesFireBomb;
+
+	public GameObject particlesLightningBlast;
+
+	public GameObject particlesStunExplode;
+
+	public GameObject particlesStunSeeingStars;
+
+	public GameObject particlesToxicFumes;
+
+	public GameObject particlesFireCoat;
+
+	public GameObject particlesExplosiveArrow;
+
+	public GameObject particlesDustPoof;
+
+	public GameObject particlesPrestigeStars;
+
+	[Header("Init Loading Stuff")]
+	public List<Sprite> commIcons;
+
+	public List<string> commIconNames;
+
+	public List<Sprite> heroIconsNormal;
+
+	public List<Sprite> heroIconsRare;
+
+	public List<Sprite> heroIconsEpic;
+
+	public List<Sprite> typeIcons;
+
+	[Header("Farm Wave Button")]
+	public GameObject farmWaveButton;
+
+	public GameObject farmWaveCheck;
+
+	[Header("Buttons")]
+	public Sprite button_green_full;
+
+	public Sprite button_red_full;
+
+	public Sprite button_grey_full;
+
+	public Sprite button_yellow_full;
+
+	public Sprite button_blue_full;
+
+	public Sprite button_green_half;
+
+	public Sprite button_red_half;
+
+	public Sprite button_grey_half;
+
+	public Sprite button_yellow_half;
+
+	public Sprite button_blue_half;
+
+	[Header("Tutorial Parent Stuff")]
+	public int onTutNum;
+
+	public bool tutv2Pause;
+
+	public bool tutMute;
+
+	public GameObject tutMuteCheck;
+
+	public GameObject tutActiveHeroButton;
+
+	private GameObject tutActiveHeroButtonParent;
+
+	public GameObject tutUpgradesButton;
+
+	private GameObject tutUpgradesButtonParent;
+
+	public GameObject tutLvlUpButton;
+
+	public GameObject tutLvlUpButtonParent;
+
+	public GameObject tutSpellButton;
+
+	private GameObject tutSpellButtonParent;
+
+	[Header("Tutorial Buttons v2")]
+	public Button tutCommPanel;
+
+	public GameObject tutFarmWave;
+
+	public Button tutHero1ActiveButton;
+
+	public Button tutHeroUpg;
+
+	public GameObject tutTourney;
+
+	public GameObject tutUG;
+
+	public GameObject tutPirates;
+
+	public Button tutSettings;
+
+	public Button tutIaps;
+
+	public Button tutAch;
+
+	public Button tutTech;
+
+	public Button tutInv;
+
+	[Header("Tutorial Panels v2")]
+	public GameObject tutv2Bg;
+
+	public GameObject tutv2Panel1;
+
+	public GameObject tutv2Panel2;
+
+	public GameObject tutv2Panel3;
+
+	public GameObject tutv2Panel4;
+
+	public GameObject tutv2Panel5;
+
+	public GameObject tutv2Panel6;
+
+	public GameObject tutv2Panel7;
+
+	public GameObject tutv2Panel8;
+
+	public GameObject tutv2Panel9;
+
+	public GameObject tutv2Panel10;
+
+	[Header("Tutorial Arrows v2")]
+	public GameObject tutv2ArrowToUpgMenu;
+
+	public GameObject tutv2ArrowToLvlButton;
+
+	public GameObject tutv2ArrowToActiveHero;
+
+	public GameObject tutv2ArrowToSkill;
+
+	[Header("Tutorial Prestige Panel")]
+	public GameObject tutPrestigePanel;
+
+	[Header("Misc Stuff")]
+	public float updateLeaderboardTimer;
+
+	private float videoAdTimer;
+
+	private float updAggStatsTimer;
+
+	private int saveOfflineSecs;
+
+	private double savedBps;
+
+	private int savedEmeralds;
+
+	public GameObject newUpdatePanel;
+
+	public GameObject heroSkinsPanel;
+
+	private string gameId = "1725752";
+}

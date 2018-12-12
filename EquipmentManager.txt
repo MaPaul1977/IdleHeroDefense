@@ -1,0 +1,693 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class EquipmentManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		EquipmentManager.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	public void getNewEquip(Hero _thisHero)
+	{
+		AchievementManager.Instance.listAch[11].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(11);
+		SoundManager.Instance.playSwordDraw();
+		int num = 0;
+		int ranRarity = this.getRanRarity();
+		int num2 = (int)UnityEngine.Random.Range((float)_thisHero.equipOnTier * 10f * 0.85f, (float)_thisHero.equipOnTier * 10f * 1.15f);
+		int num3 = 0;
+		int num4 = 0;
+		string equipName = string.Empty;
+		string equipRarity = string.Empty;
+		if (ranRarity == 1)
+		{
+			equipRarity = "Common";
+		}
+		else if (ranRarity == 2)
+		{
+			num2 += 15;
+			equipRarity = "Uncommon";
+		}
+		else if (ranRarity == 3)
+		{
+			num2 += 35;
+			equipRarity = "Rare";
+		}
+		else if (ranRarity == 4)
+		{
+			num2 += 60;
+			equipRarity = "Ultra Rare";
+		}
+		else if (ranRarity == 5)
+		{
+			num2 += 90;
+			equipRarity = "Legendary";
+		}
+		else if (ranRarity == 6)
+		{
+			num2 += 125;
+			equipRarity = "Mythic";
+		}
+		else if (ranRarity == 7)
+		{
+			num2 += 175;
+			equipRarity = "Celestial";
+		}
+		num2 += GameManager.Instance.badge11Lvl * 2;
+		int num5 = UnityEngine.Random.Range(0, 10);
+		if (num5 == 0)
+		{
+			equipName = "Primary Weapon";
+			if (_thisHero.type == 1)
+			{
+				num = UnityEngine.Random.Range(1, this.listMeleeWeapons.Count);
+				Sprite sprite = EquipmentManager.Instance.listMeleeWeapons[num];
+			}
+			else if (_thisHero.type == 2)
+			{
+				num = UnityEngine.Random.Range(1, this.listRangeWeapons.Count);
+				Sprite sprite = EquipmentManager.Instance.listRangeWeapons[num];
+			}
+			else if (_thisHero.type == 3)
+			{
+				num = UnityEngine.Random.Range(1, this.listMageWeapons.Count);
+				Sprite sprite = EquipmentManager.Instance.listMageWeapons[num];
+			}
+			num2 += _thisHero.wepLevel;
+			num3 = _thisHero.wepPower;
+			if (num2 > _thisHero.wepPower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.wepPower, _thisHero.wepRarity, _thisHero.wepLevel);
+				_thisHero.wepNum = num;
+				_thisHero.wepRarity = ranRarity;
+				_thisHero.wepPower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.wepLevel);
+			}
+		}
+		else if (num5 == 1)
+		{
+			equipName = "Secondary Weapon";
+			num = UnityEngine.Random.Range(1, this.listKnifes.Count);
+			Sprite sprite = EquipmentManager.Instance.listKnifes[num];
+			num2 += _thisHero.knifeLevel;
+			num3 = _thisHero.knifePower;
+			if (num2 > _thisHero.knifePower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.knifePower, _thisHero.knifeRarity, _thisHero.knifeLevel);
+				_thisHero.knifeNum = num;
+				_thisHero.knifeRarity = ranRarity;
+				_thisHero.knifePower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.knifeLevel);
+			}
+		}
+		else if (num5 == 2)
+		{
+			equipName = "Bracers";
+			num = UnityEngine.Random.Range(1, this.listBracers.Count);
+			Sprite sprite = EquipmentManager.Instance.listBracers[num];
+			num2 += _thisHero.bracersLevel;
+			num3 = _thisHero.bracersPower;
+			if (num2 > _thisHero.bracersPower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.bracersPower, _thisHero.bracersRarity, _thisHero.bracersLevel);
+				_thisHero.bracersNum = num;
+				_thisHero.bracersRarity = ranRarity;
+				_thisHero.bracersPower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.bracersLevel);
+			}
+		}
+		else if (num5 == 3)
+		{
+			equipName = "Gauntlets";
+			num = UnityEngine.Random.Range(1, this.listGauntlets.Count);
+			Sprite sprite = EquipmentManager.Instance.listGauntlets[num];
+			num2 += _thisHero.gauntletsLevel;
+			num3 = _thisHero.gauntletsPower;
+			if (num2 > _thisHero.gauntletsPower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.gauntletsPower, _thisHero.gauntletsRarity, _thisHero.gauntletsLevel);
+				_thisHero.gauntletsNum = num;
+				_thisHero.gauntletsRarity = ranRarity;
+				_thisHero.gauntletsPower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.gauntletsLevel);
+			}
+		}
+		else if (num5 == 4)
+		{
+			equipName = "Shield";
+			num = UnityEngine.Random.Range(1, this.listShields.Count);
+			Sprite sprite = EquipmentManager.Instance.listShields[num];
+			num2 += _thisHero.shieldLevel;
+			num3 = _thisHero.shieldPower;
+			if (num2 > _thisHero.shieldPower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.shieldPower, _thisHero.shieldRarity, _thisHero.shieldLevel);
+				_thisHero.shieldNum = num;
+				_thisHero.shieldRarity = ranRarity;
+				_thisHero.shieldPower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.shieldLevel);
+			}
+		}
+		else if (num5 == 5)
+		{
+			equipName = "Cloak";
+			num = UnityEngine.Random.Range(1, this.listCloaks.Count);
+			Sprite sprite = EquipmentManager.Instance.listCloaks[num];
+			num2 += _thisHero.cloakLevel;
+			num3 = _thisHero.cloakPower;
+			if (num2 > _thisHero.cloakPower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.cloakPower, _thisHero.cloakRarity, _thisHero.cloakLevel);
+				_thisHero.cloakNum = num;
+				_thisHero.cloakRarity = ranRarity;
+				_thisHero.cloakPower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.cloakLevel);
+			}
+		}
+		else if (num5 == 6)
+		{
+			equipName = "Boots";
+			num = UnityEngine.Random.Range(1, this.listBoots.Count);
+			Sprite sprite = EquipmentManager.Instance.listBoots[num];
+			num2 += _thisHero.bootsLevel;
+			num3 = _thisHero.bootsPower;
+			if (num2 > _thisHero.bootsPower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.bootsPower, _thisHero.bootsRarity, _thisHero.bootsLevel);
+				_thisHero.bootsNum = num;
+				_thisHero.bootsRarity = ranRarity;
+				_thisHero.bootsPower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.bootsLevel);
+			}
+		}
+		else if (num5 == 7)
+		{
+			equipName = "Belt";
+			num = UnityEngine.Random.Range(1, this.listBelts.Count);
+			Sprite sprite = EquipmentManager.Instance.listBelts[num];
+			num2 += _thisHero.beltLevel;
+			num3 = _thisHero.beltPower;
+			if (num2 > _thisHero.beltPower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.beltPower, _thisHero.beltRarity, _thisHero.beltLevel);
+				_thisHero.beltNum = num;
+				_thisHero.beltRarity = ranRarity;
+				_thisHero.beltPower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.beltLevel);
+			}
+		}
+		else if (num5 == 8)
+		{
+			equipName = "Necklace";
+			num = UnityEngine.Random.Range(1, this.listNecklaces.Count);
+			Sprite sprite = EquipmentManager.Instance.listNecklaces[num];
+			num2 += _thisHero.necklaceLevel;
+			num3 = _thisHero.necklacePower;
+			if (num2 > _thisHero.necklacePower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.necklacePower, _thisHero.necklaceRarity, _thisHero.necklaceLevel);
+				_thisHero.necklaceNum = num;
+				_thisHero.necklaceRarity = ranRarity;
+				_thisHero.necklacePower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.necklaceLevel);
+			}
+		}
+		else if (num5 == 9)
+		{
+			equipName = "Ring";
+			num = UnityEngine.Random.Range(1, this.listRings.Count);
+			Sprite sprite = EquipmentManager.Instance.listRings[num];
+			num2 += _thisHero.ringLevel;
+			num3 = _thisHero.ringPower;
+			if (num2 > _thisHero.ringPower)
+			{
+				num4 = this.getEquipSellAmt(_thisHero.ringPower, _thisHero.ringRarity, _thisHero.ringLevel);
+				_thisHero.ringNum = num;
+				_thisHero.ringRarity = ranRarity;
+				_thisHero.ringPower = num2;
+			}
+			else
+			{
+				num4 = this.getEquipSellAmt(num2, ranRarity, _thisHero.ringLevel);
+			}
+		}
+		if (GameManager.Instance.m4Num == 1 && num2 > GameManager.Instance.m4CurrVal)
+		{
+			GameManager.Instance.m4CurrVal = num2;
+			GameManager.Instance.checkMissionStatus();
+		}
+		if (GameManager.Instance.m4Num == 2 && ranRarity >= 4)
+		{
+			GameManager.Instance.m4CurrVal++;
+			GameManager.Instance.checkMissionStatus();
+		}
+		if (GameManager.Instance.m4Num == 3 && ranRarity >= 5)
+		{
+			GameManager.Instance.m4CurrVal++;
+			GameManager.Instance.checkMissionStatus();
+		}
+		if (GameManager.Instance.m4Num == 4)
+		{
+			GameManager.Instance.m4CurrVal++;
+			GameManager.Instance.checkMissionStatus();
+		}
+		if (GameManager.Instance.q2Num == 1 && ranRarity >= 5)
+		{
+			GameManager.Instance.q2CurrVal++;
+			GameManager.Instance.checkQuestStatus();
+		}
+		if (GameManager.Instance.q2Num == 2 && ranRarity >= 6)
+		{
+			GameManager.Instance.q2CurrVal++;
+			GameManager.Instance.checkQuestStatus();
+		}
+		if (GameManager.Instance.q2Num == 3 && num2 > GameManager.Instance.q2CurrVal)
+		{
+			GameManager.Instance.q2CurrVal = num2;
+			GameManager.Instance.checkQuestStatus();
+		}
+		float num6 = (float)num4 * (1f + (float)GameManager.Instance.badge2Lvl * 0.02f);
+		if (GameManager.Instance.commIcon == 23)
+		{
+			num6 *= 3f;
+		}
+		num4 = (int)num6;
+		GameManager.Instance.scrapsAmt += num4;
+		AchievementManager.Instance.listAch[18].currAmt += (double)num4;
+		AchievementManager.Instance.checkIfAchComplete(18);
+		if (num2 > num3)
+		{
+			NotificationsMenu.Instance.createNotif(1, _thisHero.heroName, equipName, equipRarity, num2, string.Empty, num4);
+		}
+		else
+		{
+			NotificationsMenu.Instance.createNotif(2, _thisHero.heroName, equipName, equipRarity, num2, string.Empty, num4);
+		}
+		_thisHero.equipOnTier++;
+		if (_thisHero.equipOnTier >= 20 + GameManager.Instance.badge19Lvl)
+		{
+			_thisHero.equipOnTier = 20 + GameManager.Instance.badge19Lvl;
+		}
+		_thisHero.equipLastExp = _thisHero.equipNextExp;
+		_thisHero.equipNextExp += 75 * _thisHero.equipOnTier;
+		if (_thisHero.equipCurrExp >= _thisHero.equipNextExp)
+		{
+			this.getNewEquip(_thisHero);
+		}
+		UIManager.Instance.updAggStats();
+	}
+
+	private int getEquipSellAmt(int _power, int _rarity, int _level)
+	{
+		int num = _power - _level;
+		if (_rarity == 1)
+		{
+			num = num;
+		}
+		else if (_rarity == 2)
+		{
+			num -= 15;
+		}
+		else if (_rarity == 3)
+		{
+			num -= 35;
+		}
+		else if (_rarity == 4)
+		{
+			num -= 60;
+		}
+		else if (_rarity == 5)
+		{
+			num -= 90;
+		}
+		else if (_rarity == 6)
+		{
+			num -= 125;
+		}
+		else if (_rarity == 7)
+		{
+			num -= 175;
+		}
+		num /= 10;
+		if (num < 1)
+		{
+			num = 1;
+		}
+		return num * _rarity;
+	}
+
+	private void updateNotifTitle(int _rarity, Text _text, string _title, int _rareNum)
+	{
+		if (_rarity == 1)
+		{
+			_text.text = _title + " (Common)";
+			_text.gameObject.GetComponent<Outline>().effectColor = Color.white;
+		}
+		else if (_rarity == 2)
+		{
+			_text.text = _title + " (Uncommon)";
+			_text.gameObject.GetComponent<Outline>().effectColor = UIManager.colorGreen;
+		}
+		else if (_rarity == 3)
+		{
+			_text.text = _title + " (Rare)";
+			_text.gameObject.GetComponent<Outline>().effectColor = UIManager.colorRare;
+		}
+		else if (_rarity == 4)
+		{
+			_text.text = _title + " (Ultra Rare)";
+			_text.gameObject.GetComponent<Outline>().effectColor = UIManager.colorUltra;
+		}
+		else if (_rarity == 5)
+		{
+			_text.text = _title + " (Legendary)";
+			_text.gameObject.GetComponent<Outline>().effectColor = UIManager.colorLegendary;
+		}
+		else if (_rarity == 6)
+		{
+			_text.text = _title + " (Mythic)";
+			_text.gameObject.GetComponent<Outline>().effectColor = Color.yellow;
+		}
+		else if (_rarity == 7)
+		{
+			_text.text = _title + " (Celestial)";
+			_text.gameObject.GetComponent<Outline>().effectColor = Color.red;
+		}
+	}
+
+	private void updateNotifIcon(GameObject _gameObject, int _rareNum, Sprite _icon)
+	{
+		_gameObject.GetComponent<Image>().sprite = EquipmentManager.Instance.listBackgrounds[_rareNum];
+		_gameObject.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = _icon;
+		_gameObject.transform.GetChild(1).gameObject.GetComponent<Image>().sprite = EquipmentManager.Instance.listBorders[_rareNum];
+	}
+
+	private void updateNotifStatsText(Hero _thisHero, int _equipNum, GameObject _gameObject, int _powerLvl)
+	{
+		if (_equipNum == 0)
+		{
+			_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+			{
+				"Power: ",
+				_powerLvl,
+				" / DPS: +",
+				_powerLvl * 25,
+				"%"
+			});
+		}
+		else if (_equipNum == 1)
+		{
+			_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+			{
+				"Power: ",
+				_powerLvl,
+				" / Crit Dmg: +",
+				_powerLvl * 10,
+				"%"
+			});
+		}
+		else if (_equipNum == 2)
+		{
+			_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+			{
+				"Power: ",
+				_powerLvl,
+				" / Crit Chance: +",
+				((float)_powerLvl * 0.05f).ToString("f2"),
+				"%"
+			});
+		}
+		else if (_equipNum == 3)
+		{
+			_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+			{
+				"Power: ",
+				_powerLvl,
+				" / Attack Speed: +",
+				((float)_powerLvl * 0.05f).ToString("f2"),
+				"%"
+			});
+		}
+		else if (_equipNum == 4)
+		{
+			_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+			{
+				"Power: ",
+				_powerLvl,
+				" / HP: +",
+				_powerLvl * 25,
+				"%"
+			});
+		}
+		else if (_equipNum == 5)
+		{
+			_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+			{
+				"Power: ",
+				_powerLvl,
+				" / Mana: +",
+				_powerLvl,
+				"%"
+			});
+		}
+		else if (_equipNum == 6)
+		{
+			_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+			{
+				"Power: ",
+				_powerLvl,
+				" / Move Speed: +",
+				((float)_powerLvl * 0.1f).ToString("f2"),
+				"%"
+			});
+		}
+		else if (_equipNum == 7)
+		{
+			if (_thisHero.type == 1)
+			{
+				_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+				{
+					"Power: ",
+					_powerLvl,
+					" / Evade Chance: +",
+					((float)_powerLvl * 0.05f).ToString("f2"),
+					"%"
+				});
+			}
+			else if (_thisHero.type == 2)
+			{
+				_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+				{
+					"Power: ",
+					_powerLvl,
+					" / Range: +",
+					((float)_powerLvl * 0.2f).ToString("f2"),
+					"%"
+				});
+			}
+			else if (_thisHero.type == 3)
+			{
+				_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+				{
+					"Power: ",
+					_powerLvl,
+					" / Skill CD: -",
+					((float)_powerLvl * 0.1f).ToString("f2"),
+					"%"
+				});
+			}
+		}
+		else if (_equipNum == 8)
+		{
+			if (_thisHero.type == 1)
+			{
+				_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+				{
+					"Power: ",
+					_powerLvl,
+					" / Splash Chance: +",
+					((float)_powerLvl * 0.05f).ToString("f2"),
+					"%"
+				});
+			}
+			else if (_thisHero.type == 2)
+			{
+				_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+				{
+					"Power: ",
+					_powerLvl,
+					" / Gold Drop: +",
+					_powerLvl * 20,
+					"%"
+				});
+			}
+			else if (_thisHero.type == 3)
+			{
+				_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+				{
+					"Power: ",
+					_powerLvl,
+					" / Mana Cost: -",
+					((float)_powerLvl * 0.1f).ToString("f2"),
+					"%"
+				});
+			}
+		}
+		else if (_equipNum == 9)
+		{
+			if (_thisHero.type == 1)
+			{
+				_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+				{
+					"Power: ",
+					_powerLvl,
+					" / Heal Chance: +",
+					((float)_powerLvl * 0.05f).ToString("f2"),
+					"%"
+				});
+			}
+			else if (_thisHero.type == 2)
+			{
+				_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+				{
+					"Power: ",
+					_powerLvl,
+					" / Chest Gold: +",
+					_powerLvl * 5,
+					"%"
+				});
+			}
+			else if (_thisHero.type == 3)
+			{
+				_gameObject.GetComponent<Text>().text = string.Concat(new object[]
+				{
+					"Power: ",
+					_powerLvl,
+					" / Mana Regen: +",
+					((float)_powerLvl * 0.1f).ToString("f2"),
+					"%"
+				});
+			}
+		}
+	}
+
+	public int getRanRarity()
+	{
+		int num = 125 + (GameManager.Instance.tech24Lvl + GameManager.Instance.badge8Lvl * 2) * 10;
+		int num2 = 25 + (GameManager.Instance.tech24Lvl + GameManager.Instance.badge8Lvl * 2) * 8;
+		int num3 = (GameManager.Instance.tech24Lvl + GameManager.Instance.badge8Lvl * 2) * 5;
+		int num4 = (GameManager.Instance.tech24Lvl + GameManager.Instance.badge8Lvl * 2) * 2;
+		int num5 = (int)(((float)GameManager.Instance.tech24Lvl + (float)(GameManager.Instance.badge8Lvl * 2)) * 0.5f);
+		int num6 = GameManager.Instance.iapCelestEquipChance * 5;
+		int num7 = UnityEngine.Random.Range(1, 1001);
+		int result;
+		if (num7 <= num6)
+		{
+			result = 7;
+		}
+		else if (num7 <= num5)
+		{
+			result = 6;
+		}
+		else if (num7 <= num4)
+		{
+			result = 5;
+		}
+		else if (num7 <= num3)
+		{
+			result = 4;
+		}
+		else if (num7 <= num2)
+		{
+			result = 3;
+		}
+		else if (num7 <= num)
+		{
+			result = 2;
+		}
+		else
+		{
+			result = 1;
+		}
+		return result;
+	}
+
+	private void Update()
+	{
+	}
+
+	public static EquipmentManager Instance;
+
+	public List<Sprite> listBackgrounds;
+
+	public List<Sprite> listBorders;
+
+	public List<Sprite> listMeleeWeapons;
+
+	public List<Sprite> listRangeWeapons;
+
+	public List<Sprite> listMageWeapons;
+
+	public List<Sprite> listKnifes;
+
+	public List<Sprite> listBracers;
+
+	public List<Sprite> listGauntlets;
+
+	public List<Sprite> listShields;
+
+	public List<Sprite> listCloaks;
+
+	public List<Sprite> listBoots;
+
+	public List<Sprite> listBelts;
+
+	public List<Sprite> listNecklaces;
+
+	public List<Sprite> listRings;
+
+	private Hero saveHero;
+
+	private int saveNewType;
+
+	private string saveNewName;
+
+	private int saveNewRarity;
+
+	private int saveNewTier;
+}

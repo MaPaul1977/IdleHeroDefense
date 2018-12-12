@@ -1,0 +1,53 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class Floor : MonoBehaviour
+{
+	private void Awake()
+	{
+	}
+
+	private void Start()
+	{
+	}
+
+	private void OnMouseUpAsButton()
+	{
+		Vector3 origin = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		origin.z = Camera.main.transform.position.z;
+		Ray ray = new Ray(origin, new Vector3(0f, 0f, 1f));
+		if (Physics2D.GetRayIntersection(ray) != null && !this.IsPointerOverUIObject())
+		{
+			UnityEngine.Debug.Log(string.Concat(new object[]
+			{
+				"touched floor at (",
+				origin.x,
+				", ",
+				origin.y,
+				")"
+			}));
+			if (GameManager.Instance.selectedHero != null && GameManager.Instance.selectedHero.currHp > 0.0)
+			{
+				GameManager.Instance.selectedHero.stopHeroAttStuff();
+				GameManager.Instance.selectedHero.targetPosition = new Vector3(origin.x, origin.y);
+				GameManager.Instance.selectedHero.clickedToMove = true;
+			}
+		}
+	}
+
+	private bool IsPointerOverUIObject()
+	{
+		PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
+		pointerEventData.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		List<RaycastResult> list = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(pointerEventData, list);
+		return list.Count > 0;
+	}
+
+	private void Update()
+	{
+	}
+}

@@ -1,0 +1,417 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class SkillTreeManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		SkillTreeManager.Instance = this;
+	}
+
+	private void Start()
+	{
+		this.selectedSkill = null;
+		for (int i = 0; i < this.skillTreeList.Count; i++)
+		{
+			SkillTreeSkill skillTreeSkill = this.skillTreeList[i];
+			switch (i)
+			{
+			case 0:
+				skillTreeSkill.level = GameManager.Instance.treeAll1Lvl;
+				skillTreeSkill.title = "Dark Assault";
+				skillTreeSkill.amount = 25f;
+				skillTreeSkill.description = "DPS";
+				skillTreeSkill.typeDesc = "This skill applies to ALL heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 1:
+				skillTreeSkill.level = GameManager.Instance.treeAll2Lvl;
+				skillTreeSkill.title = "Holy Health";
+				skillTreeSkill.amount = 25f;
+				skillTreeSkill.description = "max HP";
+				skillTreeSkill.typeDesc = "This skill applies to ALL heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 2:
+				skillTreeSkill.level = GameManager.Instance.treeAll3Lvl;
+				skillTreeSkill.title = "Alchemist";
+				skillTreeSkill.amount = 25f;
+				skillTreeSkill.description = "enemy gold drop";
+				skillTreeSkill.typeDesc = "This skill applies to ALL heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 3:
+				skillTreeSkill.level = GameManager.Instance.treeAll4Lvl;
+				skillTreeSkill.title = "Gold Rush";
+				skillTreeSkill.amount = 10f;
+				skillTreeSkill.description = "chest gold";
+				skillTreeSkill.typeDesc = "This skill applies to ALL heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 4:
+				skillTreeSkill.level = GameManager.Instance.treeAll5Lvl;
+				skillTreeSkill.title = "Demon Fury";
+				skillTreeSkill.amount = 10f;
+				skillTreeSkill.description = "critical hit damage";
+				skillTreeSkill.typeDesc = "This skill applies to ALL heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 5:
+				skillTreeSkill.level = GameManager.Instance.treeAll6Lvl;
+				skillTreeSkill.title = "Rune of Wisdom";
+				skillTreeSkill.amount = 5f;
+				skillTreeSkill.description = "blueprints from Prestige";
+				skillTreeSkill.typeDesc = "This skill applies to ALL heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 6:
+				skillTreeSkill.level = GameManager.Instance.treeAll7Lvl;
+				skillTreeSkill.title = "Dishonored";
+				skillTreeSkill.amount = 2f;
+				skillTreeSkill.description = "bonus damage to bosses";
+				skillTreeSkill.typeDesc = "This skill applies to ALL heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			case 7:
+				skillTreeSkill.level = GameManager.Instance.treeMelee1Lvl;
+				skillTreeSkill.title = "Melee Surge";
+				skillTreeSkill.amount = 50f;
+				skillTreeSkill.description = "DPS";
+				skillTreeSkill.typeDesc = "This skill only applies to MELEE heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 8:
+				skillTreeSkill.level = GameManager.Instance.treeMelee2Lvl;
+				skillTreeSkill.title = "Melee Rally";
+				skillTreeSkill.amount = 75f;
+				skillTreeSkill.description = "max HP";
+				skillTreeSkill.typeDesc = "This skill only applies to MELEE heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 9:
+				skillTreeSkill.level = GameManager.Instance.treeMelee3Lvl;
+				skillTreeSkill.title = "Foresight";
+				skillTreeSkill.amount = 0.5f;
+				skillTreeSkill.description = "evasion chance";
+				skillTreeSkill.typeDesc = "This skill only applies to MELEE heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			case 10:
+				skillTreeSkill.level = GameManager.Instance.treeMelee4Lvl;
+				skillTreeSkill.title = "Heavy Blast";
+				skillTreeSkill.amount = 0.5f;
+				skillTreeSkill.description = "splash chance";
+				skillTreeSkill.typeDesc = "This skill only applies to MELEE heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			case 11:
+				skillTreeSkill.level = GameManager.Instance.treeMelee5Lvl;
+				skillTreeSkill.title = "Paralysis";
+				skillTreeSkill.amount = 0.2f;
+				skillTreeSkill.description = "stun chance";
+				skillTreeSkill.typeDesc = "This skill only applies to MELEE heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			case 12:
+				skillTreeSkill.level = GameManager.Instance.treeRange1Lvl;
+				skillTreeSkill.title = "Range Surge";
+				skillTreeSkill.amount = 75f;
+				skillTreeSkill.description = "DPS";
+				skillTreeSkill.typeDesc = "This skill only applies to RANGE heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 13:
+				skillTreeSkill.level = GameManager.Instance.treeRange2Lvl;
+				skillTreeSkill.title = "Range Rally";
+				skillTreeSkill.amount = 50f;
+				skillTreeSkill.description = "max HP";
+				skillTreeSkill.typeDesc = "This skill only applies to RANGE heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 14:
+				skillTreeSkill.level = GameManager.Instance.treeRange3Lvl;
+				skillTreeSkill.title = "Mystic Aim";
+				skillTreeSkill.amount = 0.5f;
+				skillTreeSkill.description = "critical hit chance";
+				skillTreeSkill.typeDesc = "This skill only applies to RANGE heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			case 15:
+				skillTreeSkill.level = GameManager.Instance.treeRange4Lvl;
+				skillTreeSkill.title = "Gilded";
+				skillTreeSkill.amount = 0.5f;
+				skillTreeSkill.description = "chest drop chance";
+				skillTreeSkill.typeDesc = "This skill only applies to RANGE heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			case 16:
+				skillTreeSkill.level = GameManager.Instance.treeRange5Lvl;
+				skillTreeSkill.title = "Explosive Arrow";
+				skillTreeSkill.amount = 0.2f;
+				skillTreeSkill.description = "chance to damage all nearby enemies";
+				skillTreeSkill.typeDesc = "This skill only applies to RANGE heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			case 17:
+				skillTreeSkill.level = GameManager.Instance.treeMage1Lvl;
+				skillTreeSkill.title = "Mage Surge";
+				skillTreeSkill.amount = 50f;
+				skillTreeSkill.description = "DPS";
+				skillTreeSkill.typeDesc = "This skill only applies to MAGE heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 18:
+				skillTreeSkill.level = GameManager.Instance.treeMage2Lvl;
+				skillTreeSkill.title = "Mage Rally";
+				skillTreeSkill.amount = 50f;
+				skillTreeSkill.description = "max HP";
+				skillTreeSkill.typeDesc = "This skill only applies to MAGE heroes.";
+				skillTreeSkill.maxLevel = 9999;
+				break;
+			case 19:
+				skillTreeSkill.level = GameManager.Instance.treeMage3Lvl;
+				skillTreeSkill.title = "Clarity";
+				skillTreeSkill.amount = 0.5f;
+				skillTreeSkill.description = "mana regen";
+				skillTreeSkill.typeDesc = "This skill only applies to MAGE heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			case 20:
+				skillTreeSkill.level = GameManager.Instance.treeMage4Lvl;
+				skillTreeSkill.title = "Holy Magics";
+				skillTreeSkill.amount = 0.5f;
+				skillTreeSkill.description = "spell cooldown";
+				skillTreeSkill.typeDesc = "This skill only applies to MAGE heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			case 21:
+				skillTreeSkill.level = GameManager.Instance.treeMage5Lvl;
+				skillTreeSkill.title = "Fatal Touch";
+				skillTreeSkill.amount = 0.2f;
+				skillTreeSkill.description = "chance to damage all nearby enemies";
+				skillTreeSkill.typeDesc = "This skill only applies to MAGE heroes.";
+				skillTreeSkill.maxLevel = 25;
+				break;
+			}
+		}
+		this.updateSelectedSkillPanel();
+	}
+
+	public void updateSelectedSkillPanel()
+	{
+		if (this.selectedSkill == null)
+		{
+			this.noneSelPanel.SetActive(true);
+			return;
+		}
+		this.noneSelPanel.SetActive(false);
+		this.selTitle.text = this.selectedSkill.title;
+		this.selIcon.sprite = this.selectedSkill.iconSprite;
+		this.selLevel.text = "Level " + this.selectedSkill.level;
+		int num = 1;
+		if (this.selectedSkill.level > 1)
+		{
+			num = this.selectedSkill.level;
+		}
+		float num2 = this.selectedSkill.amount * (float)num;
+		if (this.selectedSkill.amount % 1f == 0f)
+		{
+			this.selDesc.text = "+" + num2.ToString("n0") + "% " + this.selectedSkill.description;
+		}
+		else
+		{
+			this.selDesc.text = "+" + num2.ToString("f2") + "% " + this.selectedSkill.description;
+		}
+		this.selTypeDesc.text = this.selectedSkill.typeDesc;
+		if (this.selectedSkill.amount % 1f == 0f)
+		{
+			this.upgDesc.text = "+" + this.selectedSkill.amount.ToString("n0") + "% " + this.selectedSkill.description;
+		}
+		else
+		{
+			this.upgDesc.text = "+" + this.selectedSkill.amount.ToString("f2") + "% " + this.selectedSkill.description;
+		}
+		if (this.selectedSkill.previousSkill != this.selectedSkill && this.selectedSkill.previousSkill.level == 0)
+		{
+			UIManager.Instance.changeButtonColorV2(this.upgButton, "grey", false);
+			this.upgButton.GetComponent<Button>().enabled = false;
+			this.buttonTitle.text = "Locked";
+			this.buttonCost.text = "N/A";
+		}
+		else if (this.selectedSkill.level < this.selectedSkill.maxLevel)
+		{
+			int num3 = this.selectedSkill.level + 1;
+			if (GameManager.Instance.spAmt >= num3)
+			{
+				UIManager.Instance.changeButtonColorV2(this.upgButton, "green", false);
+				this.upgButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.upgButton, "grey", false);
+				this.upgButton.GetComponent<Button>().enabled = false;
+			}
+			this.buttonTitle.text = "Lvl +1";
+			this.buttonCost.text = num3.ToString("n0");
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.upgButton, "grey", false);
+			this.upgButton.GetComponent<Button>().enabled = false;
+			this.buttonTitle.text = "Max Lvl";
+			this.buttonCost.text = "N/A";
+		}
+		this.savedSPs = GameManager.Instance.spAmt;
+	}
+
+	public void clickedSkillButton(SkillTreeSkill thisSkill)
+	{
+		if (this.selectedSkill != thisSkill)
+		{
+			this.selectedSkill = thisSkill;
+			RectTransform component = thisSkill.gameObject.GetComponent<RectTransform>();
+			RectTransform component2 = this.selectedBg.GetComponent<RectTransform>();
+			component2.anchoredPosition = new Vector2(component.anchoredPosition.x, component.anchoredPosition.y + 3f);
+			this.selectedBg.SetActive(true);
+		}
+		else
+		{
+			this.selectedSkill = null;
+			this.selectedBg.SetActive(false);
+		}
+		this.updateSelectedSkillPanel();
+	}
+
+	public void clickedUpgradeButton()
+	{
+		GameManager.Instance.spAmt -= this.selectedSkill.level + 1;
+		this.selectedSkill.level++;
+		AchievementManager.Instance.listAch[13].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(13);
+		if (GameManager.Instance.q6Num == 1)
+		{
+			GameManager.Instance.q6CurrVal++;
+			GameManager.Instance.checkQuestStatus();
+		}
+		int num = 0;
+		for (int i = 0; i < this.skillTreeList.Count; i++)
+		{
+			SkillTreeSkill x = this.skillTreeList[i];
+			if (x == this.selectedSkill)
+			{
+				num = i;
+			}
+		}
+		switch (num)
+		{
+		case 0:
+			GameManager.Instance.treeAll1Lvl++;
+			break;
+		case 1:
+			GameManager.Instance.treeAll2Lvl++;
+			break;
+		case 2:
+			GameManager.Instance.treeAll3Lvl++;
+			break;
+		case 3:
+			GameManager.Instance.treeAll4Lvl++;
+			break;
+		case 4:
+			GameManager.Instance.treeAll5Lvl++;
+			break;
+		case 5:
+			GameManager.Instance.treeAll6Lvl++;
+			break;
+		case 6:
+			GameManager.Instance.treeAll7Lvl++;
+			break;
+		case 7:
+			GameManager.Instance.treeMelee1Lvl++;
+			break;
+		case 8:
+			GameManager.Instance.treeMelee2Lvl++;
+			break;
+		case 9:
+			GameManager.Instance.treeMelee3Lvl++;
+			break;
+		case 10:
+			GameManager.Instance.treeMelee4Lvl++;
+			break;
+		case 11:
+			GameManager.Instance.treeMelee5Lvl++;
+			break;
+		case 12:
+			GameManager.Instance.treeRange1Lvl++;
+			break;
+		case 13:
+			GameManager.Instance.treeRange2Lvl++;
+			break;
+		case 14:
+			GameManager.Instance.treeRange3Lvl++;
+			break;
+		case 15:
+			GameManager.Instance.treeRange4Lvl++;
+			break;
+		case 16:
+			GameManager.Instance.treeRange5Lvl++;
+			break;
+		case 17:
+			GameManager.Instance.treeMage1Lvl++;
+			break;
+		case 18:
+			GameManager.Instance.treeMage2Lvl++;
+			break;
+		case 19:
+			GameManager.Instance.treeMage3Lvl++;
+			break;
+		case 20:
+			GameManager.Instance.treeMage4Lvl++;
+			break;
+		case 21:
+			GameManager.Instance.treeMage5Lvl++;
+			break;
+		}
+		this.updateSelectedSkillPanel();
+	}
+
+	private void Update()
+	{
+		if (this.savedSPs != GameManager.Instance.spAmt)
+		{
+			this.updateSelectedSkillPanel();
+		}
+	}
+
+	public static SkillTreeManager Instance;
+
+	public List<SkillTreeSkill> skillTreeList;
+
+	public GameObject noneSelPanel;
+
+	public SkillTreeSkill selectedSkill;
+
+	public GameObject selectedBg;
+
+	public Text selTitle;
+
+	public Image selIcon;
+
+	public Text selLevel;
+
+	public Text selDesc;
+
+	public Text selTypeDesc;
+
+	public Text upgDesc;
+
+	public GameObject upgButton;
+
+	public Text buttonTitle;
+
+	public Text buttonCost;
+
+	private int savedSPs;
+}

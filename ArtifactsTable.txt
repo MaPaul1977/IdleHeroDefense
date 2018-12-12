@@ -1,0 +1,106 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ArtifactsTable : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void OnEnable()
+	{
+		if (GameManager.Instance.tournArtLvl1 == 0 && GameManager.Instance.tournArtLvl2 == 0 && GameManager.Instance.tournArtLvl3 == 0 && GameManager.Instance.tournArtLvl4 == 0 && GameManager.Instance.tournArtLvl5 == 0 && GameManager.Instance.tournArtLvl6 == 0 && GameManager.Instance.tournArtLvl7 == 0 && GameManager.Instance.tournArtLvl8 == 0 && GameManager.Instance.tournArtLvl9 == 0)
+		{
+			this.nonePanel.SetActive(true);
+			return;
+		}
+		this.nonePanel.SetActive(false);
+		this.artAmt0.text = "x" + GameManager.Instance.tournArtCollections;
+		double num = 0.0;
+		if (GameManager.Instance.tournArtCollections > 0)
+		{
+			num = 1.0;
+			for (int i = 0; i < GameManager.Instance.tournArtCollections; i++)
+			{
+				num *= 10.0;
+			}
+		}
+		num *= 100.0;
+		this.artBonus0.text = "+" + UIManager.Instance.convertNumberFormat(num.ToString("0")) + "% DPS/HP/Gold";
+		int num2 = 750 * GameManager.Instance.tournArtLvl1;
+		this.artAmt1.text = "x" + GameManager.Instance.tournArtLvl1;
+		this.artBonus1.text = "+" + UIManager.Instance.convertNumberFormat(num2.ToString("0")) + "%";
+		int num3 = 750 * GameManager.Instance.tournArtLvl2;
+		this.artAmt2.text = "x" + GameManager.Instance.tournArtLvl2;
+		this.artBonus2.text = "+" + UIManager.Instance.convertNumberFormat(num3.ToString("0")) + "%";
+		int num4 = 300 * GameManager.Instance.tournArtLvl3;
+		this.artAmt3.text = "x" + GameManager.Instance.tournArtLvl3;
+		this.artBonus3.text = "+" + UIManager.Instance.convertNumberFormat(num4.ToString("0")) + "%";
+		int num5 = 1000 * GameManager.Instance.tournArtLvl4;
+		this.artAmt4.text = "x" + GameManager.Instance.tournArtLvl4;
+		this.artBonus4.text = "+" + UIManager.Instance.convertNumberFormat(num5.ToString("0")) + "%";
+		int num6 = 500 * GameManager.Instance.tournArtLvl5;
+		this.artAmt5.text = "x" + GameManager.Instance.tournArtLvl5;
+		this.artBonus5.text = "+" + UIManager.Instance.convertNumberFormat(num6.ToString("0")) + "%";
+		int num7 = 300 * GameManager.Instance.tournArtLvl6;
+		this.artAmt6.text = "x" + GameManager.Instance.tournArtLvl6;
+		this.artBonus6.text = "+" + UIManager.Instance.convertNumberFormat(num7.ToString("0")) + "%";
+		int num8 = 1250 * GameManager.Instance.tournArtLvl7;
+		this.artAmt7.text = "x" + GameManager.Instance.tournArtLvl7;
+		this.artBonus7.text = "+" + UIManager.Instance.convertNumberFormat(num8.ToString("0")) + "%";
+		int num9 = 1250 * GameManager.Instance.tournArtLvl8;
+		this.artAmt8.text = "x" + GameManager.Instance.tournArtLvl8;
+		this.artBonus8.text = "+" + UIManager.Instance.convertNumberFormat(num9.ToString("0")) + "%";
+		int num10 = 1250 * GameManager.Instance.tournArtLvl9;
+		this.artAmt9.text = "x" + GameManager.Instance.tournArtLvl9;
+		this.artBonus9.text = "+" + UIManager.Instance.convertNumberFormat(num10.ToString("0")) + "%";
+	}
+
+	private void Update()
+	{
+	}
+
+	public GameObject nonePanel;
+
+	public Text artAmt0;
+
+	public Text artAmt1;
+
+	public Text artAmt2;
+
+	public Text artAmt3;
+
+	public Text artAmt4;
+
+	public Text artAmt5;
+
+	public Text artAmt6;
+
+	public Text artAmt7;
+
+	public Text artAmt8;
+
+	public Text artAmt9;
+
+	public Text artBonus0;
+
+	public Text artBonus1;
+
+	public Text artBonus2;
+
+	public Text artBonus3;
+
+	public Text artBonus4;
+
+	public Text artBonus5;
+
+	public Text artBonus6;
+
+	public Text artBonus7;
+
+	public Text artBonus8;
+
+	public Text artBonus9;
+}

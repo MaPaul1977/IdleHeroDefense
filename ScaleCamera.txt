@@ -1,0 +1,15 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class ScaleCamera : MonoBehaviour
+{
+	private void Start()
+	{
+		Camera.main.projectionMatrix = Matrix4x4.Ortho(-this.orthographicSize * this.aspect, this.orthographicSize * this.aspect, -this.orthographicSize, this.orthographicSize, Camera.main.nearClipPlane, Camera.main.farClipPlane);
+	}
+
+	public float orthographicSize = 11f;
+
+	public float aspect = 1.66666f;
+}

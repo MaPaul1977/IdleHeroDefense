@@ -1,0 +1,106 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class MinigamesTable : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void OnEnable()
+	{
+		this.updateAuras();
+		this.updateRunes();
+	}
+
+	private void updateAuras()
+	{
+		if (GameManager.Instance.auraDmgLvl == 0 && GameManager.Instance.auraHpLvl == 0 && GameManager.Instance.auraGoldLvl == 0)
+		{
+			this.noAurasPanel.SetActive(true);
+			return;
+		}
+		this.noAurasPanel.SetActive(false);
+		this.aura1Lvl.text = "x" + GameManager.Instance.auraDmgLvl.ToString("n0");
+		int num = GameManager.Instance.auraDmgLvl * 5;
+		this.aura1Amt.text = "+" + UIManager.Instance.convertNumberFormat(num.ToString("0")) + "%";
+		this.aura2Lvl.text = "x" + GameManager.Instance.auraHpLvl.ToString("n0");
+		int num2 = GameManager.Instance.auraHpLvl * 5;
+		this.aura2Amt.text = "+" + UIManager.Instance.convertNumberFormat(num2.ToString("0")) + "%";
+		this.aura3Lvl.text = "x" + GameManager.Instance.auraGoldLvl.ToString("n0");
+		int num3 = GameManager.Instance.auraGoldLvl * 5;
+		this.aura3Amt.text = "+" + UIManager.Instance.convertNumberFormat(num3.ToString("0")) + "%";
+	}
+
+	private void updateRunes()
+	{
+		if (GameManager.Instance.artifact1Lvl == 0 && GameManager.Instance.artifact2Lvl == 0 && GameManager.Instance.artifact3Lvl == 0)
+		{
+			this.noRunesPanel.SetActive(true);
+			return;
+		}
+		this.noRunesPanel.SetActive(false);
+		this.rune1Lvl.text = "x" + GameManager.Instance.artifact1Lvl.ToString("n0");
+		int num = GameManager.Instance.artifact1Lvl * 5;
+		int num2 = GameManager.Instance.artifact1Lvl * 5;
+		this.rune1Amt.text = "+" + UIManager.Instance.convertNumberFormat(num.ToString("0")) + "%";
+		this.rune1Amt2.text = "+" + UIManager.Instance.convertNumberFormat(num2.ToString("0")) + "%";
+		this.rune2Lvl.text = "x" + GameManager.Instance.artifact2Lvl.ToString("n0");
+		int num3 = GameManager.Instance.artifact2Lvl * 5;
+		int num4 = GameManager.Instance.artifact2Lvl * 2;
+		this.rune2Amt.text = "+" + UIManager.Instance.convertNumberFormat(num3.ToString("0")) + "%";
+		this.rune2Amt2.text = "+" + UIManager.Instance.convertNumberFormat(num4.ToString("0")) + "%";
+		this.rune3Lvl.text = "x" + GameManager.Instance.artifact3Lvl.ToString("n0");
+		int num5 = GameManager.Instance.artifact3Lvl * 2;
+		float num6 = (float)GameManager.Instance.artifact3Lvl * 0.25f;
+		this.rune3Amt.text = "+" + UIManager.Instance.convertNumberFormat(num5.ToString("0")) + "%";
+		if (num6 < 1000f)
+		{
+			this.rune3Amt2.text = "+" + num6.ToString("f2") + "%";
+		}
+		else
+		{
+			this.rune3Amt2.text = "+" + UIManager.Instance.convertNumberFormat(num6.ToString("0")) + "%";
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	public GameObject noAurasPanel;
+
+	public Text aura1Lvl;
+
+	public Text aura1Amt;
+
+	public Text aura2Lvl;
+
+	public Text aura2Amt;
+
+	public Text aura3Lvl;
+
+	public Text aura3Amt;
+
+	public GameObject noRunesPanel;
+
+	public Text rune1Lvl;
+
+	public Text rune1Amt;
+
+	public Text rune1Amt2;
+
+	public Text rune2Lvl;
+
+	public Text rune2Amt;
+
+	public Text rune2Amt2;
+
+	public Text rune3Lvl;
+
+	public Text rune3Amt;
+
+	public Text rune3Amt2;
+}

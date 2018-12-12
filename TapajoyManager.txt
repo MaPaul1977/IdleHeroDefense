@@ -1,0 +1,157 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using TapjoyUnity;
+using UnityEngine;
+
+public class TapjoyManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		if (TapjoyManager.Instance == null)
+		{
+			TapjoyManager.Instance = this;
+		}
+		else if (TapjoyManager.Instance != this)
+		{
+			UnityEngine.Object.Destroy(base.gameObject);
+			return;
+		}
+	}
+
+	private void Start()
+	{
+		this.tjWall = TJPlacement.CreatePlacement("Offerwall");
+	}
+
+	private void OnEnable()
+	{
+		Tapjoy.OnConnectSuccess += this.HandleConnectSuccess;
+		TJPlacement.OnRequestFailure += this.HandlePlacementRequestFailure;
+		TJPlacement.OnContentDismiss += this.HandlePlacementContentDismiss;
+		TJPlacement.OnRewardRequest += this.HandleOnRewardRequest;
+		Tapjoy.OnGetCurrencyBalanceResponse += this.HandleGetCurrencyBalanceResponse;
+		Tapjoy.OnGetCurrencyBalanceResponseFailure += this.HandleGetCurrencyBalanceResponseFailure;
+		Tapjoy.OnEarnedCurrency += this.HandleEarnedCurrency;
+	}
+
+	private void OnDisable()
+	{
+		Tapjoy.OnConnectSuccess -= this.HandleConnectSuccess;
+		TJPlacement.OnRequestFailure -= this.HandlePlacementRequestFailure;
+		TJPlacement.OnContentDismiss -= this.HandlePlacementContentDismiss;
+		TJPlacement.OnRewardRequest -= this.HandleOnRewardRequest;
+		Tapjoy.OnGetCurrencyBalanceResponse -= this.HandleGetCurrencyBalanceResponse;
+		Tapjoy.OnGetCurrencyBalanceResponseFailure -= this.HandleGetCurrencyBalanceResponseFailure;
+		Tapjoy.OnEarnedCurrency -= this.HandleEarnedCurrency;
+	}
+
+	public void clickedViewOfferwallButton()
+	{
+		if (this.tjWall.IsContentReady())
+		{
+			this.tjWall.ShowContent();
+		}
+		else
+		{
+			this.tjWall.RequestContent();
+		}
+	}
+
+	public void HandleEarnedCurrency(string currencyName, int amount)
+	{
+		UnityEngine.Debug.Log(string.Concat(new object[]
+		{
+			"C#: HandleEarnedCurrency: currencyName: ",
+			currencyName,
+			", amount: ",
+			amount
+		}));
+		this.giveNewBalance = true;
+		Tapjoy.GetCurrencyBalance();
+	}
+
+	public void HandleGetCurrencyBalanceResponse(string currencyName, int balance)
+	{
+		UnityEngine.Debug.Log(string.Concat(new object[]
+		{
+			"C#: HandleGetCurrencyBalanceResponse: currencyName: ",
+			currencyName,
+			", balance: ",
+			balance
+		}));
+		if (this.giveNewBalance)
+		{
+			GameManager.Instance.gemsAmt += balance - this.tjBalance;
+			DataManager.Instance.saveData(true);
+		}
+		this.tjBalance = balance;
+		this.loadedInitBalance = true;
+		this.giveNewBalance = false;
+	}
+
+	public void HandleGetCurrencyBalanceResponseFailure(string error)
+	{
+		UnityEngine.Debug.Log("C#: HandleGetCurrencyBalanceResponseFailure: " + error);
+		this.loadedInitBalance = false;
+	}
+
+	public void HandleConnectSuccess()
+	{
+		UnityEngine.Debug.Log("TJ - connect success");
+		this.giveNewBalance = false;
+		Tapjoy.GetCurrencyBalance();
+	}
+
+	public void HandlePlacementRequestFailure(TJPlacement placement, string error)
+	{
+		UnityEngine.Debug.Log("TJ - placement failed");
+	}
+
+	public void HandlePlacementContentDismiss(TJPlacement placement)
+	{
+		UnityEngine.Debug.Log("TJ - dismissed content");
+	}
+
+	public void HandleOnRewardRequest(TJPlacement placement, TJActionRequest request, string itemId, int quantity)
+	{
+		UnityEngine.Debug.Log("TJ - on reward request");
+	}
+
+	public void updateStatus()
+	{
+		if (!Tapjoy.IsConnected)
+		{
+			Tapjoy.Connect();
+		}
+		else if (!this.tjWall.IsContentReady())
+		{
+			this.tjWall.RequestContent();
+		}
+		else
+		{
+			Tapjoy.GetCurrencyBalance();
+		}
+	}
+
+	private void Update()
+	{
+		this.refreshTimer += Time.deltaTime;
+		if (this.refreshTimer >= 30f)
+		{
+			this.refreshTimer = 0f;
+			this.updateStatus();
+		}
+	}
+
+	public static TapjoyManager Instance;
+
+	public TJPlacement tjWall;
+
+	public bool loadedInitBalance;
+
+	private int tjBalance;
+
+	private bool giveNewBalance;
+
+	private float refreshTimer = 20f;
+}

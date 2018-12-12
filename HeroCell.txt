@@ -1,0 +1,694 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HeroCell : MonoBehaviour
+{
+	private void Start()
+	{
+		this.doInitUpd = true;
+		this.employButtonsAreInit = false;
+		this.levelButtonsAreInit = false;
+		this.savedIconPosition = this.heroIcon.gameObject.GetComponent<RectTransform>();
+	}
+
+	private void OnEnable()
+	{
+		this.doInitUpd = true;
+	}
+
+	public void openHeroDetailsPanel(bool forceOpenThisHero)
+	{
+		if (!GameManager.Instance.doneTutorial)
+		{
+			return;
+		}
+		if (UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero != this.thisHero || forceOpenThisHero)
+		{
+			UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero = this.thisHero;
+			UIManager.Instance.heroDetailsPanel.SetActive(true);
+			UIManager.Instance.heroDetailsPanelBar.SetActive(true);
+			UIManager.Instance.heroDetailsPanelNone.SetActive(false);
+			UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().updateTable();
+		}
+		else
+		{
+			UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero = null;
+			UIManager.Instance.heroDetailsPanel.SetActive(false);
+			UIManager.Instance.heroDetailsPanelBar.SetActive(false);
+			UIManager.Instance.heroDetailsPanelNone.SetActive(true);
+		}
+		HeroTable.Instance.updateTable();
+	}
+
+	public void updateCell()
+	{
+		this.heroName.text = this.thisHero.heroName;
+		this.heroIcon.sprite = this.thisHero.getHeroIcon();
+		this.level.text = "Level " + this.thisHero.level.ToString();
+		if (this.thisHero.evolveLvl > 0)
+		{
+			this.evolveIcon.SetActive(true);
+			this.evolveText.gameObject.SetActive(true);
+			this.evolveText.text = "x" + this.thisHero.evolveLvl;
+			this.savedIconPosition.anchoredPosition = new Vector2(this.savedIconPosition.anchoredPosition.x, -4f);
+		}
+		else
+		{
+			this.evolveIcon.SetActive(false);
+			this.evolveText.gameObject.SetActive(false);
+			this.savedIconPosition.anchoredPosition = new Vector2(this.savedIconPosition.anchoredPosition.x, -13f);
+		}
+		if (this.thisHero.level > 0)
+		{
+			if (this.thisHero.level >= this.thisHero.nextMasteryLvl)
+			{
+				this.employButton.SetActive(false);
+				this.levelButton.SetActive(false);
+				this.traitButton.SetActive(false);
+				this.masteryButton.SetActive(true);
+				this.updateMasteryButton();
+			}
+			else if (this.thisHero.level >= this.thisHero.nextTraitLvl)
+			{
+				this.employButton.SetActive(false);
+				this.levelButton.SetActive(false);
+				this.traitButton.SetActive(true);
+				this.masteryButton.SetActive(false);
+				this.updateTraitButton();
+			}
+			else
+			{
+				this.employButton.SetActive(false);
+				this.levelButton.SetActive(true);
+				this.traitButton.SetActive(false);
+				this.masteryButton.SetActive(false);
+				this.updateLevelButton();
+			}
+		}
+		else
+		{
+			this.employButton.SetActive(true);
+			this.levelButton.SetActive(false);
+			this.traitButton.SetActive(false);
+			this.masteryButton.SetActive(false);
+			this.updateEmployButton();
+		}
+		this.dpsText.text = UIManager.Instance.convertNumberFormat(this.thisHero.getActDps(this.thisHero.baseDps, true).ToString("0")) + " DPS";
+		this.hpText.text = UIManager.Instance.convertNumberFormat(this.thisHero.getActMaxHp(this.thisHero.baseDps).ToString("0")) + " HP";
+		this.manaText.text = this.thisHero.getActMaxMana() + " Mana";
+		this.savedScraps = GameManager.Instance.scrapsAmt;
+	}
+
+	public void updateEmployButton()
+	{
+		this.employCostText.text = UIManager.Instance.convertNumberFormat(this.thisHero.lvlUpCost.ToString("0"));
+		if (this.thisHero.tier <= 32)
+		{
+			this.employTitleText.text = "Employ\nHero";
+			if (GameManager.Instance.goldAmt >= this.thisHero.lvlUpCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.employButton, "green", false);
+				this.employButton.GetComponent<Button>().interactable = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.employButton, "grey", false);
+				this.employButton.GetComponent<Button>().interactable = false;
+			}
+		}
+		else
+		{
+			int num = 2000;
+			if (HeroManager.Instance.hero33.level > 0)
+			{
+				num += 750;
+			}
+			if (HeroManager.Instance.hero34.level > 0)
+			{
+				num += 750;
+			}
+			if (HeroManager.Instance.hero35.level > 0)
+			{
+				num += 750;
+			}
+			if (GameManager.Instance.enemyWaveNum > num)
+			{
+				this.employTitleText.text = "Employ\nHero";
+				if (GameManager.Instance.goldAmt >= this.thisHero.lvlUpCost)
+				{
+					UIManager.Instance.changeButtonColorV2(this.employButton, "green", false);
+					this.employButton.GetComponent<Button>().interactable = true;
+				}
+				else
+				{
+					UIManager.Instance.changeButtonColorV2(this.employButton, "grey", false);
+					this.employButton.GetComponent<Button>().interactable = false;
+				}
+			}
+			else
+			{
+				this.employTitleText.text = "Wave " + num + "\nRequired";
+				UIManager.Instance.changeButtonColorV2(this.employButton, "grey", false);
+				this.employButton.GetComponent<Button>().interactable = false;
+			}
+		}
+		this.savedGoldAmt = GameManager.Instance.goldAmt;
+		this.savedWave = GameManager.Instance.enemyWaveNum;
+		this.employButtonsAreInit = true;
+	}
+
+	public void clickedEmployButton(bool andSelect)
+	{
+		if (!this.employButtonsAreInit)
+		{
+			return;
+		}
+		GameManager.Instance.goldAmt -= this.thisHero.lvlUpCost;
+		this.thisHero.level = 1;
+		int num = this.thisHero.tier;
+		if (num > 32)
+		{
+			num = 32;
+			if (HeroManager.Instance.hero33.level > 0)
+			{
+				num++;
+			}
+			if (HeroManager.Instance.hero34.level > 0)
+			{
+				num++;
+			}
+			if (HeroManager.Instance.hero35.level > 0)
+			{
+				num++;
+			}
+		}
+		if ((double)num >= AchievementManager.Instance.listAch[8].currAmt)
+		{
+			AchievementManager.Instance.listAch[8].currAmt = (double)num;
+			AchievementManager.Instance.checkIfAchComplete(8);
+		}
+		if (GameManager.Instance.activeHeroes.Count < 5)
+		{
+			GameManager.Instance.activeHeroes.Add(this.thisHero);
+			if (this.thisHero.currHp > 0.0)
+			{
+				GameManager.Instance.numAliveHeroes++;
+			}
+			this.thisHero.isActiveHero = true;
+			int num2 = 0;
+			for (int i = 0; i < GameManager.Instance.activeHeroes.Count; i++)
+			{
+				if (this.thisHero == GameManager.Instance.activeHeroes[i])
+				{
+					num2 = i;
+				}
+			}
+			if (num2 == 0)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(0f, 4f);
+			}
+			else if (num2 == 1)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(-1.5f, 5f);
+			}
+			else if (num2 == 2)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(1.5f, 5f);
+			}
+			else if (num2 == 3)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(-1.5f, 3f);
+			}
+			else if (num2 == 4)
+			{
+				this.thisHero.gameObject.transform.position = new Vector3(1.5f, 3f);
+			}
+			if (GameManager.Instance.onMapNum == 7)
+			{
+				this.thisHero.gameObject.transform.position = this.thisHero.gameObject.transform.position - new Vector3(0f, 0.75f);
+			}
+		}
+		HeroTable.Instance.updateTable();
+		this.updateCell();
+		if (andSelect)
+		{
+			UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero = this.thisHero;
+			this.openHeroDetailsPanel(true);
+		}
+	}
+
+	public void updateLevelButton()
+	{
+		this.getScaleVals();
+		this.addLvlsAmt = 1;
+		if (HeroTable.Instance.lvlMultID == 2)
+		{
+			this.addLvlsAmt = 10;
+		}
+		else if (HeroTable.Instance.lvlMultID == 3)
+		{
+			this.addLvlsAmt = 100;
+		}
+		else if (HeroTable.Instance.lvlMultID == 4)
+		{
+			double num = this.thisHero.lvlUpCost;
+			double num2 = this.thisHero.lvlUpCost;
+			while (num2 * (double)(1f - (float)GameManager.Instance.tech21Lvl * 0.02f) <= GameManager.Instance.goldAmt)
+			{
+				num *= this.costScaleVal;
+				num = Math.Round(num, 0);
+				this.addLvlsAmt++;
+				num2 += num;
+			}
+			this.addLvlsAmt--;
+			if (this.addLvlsAmt <= 0)
+			{
+				this.addLvlsAmt = 1;
+			}
+		}
+		this.totalCost = 0.0;
+		this.currCost = this.thisHero.lvlUpCost;
+		double num3 = this.thisHero.baseDps;
+		for (int i = 0; i < this.addLvlsAmt; i++)
+		{
+			this.totalCost += this.currCost;
+			this.currCost *= this.costScaleVal;
+			this.currCost = Math.Round(this.currCost, 0);
+			num3 = num3 * this.dpsScaleVal + this.thisHero.addOnDps;
+			num3 = Math.Round(num3, 0);
+		}
+		this.addDpsAmt = num3 - this.thisHero.baseDps;
+		double num4 = this.thisHero.getActDps(num3, true) - this.thisHero.getActDps(this.thisHero.baseDps, true);
+		double num5 = this.thisHero.getActMaxHp(num3) - this.thisHero.getActMaxHp(this.thisHero.baseDps);
+		this.totalCost *= (double)(1f - (float)GameManager.Instance.tech21Lvl * 0.02f);
+		this.totalCost = Math.Round(this.totalCost, 0);
+		this.levelAmountText.text = "Lvl +" + this.addLvlsAmt;
+		this.levelDpsText.text = "+" + UIManager.Instance.convertNumberFormat(num4.ToString("0"));
+		this.levelHpText.text = "+" + UIManager.Instance.convertNumberFormat(num5.ToString("0"));
+		this.levelCostText.text = UIManager.Instance.convertNumberFormat(this.totalCost.ToString("0"));
+		if (GameManager.Instance.goldAmt >= this.totalCost)
+		{
+			UIManager.Instance.changeButtonColorV2(this.levelButton, "green", false);
+			this.levelButton.GetComponent<Button>().interactable = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.levelButton, "grey", false);
+			this.levelButton.GetComponent<Button>().interactable = false;
+		}
+		this.savedGoldAmt = GameManager.Instance.goldAmt;
+		this.savedLvlMult = HeroTable.Instance.lvlMultID;
+		this.levelButtonsAreInit = true;
+	}
+
+	public void clickedLevelButton()
+	{
+		if (!this.levelButtonsAreInit)
+		{
+			return;
+		}
+		if (UIManager.Instance.onTutNum == 5)
+		{
+			UIManager.Instance.doTutorialScreensV2();
+		}
+		GameManager.Instance.goldAmt -= this.totalCost;
+		double actMaxHp = this.thisHero.getActMaxHp(this.thisHero.baseDps);
+		int actMaxMana = this.thisHero.getActMaxMana();
+		this.thisHero.level += this.addLvlsAmt;
+		this.thisHero.lvlUpCost = this.currCost;
+		this.thisHero.baseDps += this.addDpsAmt;
+		AchievementManager.Instance.listAch[10].currAmt += (double)this.addLvlsAmt;
+		AchievementManager.Instance.checkIfAchComplete(10);
+		if (GameManager.Instance.q5Num == 1)
+		{
+			GameManager.Instance.q5CurrVal += this.addLvlsAmt;
+			GameManager.Instance.checkQuestStatus();
+		}
+		if (this.thisHero.currHp > 0.0)
+		{
+			double actMaxHp2 = this.thisHero.getActMaxHp(this.thisHero.baseDps);
+			this.thisHero.currHp += actMaxHp2 - actMaxHp;
+		}
+		int actMaxMana2 = this.thisHero.getActMaxMana();
+		this.thisHero.currMana += actMaxMana2 - actMaxMana;
+		this.updateCell();
+		if (!GameManager.Instance.doneTutorial)
+		{
+			return;
+		}
+		UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero = this.thisHero;
+		this.openHeroDetailsPanel(true);
+	}
+
+	public void clickedLevelMaxButton(double spendAmt)
+	{
+		this.getScaleVals();
+		float num = 1f - (float)GameManager.Instance.tech21Lvl * 0.02f;
+		double actMaxHp = this.thisHero.getActMaxHp(this.thisHero.baseDps);
+		int actMaxMana = this.thisHero.getActMaxMana();
+		while (this.thisHero.lvlUpCost * (double)num <= spendAmt)
+		{
+			this.thisHero.level++;
+			GameManager.Instance.goldAmt -= this.thisHero.lvlUpCost * (double)num;
+			spendAmt -= this.thisHero.lvlUpCost * (double)num;
+			this.thisHero.lvlUpCost *= this.costScaleVal;
+			this.thisHero.lvlUpCost = Math.Round(this.thisHero.lvlUpCost, 0);
+			this.thisHero.baseDps = this.thisHero.baseDps * this.dpsScaleVal + this.thisHero.addOnDps;
+			this.thisHero.baseDps = Math.Round(this.thisHero.baseDps, 0);
+			AchievementManager.Instance.listAch[10].currAmt += 1.0;
+			AchievementManager.Instance.checkIfAchComplete(10);
+			if (GameManager.Instance.q5Num == 1)
+			{
+				GameManager.Instance.q5CurrVal++;
+				GameManager.Instance.checkQuestStatus();
+			}
+			if (this.thisHero.level >= this.thisHero.nextMasteryLvl)
+			{
+				double num2 = this.thisHero.lvlUpCost;
+				int num3 = this.thisHero.level - this.thisHero.nextMasteryLvl;
+				for (int i = 0; i < num3; i++)
+				{
+					num2 /= this.costScaleVal;
+					num2 = Math.Round(num2, 0);
+				}
+				num2 *= 25.0;
+				if (num2 > spendAmt)
+				{
+					break;
+				}
+				GameManager.Instance.goldAmt -= num2;
+				spendAmt -= num2;
+				this.thisHero.numMastery++;
+				this.thisHero.nextMasteryLvl += 500;
+			}
+			if (this.thisHero.level >= this.thisHero.nextTraitLvl)
+			{
+				double num4 = this.thisHero.lvlUpCost;
+				int num5 = this.thisHero.level - this.thisHero.nextTraitLvl;
+				for (int j = 0; j < num5; j++)
+				{
+					num4 /= this.costScaleVal;
+					num4 = Math.Round(num4, 0);
+				}
+				num4 *= 5.0;
+				if (num4 > spendAmt)
+				{
+					break;
+				}
+				GameManager.Instance.goldAmt -= num4;
+				spendAmt -= num4;
+				switch (this.thisHero.nextTraitTitle)
+				{
+				case 0:
+					this.thisHero.numTraitDps++;
+					break;
+				case 1:
+					this.thisHero.numTraitHp++;
+					break;
+				case 2:
+					this.thisHero.numTraitMana++;
+					break;
+				case 3:
+					this.thisHero.numTraitCritChance++;
+					break;
+				case 4:
+					this.thisHero.numTraitCritDmg++;
+					break;
+				case 5:
+					this.thisHero.numTraitAttSpeed++;
+					break;
+				}
+				this.thisHero.numTraits++;
+				this.thisHero.nextTraitLvl += 25 * this.thisHero.numTraits;
+				this.thisHero.nextTraitTitle = UnityEngine.Random.Range(0, 6);
+			}
+		}
+		if (this.thisHero.currHp > 0.0)
+		{
+			double actMaxHp2 = this.thisHero.getActMaxHp(this.thisHero.baseDps);
+			this.thisHero.currHp += actMaxHp2 - actMaxHp;
+		}
+		int actMaxMana2 = this.thisHero.getActMaxMana();
+		this.thisHero.currMana += actMaxMana2 - actMaxMana;
+		this.updateCell();
+		if (UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero != null && UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero == this.thisHero)
+		{
+			UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().updateTable();
+		}
+	}
+
+	public void updateTraitButton()
+	{
+		this.getScaleVals();
+		this.traitTitleText.text = this.thisHero.getTraitTitle();
+		this.traitDescText.text = this.thisHero.getTraitDesc2();
+		this.totalCost = this.thisHero.lvlUpCost;
+		int num = this.thisHero.level - this.thisHero.nextTraitLvl;
+		for (int i = 0; i < num; i++)
+		{
+			this.totalCost /= this.costScaleVal;
+			this.totalCost = Math.Round(this.totalCost, 0);
+		}
+		this.totalCost *= 5.0;
+		this.traitCostText.text = UIManager.Instance.convertNumberFormat(this.totalCost.ToString("0"));
+		if (GameManager.Instance.goldAmt >= this.totalCost)
+		{
+			UIManager.Instance.changeButtonColorV2(this.traitButton, "blue", false);
+			this.traitButton.GetComponent<Button>().interactable = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.traitButton, "grey", false);
+			this.traitButton.GetComponent<Button>().interactable = false;
+		}
+		this.savedGoldAmt = GameManager.Instance.goldAmt;
+	}
+
+	public void clickedTraitButton()
+	{
+		GameManager.Instance.goldAmt -= this.totalCost;
+		double actMaxHp = this.thisHero.getActMaxHp(this.thisHero.baseDps);
+		int actMaxMana = this.thisHero.getActMaxMana();
+		switch (this.thisHero.nextTraitTitle)
+		{
+		case 0:
+			this.thisHero.numTraitDps++;
+			break;
+		case 1:
+			this.thisHero.numTraitHp++;
+			break;
+		case 2:
+			this.thisHero.numTraitMana++;
+			break;
+		case 3:
+			this.thisHero.numTraitCritChance++;
+			break;
+		case 4:
+			this.thisHero.numTraitCritDmg++;
+			break;
+		case 5:
+			this.thisHero.numTraitAttSpeed++;
+			break;
+		}
+		this.thisHero.numTraits++;
+		this.thisHero.nextTraitLvl += 25 * this.thisHero.numTraits;
+		this.thisHero.nextTraitTitle = UnityEngine.Random.Range(0, 6);
+		if (this.thisHero.currHp > 0.0)
+		{
+			double actMaxHp2 = this.thisHero.getActMaxHp(this.thisHero.baseDps);
+			this.thisHero.currHp += actMaxHp2 - actMaxHp;
+		}
+		int actMaxMana2 = this.thisHero.getActMaxMana();
+		this.thisHero.currMana += actMaxMana2 - actMaxMana;
+		this.updateCell();
+		UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero = this.thisHero;
+		this.openHeroDetailsPanel(true);
+	}
+
+	public void updateMasteryButton()
+	{
+		this.getScaleVals();
+		this.totalCost = this.thisHero.lvlUpCost;
+		int num = this.thisHero.level - this.thisHero.nextMasteryLvl;
+		for (int i = 0; i < num; i++)
+		{
+			this.totalCost /= this.costScaleVal;
+			this.totalCost = Math.Round(this.totalCost, 0);
+		}
+		this.totalCost *= 25.0;
+		this.masteryCostText.text = UIManager.Instance.convertNumberFormat(this.totalCost.ToString("0"));
+		if (GameManager.Instance.goldAmt >= this.totalCost)
+		{
+			UIManager.Instance.changeButtonColorV2(this.masteryButton, "blue", false);
+			this.masteryButton.GetComponent<Button>().interactable = true;
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.masteryButton, "grey", false);
+			this.masteryButton.GetComponent<Button>().interactable = false;
+		}
+		this.savedGoldAmt = GameManager.Instance.goldAmt;
+	}
+
+	public void clickedMasteryButton()
+	{
+		GameManager.Instance.goldAmt -= this.totalCost;
+		double actMaxHp = this.thisHero.getActMaxHp(this.thisHero.baseDps);
+		int actMaxMana = this.thisHero.getActMaxMana();
+		this.thisHero.numMastery++;
+		this.thisHero.nextMasteryLvl += 500;
+		if (this.thisHero.currHp > 0.0)
+		{
+			double actMaxHp2 = this.thisHero.getActMaxHp(this.thisHero.baseDps);
+			this.thisHero.currHp += actMaxHp2 - actMaxHp;
+		}
+		int actMaxMana2 = this.thisHero.getActMaxMana();
+		this.thisHero.currMana += actMaxMana2 - actMaxMana;
+		this.updateCell();
+		UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero = this.thisHero;
+		this.openHeroDetailsPanel(true);
+	}
+
+	private void getScaleVals()
+	{
+		if (GameManager.Instance.enemyWaveNum > 3750)
+		{
+			this.costScaleVal = 1.13;
+			this.dpsScaleVal = 1.07;
+		}
+		else if (GameManager.Instance.enemyWaveNum > 2500)
+		{
+			this.costScaleVal = 1.1275;
+			this.dpsScaleVal = 1.0725;
+		}
+		else if (GameManager.Instance.enemyWaveNum > 1000)
+		{
+			this.costScaleVal = 1.125;
+			this.dpsScaleVal = 1.075;
+		}
+		else if (GameManager.Instance.enemyWaveNum > 500)
+		{
+			this.costScaleVal = 1.1225;
+			this.dpsScaleVal = 1.0775;
+		}
+		else
+		{
+			this.costScaleVal = 1.12;
+			this.dpsScaleVal = 1.08;
+		}
+	}
+
+	private void Update()
+	{
+		if (this.doInitUpd && HeroTable.Instance != null)
+		{
+			this.doInitUpd = false;
+			this.updateCell();
+			this.getScaleVals();
+		}
+		if (UIManager.Instance.heroDetailsPanel.activeSelf && UIManager.Instance.heroDetailsPanel.GetComponent<HeroDetailsPanel>().thisHero == this.thisHero && GameManager.Instance.scrapsAmt != this.savedScraps)
+		{
+			this.updateCell();
+		}
+		if (this.employButton.activeSelf && (this.savedGoldAmt != GameManager.Instance.goldAmt || this.savedWave != GameManager.Instance.enemyWaveNum))
+		{
+			this.updateEmployButton();
+		}
+		if (this.levelButton.activeSelf && (this.savedGoldAmt != GameManager.Instance.goldAmt || this.savedLvlMult != HeroTable.Instance.lvlMultID))
+		{
+			this.updateLevelButton();
+		}
+		if (this.traitButton.activeSelf && this.savedGoldAmt != GameManager.Instance.goldAmt)
+		{
+			this.updateTraitButton();
+		}
+		if (this.masteryButton.activeSelf && this.savedGoldAmt != GameManager.Instance.goldAmt)
+		{
+			this.updateMasteryButton();
+		}
+	}
+
+	private double costScaleVal;
+
+	private double dpsScaleVal;
+
+	[Header("Manually Set Attributes")]
+	public Hero thisHero;
+
+	[Header("Automatically Set Attributes")]
+	public Text heroName;
+
+	public Text level;
+
+	public Image heroIcon;
+
+	public GameObject evolveIcon;
+
+	public Text evolveText;
+
+	public Text dpsText;
+
+	public Text hpText;
+
+	public Text manaText;
+
+	[Header("Employ Button Stuff")]
+	public GameObject employButton;
+
+	public Text employCostText;
+
+	public Text employTitleText;
+
+	private int savedWave;
+
+	[Header("Level Button Stuff")]
+	public GameObject levelButton;
+
+	public Text levelAmountText;
+
+	public Text levelDpsText;
+
+	public Text levelHpText;
+
+	public Text levelCostText;
+
+	private int addLvlsAmt;
+
+	private double currCost;
+
+	private double totalCost;
+
+	private double addDpsAmt;
+
+	private double addHpAmt;
+
+	private int savedLvlMult;
+
+	private double savedGoldAmt;
+
+	[Header("Trait Button Stuff")]
+	public GameObject traitButton;
+
+	public Text traitCostText;
+
+	public Text traitTitleText;
+
+	public Text traitDescText;
+
+	[Header("Mastery Button Stuff")]
+	public GameObject masteryButton;
+
+	public Text masteryCostText;
+
+	private int savedScraps;
+
+	private bool doInitUpd;
+
+	private RectTransform savedIconPosition;
+
+	private bool employButtonsAreInit;
+
+	private bool levelButtonsAreInit;
+}

@@ -1,0 +1,124 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class BuyGemsTable : MonoBehaviour
+{
+	private void Start()
+	{
+		if (Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			this.tableKongGems.SetActive(true);
+			this.tableMobileGems.SetActive(false);
+		}
+		else
+		{
+			this.tableKongGems.SetActive(false);
+			this.tableMobileGems.SetActive(true);
+			if (Application.platform == RuntimePlatform.IPhonePlayer)
+			{
+				this.restorePurchasesCell.SetActive(true);
+				RectTransform component = this.tableContent.GetComponent<RectTransform>();
+				component.sizeDelta = new Vector2(component.sizeDelta.x, 950f);
+			}
+			else
+			{
+				this.restorePurchasesCell.SetActive(false);
+				RectTransform component2 = this.tableContent.GetComponent<RectTransform>();
+				component2.sizeDelta = new Vector2(component2.sizeDelta.x, 845f);
+			}
+		}
+		this.updateTable();
+	}
+
+	private void OnEnable()
+	{
+		this.updateTable();
+	}
+
+	public void updateTable()
+	{
+		if (!GameManager.Instance.iapSkipAds)
+		{
+			UIManager.Instance.changeButtonColorV2(this.skipAdsButton, "green", true);
+			this.skipAdsButton.GetComponent<Button>().enabled = true;
+			this.skipAdsButtonDesc.text = "$5.99";
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.skipAdsButton, "grey", true);
+			this.skipAdsButton.GetComponent<Button>().enabled = false;
+			this.skipAdsButtonDesc.text = "Purchased";
+		}
+		if (!GameManager.Instance.iap2xGameSpeed)
+		{
+			UIManager.Instance.changeButtonColorV2(this.mobileSpeed2xButton, "green", true);
+			this.mobileSpeed2xButton.GetComponent<Button>().enabled = true;
+			this.mobileSpeed2xButtonDesc.text = "$9.99";
+			this.kongSpeed2xButtonCover.SetActive(false);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.mobileSpeed2xButton, "grey", true);
+			this.mobileSpeed2xButton.GetComponent<Button>().enabled = false;
+			this.mobileSpeed2xButtonDesc.text = "Purchased";
+			this.kongSpeed2xButtonCover.SetActive(true);
+		}
+		if (!GameManager.Instance.iap3xEmeralds)
+		{
+			UIManager.Instance.changeButtonColorV2(this.emeralds3xButton, "green", true);
+			this.emeralds3xButton.GetComponent<Button>().enabled = true;
+			this.emeralds3xButtonDesc.text = "$14.99";
+			this.kongEmeralds3xButtonCover.SetActive(false);
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.emeralds3xButton, "grey", true);
+			this.emeralds3xButton.GetComponent<Button>().enabled = false;
+			this.emeralds3xButtonDesc.text = "Purchased";
+			this.kongEmeralds3xButtonCover.SetActive(true);
+		}
+		this.savedSkipAds = GameManager.Instance.iapSkipAds;
+		this.saved2xSpeed = GameManager.Instance.iap2xGameSpeed;
+		this.saved3xEmeralds = GameManager.Instance.iap3xEmeralds;
+	}
+
+	private void Update()
+	{
+		if (this.savedSkipAds != GameManager.Instance.iapSkipAds || this.saved2xSpeed != GameManager.Instance.iap2xGameSpeed || this.saved3xEmeralds != GameManager.Instance.iap3xEmeralds)
+		{
+			this.updateTable();
+		}
+	}
+
+	public GameObject tableMobileGems;
+
+	public GameObject tableKongGems;
+
+	public GameObject restorePurchasesCell;
+
+	public GameObject tableContent;
+
+	public GameObject skipAdsButton;
+
+	public Text skipAdsButtonDesc;
+
+	public GameObject kongSpeed2xButtonCover;
+
+	public GameObject kongEmeralds3xButtonCover;
+
+	public GameObject mobileSpeed2xButton;
+
+	public Text mobileSpeed2xButtonDesc;
+
+	public GameObject emeralds3xButton;
+
+	public Text emeralds3xButtonDesc;
+
+	private bool savedSkipAds;
+
+	private bool saved2xSpeed;
+
+	private bool saved3xEmeralds;
+}

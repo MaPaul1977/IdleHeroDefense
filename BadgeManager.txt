@@ -1,0 +1,622 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class BadgeManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		BadgeManager.Instance = this;
+	}
+
+	private void Start()
+	{
+		this.updateTable();
+	}
+
+	private void OnEnable()
+	{
+		this.updateTable();
+	}
+
+	public void updateTable()
+	{
+		for (int i = 0; i < this.listTechCells.Count; i++)
+		{
+			GameObject gameObject = this.listTechCells[i];
+			BadgeCell component = gameObject.GetComponent<BadgeCell>();
+			component.updateCell();
+		}
+		int num = 0;
+		this.newTechCost = 2;
+		for (int j = 0; j < this.listTechCells.Count; j++)
+		{
+			GameObject gameObject2 = this.listTechCells[j];
+			BadgeCell component2 = gameObject2.GetComponent<BadgeCell>();
+			if (component2.currLevel > 0)
+			{
+				num++;
+				this.newTechCost += 2;
+			}
+		}
+		this.numTechText.text = num + " / " + this.listTechCells.Count;
+		if (num == 0)
+		{
+			this.noTechsText.SetActive(true);
+		}
+		else
+		{
+			this.noTechsText.SetActive(false);
+		}
+		if (num < this.listTechCells.Count)
+		{
+			if (GameManager.Instance.medAmt >= this.newTechCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.newTechButton, "green", false);
+				this.newTechButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.newTechButton, "grey", false);
+				this.newTechButton.GetComponent<Button>().enabled = false;
+			}
+			this.newTechButtonTitle.text = "Unlock";
+			this.newTechButtonCost.text = UIManager.Instance.convertNumberFormat(this.newTechCost.ToString("0"));
+		}
+		else
+		{
+			this.newTechButtonTitle.text = "Max Badges";
+			this.newTechButtonCost.text = "N/A";
+			UIManager.Instance.changeButtonColorV2(this.newTechButton, "grey", false);
+			this.newTechButton.GetComponent<Button>().enabled = false;
+		}
+		this.savedMeds = GameManager.Instance.medAmt;
+		float num2 = -105f;
+		for (int k = 0; k < this.listTechCells.Count; k++)
+		{
+			GameObject gameObject3 = this.listTechCells[k];
+			BadgeCell component3 = gameObject3.GetComponent<BadgeCell>();
+			if (component3.currLevel > 0)
+			{
+				if (component3.currLevel < component3.maxLevel)
+				{
+					RectTransform component4 = gameObject3.GetComponent<RectTransform>();
+					component4.anchoredPosition = new Vector2(component4.anchoredPosition.x, num2);
+					gameObject3.SetActive(true);
+					num2 -= 100f;
+					if (component3 == this.selectedTech)
+					{
+						RectTransform component5 = this.selectedCellBg.GetComponent<RectTransform>();
+						component5.anchoredPosition = new Vector2(component5.anchoredPosition.x, component4.anchoredPosition.y + 2f);
+						this.selectedCellBg.SetActive(true);
+					}
+				}
+			}
+			else
+			{
+				gameObject3.SetActive(false);
+			}
+		}
+		for (int l = 0; l < this.listTechCells.Count; l++)
+		{
+			GameObject gameObject4 = this.listTechCells[l];
+			BadgeCell component6 = gameObject4.GetComponent<BadgeCell>();
+			if (component6.currLevel > 0)
+			{
+				if (component6.currLevel >= component6.maxLevel)
+				{
+					RectTransform component7 = gameObject4.GetComponent<RectTransform>();
+					component7.anchoredPosition = new Vector2(component7.anchoredPosition.x, num2);
+					gameObject4.SetActive(true);
+					num2 -= 100f;
+					if (component6 == this.selectedTech)
+					{
+						RectTransform component8 = this.selectedCellBg.GetComponent<RectTransform>();
+						component8.anchoredPosition = new Vector2(component8.anchoredPosition.x, component7.anchoredPosition.y + 2f);
+						this.selectedCellBg.SetActive(true);
+					}
+				}
+			}
+			else
+			{
+				gameObject4.SetActive(false);
+			}
+		}
+		RectTransform component9 = this.tableContent.GetComponent<RectTransform>();
+		component9.sizeDelta = new Vector2(component9.sizeDelta.x, num2 * -1f);
+		if (this.selectedTech == null)
+		{
+			this.selectedCellBg.SetActive(false);
+			this.notSelectedText.SetActive(true);
+		}
+		else
+		{
+			this.selectedCellBg.SetActive(true);
+			this.notSelectedText.SetActive(false);
+			this.updateSelectedPanel();
+		}
+	}
+
+	public void clickedSelectedUpgradeButton()
+	{
+		this.clickedUpgradeButton(this.selectedTech);
+	}
+
+	public void clickedUpgradeButton(BadgeCell thisCell)
+	{
+		GameManager.Instance.medAmt -= thisCell.lvlUpCost;
+		switch (thisCell.badgeId)
+		{
+		case 1:
+			GameManager.Instance.badge1Lvl++;
+			break;
+		case 2:
+			GameManager.Instance.badge2Lvl++;
+			break;
+		case 3:
+			GameManager.Instance.badge3Lvl++;
+			break;
+		case 4:
+			GameManager.Instance.badge4Lvl++;
+			break;
+		case 5:
+			GameManager.Instance.badge5Lvl++;
+			break;
+		case 6:
+			GameManager.Instance.badge6Lvl++;
+			break;
+		case 7:
+			GameManager.Instance.badge7Lvl++;
+			break;
+		case 8:
+			GameManager.Instance.badge8Lvl++;
+			break;
+		case 9:
+			GameManager.Instance.badge9Lvl++;
+			break;
+		case 10:
+			GameManager.Instance.badge10Lvl++;
+			break;
+		case 11:
+			GameManager.Instance.badge11Lvl++;
+			break;
+		case 12:
+			GameManager.Instance.badge12Lvl++;
+			break;
+		case 13:
+			GameManager.Instance.badge13Lvl++;
+			break;
+		case 14:
+			GameManager.Instance.badge14Lvl++;
+			break;
+		case 15:
+			GameManager.Instance.badge15Lvl++;
+			break;
+		case 16:
+			GameManager.Instance.badge16Lvl++;
+			break;
+		case 17:
+			GameManager.Instance.badge17Lvl++;
+			break;
+		case 18:
+			GameManager.Instance.badge18Lvl++;
+			break;
+		case 19:
+			GameManager.Instance.badge19Lvl++;
+			break;
+		case 20:
+			GameManager.Instance.badge20Lvl++;
+			break;
+		case 21:
+			GameManager.Instance.badge21Lvl++;
+			break;
+		case 22:
+			GameManager.Instance.badge22Lvl++;
+			break;
+		case 23:
+			GameManager.Instance.badge23Lvl++;
+			break;
+		}
+		thisCell.updateCell();
+		if (this.selectedTech != null)
+		{
+			this.updateSelectedPanel();
+		}
+	}
+
+	public void updateSelectedPanel()
+	{
+		this.selIcon.sprite = this.selectedTech.icon.sprite;
+		this.selTitle.text = this.selectedTech.titleText.text;
+		this.selLevel.text = "Lvl " + this.selectedTech.currLevel;
+		this.selDesc.text = this.selectedTech.descText.text;
+		this.selStat.text = this.selectedTech.statText.text;
+		switch (this.selectedTech.badgeId)
+		{
+		case 1:
+			this.selUpgStat.text = "+250% DPS/HP";
+			break;
+		case 2:
+			this.selUpgStat.text = "+2% scraps";
+			break;
+		case 3:
+			this.selUpgStat.text = "+50% blueprints";
+			break;
+		case 4:
+			this.selUpgStat.text = "+25% skillpoints";
+			break;
+		case 5:
+			this.selUpgStat.text = "+1 commander exp";
+			break;
+		case 6:
+			this.selUpgStat.text = "+25% commander bonus";
+			break;
+		case 7:
+			this.selUpgStat.text = "+250% gold drop";
+			break;
+		case 8:
+			this.selUpgStat.text = "+2% rarer equip chance";
+			break;
+		case 9:
+			this.selUpgStat.text = "-3% damage taken";
+			break;
+		case 10:
+			this.selUpgStat.text = "+2% block chance";
+			break;
+		case 11:
+			this.selUpgStat.text = "+2 equip power";
+			break;
+		case 12:
+			this.selUpgStat.text = "-3% tech upgrade cost";
+			break;
+		case 13:
+			this.selUpgStat.text = "+3% skill duration";
+			break;
+		case 14:
+			this.selUpgStat.text = "+1 kill exp";
+			break;
+		case 15:
+			this.selUpgStat.text = "+2% stack of pages chance";
+			break;
+		case 16:
+			this.selUpgStat.text = "+2% attack speed";
+			break;
+		case 17:
+			this.selUpgStat.text = "+2% movement speed";
+			break;
+		case 18:
+			this.selUpgStat.text = "+1 daily mission gems";
+			break;
+		case 19:
+			this.selUpgStat.text = "+1 max equip tier";
+			break;
+		case 20:
+			this.selUpgStat.text = "+10% weapon/shield boost";
+			break;
+		case 21:
+			this.selUpgStat.text = "-3% minigame required wave";
+			break;
+		case 22:
+			this.selUpgStat.text = "+10% minigame rewards";
+			break;
+		case 23:
+			this.selUpgStat.text = "+1 pages in stack of pages";
+			break;
+		}
+		if (this.selectedTech.currLevel < this.selectedTech.maxLevel)
+		{
+			if (GameManager.Instance.medAmt >= this.selectedTech.lvlUpCost)
+			{
+				UIManager.Instance.changeButtonColorV2(this.selUpgButton, "green", false);
+				this.selUpgButton.GetComponent<Button>().enabled = true;
+			}
+			else
+			{
+				UIManager.Instance.changeButtonColorV2(this.selUpgButton, "grey", false);
+				this.selUpgButton.GetComponent<Button>().enabled = false;
+			}
+			this.selUpgButtonTitle.text = "Lvl +1";
+			this.selUpgButtonCost.text = UIManager.Instance.convertNumberFormat(this.selectedTech.lvlUpCost.ToString("n0"));
+		}
+		else
+		{
+			UIManager.Instance.changeButtonColorV2(this.selUpgButton, "grey", false);
+			this.selUpgButton.GetComponent<Button>().enabled = false;
+			this.selUpgButtonTitle.text = "Max Level";
+			this.selUpgButtonCost.text = "N/A";
+		}
+		double num = (double)(this.selectedTech.paidForAmt / 2);
+		this.selSellButtonCost.text = "+" + UIManager.Instance.convertNumberFormat(num.ToString("0"));
+	}
+
+	public void clickedSellBadgeButton()
+	{
+		GameManager.Instance.medAmt += this.selectedTech.paidForAmt / 2;
+		AchievementManager.Instance.listAch[23].currAmt -= 1.0;
+		AchievementManager.Instance.checkIfAchComplete(23);
+		switch (this.selectedTech.badgeId)
+		{
+		case 1:
+			GameManager.Instance.badge1Lvl = 0;
+			GameManager.Instance.badge1PaidFor = 0;
+			break;
+		case 2:
+			GameManager.Instance.badge2Lvl = 0;
+			GameManager.Instance.badge2PaidFor = 0;
+			break;
+		case 3:
+			GameManager.Instance.badge3Lvl = 0;
+			GameManager.Instance.badge3PaidFor = 0;
+			break;
+		case 4:
+			GameManager.Instance.badge4Lvl = 0;
+			GameManager.Instance.badge4PaidFor = 0;
+			break;
+		case 5:
+			GameManager.Instance.badge5Lvl = 0;
+			GameManager.Instance.badge5PaidFor = 0;
+			break;
+		case 6:
+			GameManager.Instance.badge6Lvl = 0;
+			GameManager.Instance.badge6PaidFor = 0;
+			break;
+		case 7:
+			GameManager.Instance.badge7Lvl = 0;
+			GameManager.Instance.badge7PaidFor = 0;
+			break;
+		case 8:
+			GameManager.Instance.badge8Lvl = 0;
+			GameManager.Instance.badge8PaidFor = 0;
+			break;
+		case 9:
+			GameManager.Instance.badge9Lvl = 0;
+			GameManager.Instance.badge9PaidFor = 0;
+			break;
+		case 10:
+			GameManager.Instance.badge10Lvl = 0;
+			GameManager.Instance.badge10PaidFor = 0;
+			break;
+		case 11:
+			GameManager.Instance.badge11Lvl = 0;
+			GameManager.Instance.badge11PaidFor = 0;
+			break;
+		case 12:
+			GameManager.Instance.badge12Lvl = 0;
+			GameManager.Instance.badge12PaidFor = 0;
+			break;
+		case 13:
+			GameManager.Instance.badge13Lvl = 0;
+			GameManager.Instance.badge13PaidFor = 0;
+			break;
+		case 14:
+			GameManager.Instance.badge14Lvl = 0;
+			GameManager.Instance.badge14PaidFor = 0;
+			break;
+		case 15:
+			GameManager.Instance.badge15Lvl = 0;
+			GameManager.Instance.badge15PaidFor = 0;
+			break;
+		case 16:
+			GameManager.Instance.badge16Lvl = 0;
+			GameManager.Instance.badge16PaidFor = 0;
+			break;
+		case 17:
+			GameManager.Instance.badge17Lvl = 0;
+			GameManager.Instance.badge17PaidFor = 0;
+			break;
+		case 18:
+			GameManager.Instance.badge18Lvl = 0;
+			GameManager.Instance.badge18PaidFor = 0;
+			break;
+		case 19:
+			GameManager.Instance.badge19Lvl = 0;
+			GameManager.Instance.badge19PaidFor = 0;
+			break;
+		case 20:
+			GameManager.Instance.badge20Lvl = 0;
+			GameManager.Instance.badge20PaidFor = 0;
+			break;
+		case 21:
+			GameManager.Instance.badge21Lvl = 0;
+			GameManager.Instance.badge21PaidFor = 0;
+			break;
+		case 22:
+			GameManager.Instance.badge22Lvl = 0;
+			GameManager.Instance.badge22PaidFor = 0;
+			break;
+		case 23:
+			GameManager.Instance.badge23Lvl = 0;
+			GameManager.Instance.badge23PaidFor = 0;
+			break;
+		}
+		this.selectedTech = null;
+		this.updateTable();
+	}
+
+	public void clickedPurchaseButton()
+	{
+		SoundManager.Instance.playReward();
+		AchievementManager.Instance.listAch[23].currAmt += 1.0;
+		AchievementManager.Instance.checkIfAchComplete(23);
+		List<BadgeCell> list = new List<BadgeCell>();
+		for (int i = 0; i < this.listTechCells.Count; i++)
+		{
+			GameObject gameObject = this.listTechCells[i];
+			BadgeCell component = gameObject.GetComponent<BadgeCell>();
+			if (component.currLevel == 0)
+			{
+				list.Add(component);
+			}
+		}
+		int index = UnityEngine.Random.Range(0, list.Count);
+		BadgeCell badgeCell = list[index];
+		switch (badgeCell.badgeId)
+		{
+		case 1:
+			GameManager.Instance.badge1Lvl = 1;
+			GameManager.Instance.badge1PaidFor = this.newTechCost;
+			break;
+		case 2:
+			GameManager.Instance.badge2Lvl = 1;
+			GameManager.Instance.badge2PaidFor = this.newTechCost;
+			break;
+		case 3:
+			GameManager.Instance.badge3Lvl = 1;
+			GameManager.Instance.badge3PaidFor = this.newTechCost;
+			break;
+		case 4:
+			GameManager.Instance.badge4Lvl = 1;
+			GameManager.Instance.badge4PaidFor = this.newTechCost;
+			break;
+		case 5:
+			GameManager.Instance.badge5Lvl = 1;
+			GameManager.Instance.badge5PaidFor = this.newTechCost;
+			break;
+		case 6:
+			GameManager.Instance.badge6Lvl = 1;
+			GameManager.Instance.badge6PaidFor = this.newTechCost;
+			break;
+		case 7:
+			GameManager.Instance.badge7Lvl = 1;
+			GameManager.Instance.badge7PaidFor = this.newTechCost;
+			break;
+		case 8:
+			GameManager.Instance.badge8Lvl = 1;
+			GameManager.Instance.badge8PaidFor = this.newTechCost;
+			break;
+		case 9:
+			GameManager.Instance.badge9Lvl = 1;
+			GameManager.Instance.badge9PaidFor = this.newTechCost;
+			break;
+		case 10:
+			GameManager.Instance.badge10Lvl = 1;
+			GameManager.Instance.badge10PaidFor = this.newTechCost;
+			break;
+		case 11:
+			GameManager.Instance.badge11Lvl = 1;
+			GameManager.Instance.badge11PaidFor = this.newTechCost;
+			break;
+		case 12:
+			GameManager.Instance.badge12Lvl = 1;
+			GameManager.Instance.badge12PaidFor = this.newTechCost;
+			break;
+		case 13:
+			GameManager.Instance.badge13Lvl = 1;
+			GameManager.Instance.badge13PaidFor = this.newTechCost;
+			break;
+		case 14:
+			GameManager.Instance.badge14Lvl = 1;
+			GameManager.Instance.badge14PaidFor = this.newTechCost;
+			break;
+		case 15:
+			GameManager.Instance.badge15Lvl = 1;
+			GameManager.Instance.badge15PaidFor = this.newTechCost;
+			break;
+		case 16:
+			GameManager.Instance.badge16Lvl = 1;
+			GameManager.Instance.badge16PaidFor = this.newTechCost;
+			break;
+		case 17:
+			GameManager.Instance.badge17Lvl = 1;
+			GameManager.Instance.badge17PaidFor = this.newTechCost;
+			break;
+		case 18:
+			GameManager.Instance.badge18Lvl = 1;
+			GameManager.Instance.badge18PaidFor = this.newTechCost;
+			break;
+		case 19:
+			GameManager.Instance.badge19Lvl = 1;
+			GameManager.Instance.badge19PaidFor = this.newTechCost;
+			break;
+		case 20:
+			GameManager.Instance.badge20Lvl = 1;
+			GameManager.Instance.badge20PaidFor = this.newTechCost;
+			break;
+		case 21:
+			GameManager.Instance.badge21Lvl = 1;
+			GameManager.Instance.badge21PaidFor = this.newTechCost;
+			break;
+		case 22:
+			GameManager.Instance.badge22Lvl = 1;
+			GameManager.Instance.badge22PaidFor = this.newTechCost;
+			break;
+		case 23:
+			GameManager.Instance.badge23Lvl = 1;
+			GameManager.Instance.badge23PaidFor = this.newTechCost;
+			break;
+		}
+		badgeCell.updateCell();
+		UIManager.Instance.blackbg.SetActive(true);
+		this.newTechPanelTitle.text = badgeCell.titleText.text;
+		this.newTechPanelIcon.sprite = badgeCell.icon.sprite;
+		this.newTechPanelDesc.text = badgeCell.descText.text;
+		this.newTechPanel.SetActive(true);
+		GameManager.Instance.medAmt -= this.newTechCost;
+		this.updateTable();
+		DataManager.Instance.saveData(false);
+	}
+
+	private void Update()
+	{
+		if (this.savedMeds != GameManager.Instance.medAmt)
+		{
+			this.updateTable();
+		}
+	}
+
+	public static BadgeManager Instance;
+
+	public GameObject noTechsText;
+
+	public GameObject notSelectedText;
+
+	public GameObject tableContent;
+
+	public BadgeCell selectedTech;
+
+	public GameObject selectedCellBg;
+
+	public List<GameObject> listTechCells;
+
+	public Text numTechText;
+
+	public GameObject newTechButton;
+
+	public Text newTechButtonTitle;
+
+	public Text newTechButtonCost;
+
+	private int newTechCost;
+
+	private int savedMeds;
+
+	public Image selIcon;
+
+	public Text selTitle;
+
+	public Text selLevel;
+
+	public Text selDesc;
+
+	public Text selStat;
+
+	public Text selUpgStat;
+
+	public GameObject selUpgButton;
+
+	public Text selUpgButtonTitle;
+
+	public Text selUpgButtonCost;
+
+	public Text selSellButtonCost;
+
+	public GameObject newTechPanel;
+
+	public Text newTechPanelTitle;
+
+	public Image newTechPanelIcon;
+
+	public Text newTechPanelDesc;
+}

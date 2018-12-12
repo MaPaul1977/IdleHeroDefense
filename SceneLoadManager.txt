@@ -1,0 +1,147 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class SceneLoadManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		SceneLoadManager.Instance = this;
+	}
+
+	private void Start()
+	{
+		GameManager.Instance.loadData();
+		if (GameManager.Instance.tournArtCollectionsBonus == 0.0)
+		{
+			GameManager.Instance.tournArtCollectionsBonus = 1.0;
+			for (int i = 0; i < GameManager.Instance.tournArtCollections; i++)
+			{
+				GameManager.Instance.tournArtCollectionsBonus *= 10.0;
+			}
+		}
+		AcademiaManager.Instance.listAcademia[0].loadData(DataManager.Instance.Academia1Data);
+		AcademiaManager.Instance.listAcademia[1].loadData(DataManager.Instance.Academia2Data);
+		AcademiaManager.Instance.listAcademia[2].loadData(DataManager.Instance.Academia3Data);
+		AcademiaManager.Instance.listAcademia[3].loadData(DataManager.Instance.Academia4Data);
+		AcademiaManager.Instance.listAcademia[4].loadData(DataManager.Instance.Academia5Data);
+		AcademiaManager.Instance.listAcademia[5].loadData(DataManager.Instance.Academia6Data);
+		AchievementManager.Instance.listAch[0].loadData(DataManager.Instance.Achievement1Data);
+		AchievementManager.Instance.listAch[1].loadData(DataManager.Instance.Achievement2Data);
+		AchievementManager.Instance.listAch[2].loadData(DataManager.Instance.Achievement3Data);
+		AchievementManager.Instance.listAch[3].loadData(DataManager.Instance.Achievement4Data);
+		AchievementManager.Instance.listAch[4].loadData(DataManager.Instance.Achievement5Data);
+		AchievementManager.Instance.listAch[5].loadData(DataManager.Instance.Achievement6Data);
+		AchievementManager.Instance.listAch[6].loadData(DataManager.Instance.Achievement7Data);
+		AchievementManager.Instance.listAch[7].loadData(DataManager.Instance.Achievement8Data);
+		AchievementManager.Instance.listAch[8].loadData(DataManager.Instance.Achievement9Data);
+		AchievementManager.Instance.listAch[9].loadData(DataManager.Instance.Achievement10Data);
+		AchievementManager.Instance.listAch[10].loadData(DataManager.Instance.Achievement11Data);
+		AchievementManager.Instance.listAch[11].loadData(DataManager.Instance.Achievement12Data);
+		AchievementManager.Instance.listAch[12].loadData(DataManager.Instance.Achievement13Data);
+		AchievementManager.Instance.listAch[13].loadData(DataManager.Instance.Achievement14Data);
+		AchievementManager.Instance.listAch[14].loadData(DataManager.Instance.Achievement15Data);
+		AchievementManager.Instance.listAch[15].loadData(DataManager.Instance.Achievement16Data);
+		AchievementManager.Instance.listAch[16].loadData(DataManager.Instance.Achievement17Data);
+		AchievementManager.Instance.listAch[17].loadData(DataManager.Instance.Achievement18Data);
+		AchievementManager.Instance.listAch[18].loadData(DataManager.Instance.Achievement19Data);
+		AchievementManager.Instance.listAch[19].loadData(DataManager.Instance.Achievement20Data);
+		AchievementManager.Instance.listAch[20].loadData(DataManager.Instance.Achievement21Data);
+		AchievementManager.Instance.listAch[21].loadData(DataManager.Instance.Achievement22Data);
+		AchievementManager.Instance.listAch[22].loadData(DataManager.Instance.Achievement23Data);
+		AchievementManager.Instance.listAch[23].loadData(DataManager.Instance.Achievement24Data);
+		AchievementManager.Instance.listAch[24].loadData(DataManager.Instance.Achievement25Data);
+		AchievementManager.Instance.listAch[25].loadData(DataManager.Instance.Achievement26Data);
+		HeroManager.Instance.heroList[0].loadData(DataManager.Instance.Hero1Data);
+		HeroManager.Instance.heroList[1].loadData(DataManager.Instance.Hero2Data);
+		HeroManager.Instance.heroList[2].loadData(DataManager.Instance.Hero3Data);
+		HeroManager.Instance.heroList[3].loadData(DataManager.Instance.Hero4Data);
+		HeroManager.Instance.heroList[4].loadData(DataManager.Instance.Hero5Data);
+		HeroManager.Instance.heroList[5].loadData(DataManager.Instance.Hero6Data);
+		HeroManager.Instance.heroList[6].loadData(DataManager.Instance.Hero7Data);
+		HeroManager.Instance.heroList[7].loadData(DataManager.Instance.Hero8Data);
+		HeroManager.Instance.heroList[8].loadData(DataManager.Instance.Hero9Data);
+		HeroManager.Instance.heroList[9].loadData(DataManager.Instance.Hero10Data);
+		HeroManager.Instance.heroList[10].loadData(DataManager.Instance.Hero11Data);
+		HeroManager.Instance.heroList[11].loadData(DataManager.Instance.Hero12Data);
+		HeroManager.Instance.heroList[12].loadData(DataManager.Instance.Hero13Data);
+		HeroManager.Instance.heroList[13].loadData(DataManager.Instance.Hero14Data);
+		HeroManager.Instance.heroList[14].loadData(DataManager.Instance.Hero15Data);
+		HeroManager.Instance.heroList[15].loadData(DataManager.Instance.Hero16Data);
+		HeroManager.Instance.heroList[16].loadData(DataManager.Instance.Hero17Data);
+		HeroManager.Instance.heroList[17].loadData(DataManager.Instance.Hero18Data);
+		HeroManager.Instance.heroList[18].loadData(DataManager.Instance.Hero19Data);
+		HeroManager.Instance.heroList[19].loadData(DataManager.Instance.Hero20Data);
+		HeroManager.Instance.heroList[20].loadData(DataManager.Instance.Hero21Data);
+		HeroManager.Instance.heroList[21].loadData(DataManager.Instance.Hero22Data);
+		HeroManager.Instance.heroList[22].loadData(DataManager.Instance.Hero23Data);
+		HeroManager.Instance.heroList[23].loadData(DataManager.Instance.Hero24Data);
+		HeroManager.Instance.heroList[24].loadData(DataManager.Instance.Hero25Data);
+		HeroManager.Instance.heroList[25].loadData(DataManager.Instance.Hero26Data);
+		HeroManager.Instance.heroList[26].loadData(DataManager.Instance.Hero27Data);
+		HeroManager.Instance.heroList[27].loadData(DataManager.Instance.Hero28Data);
+		HeroManager.Instance.heroList[28].loadData(DataManager.Instance.Hero29Data);
+		HeroManager.Instance.heroList[29].loadData(DataManager.Instance.Hero30Data);
+		HeroManager.Instance.heroList[30].loadData(DataManager.Instance.Hero31Data);
+		HeroManager.Instance.heroList[31].loadData(DataManager.Instance.Hero32Data);
+		HeroManager.Instance.heroList[32].loadData(DataManager.Instance.Hero33Data);
+		HeroManager.Instance.heroList[33].loadData(DataManager.Instance.Hero34Data);
+		HeroManager.Instance.heroList[34].loadData(DataManager.Instance.Hero35Data);
+		if (GameManager.Instance.statTimePlayed < 30)
+		{
+			GameManager.Instance.statTimePlayed = (int)AchievementManager.Instance.listAch[0].currAmt;
+		}
+		if (GameManager.Instance.iap3xBlueprintBonusDouble == 0.0)
+		{
+			GameManager.Instance.iap3xBlueprintBonusDouble = (double)GameManager.Instance.iap3xBlueprintBonus * (double)GameManager.Instance.iap3xBlueprintBonus2;
+		}
+		if (GameManager.Instance.iap3xBlueprintBonusDouble < 1.0)
+		{
+			GameManager.Instance.iap3xBlueprintBonusDouble = 1.0;
+		}
+		GameManager.Instance.checkQuestStatus();
+		GameManager.Instance.checkMissionStatus();
+		UIManager.Instance.saveIsLoaded = true;
+		MusicManager.Instance.playMusic();
+		if (Application.platform == RuntimePlatform.WebGLPlayer && LoginManager.Instance.PlayerLoggedIntoKongregate)
+		{
+			UnityEngine.Debug.Log("init kong stats");
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"initialized",
+				1
+			});
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Highest Wave",
+				GameManager.Instance.statHighestWave
+			});
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Total Score",
+				GameManager.Instance.statTotalScore
+			});
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Enemies Killed",
+				GameManager.Instance.statEnemiesKilled
+			});
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Total Waves",
+				GameManager.Instance.statTotalWaves
+			});
+			Application.ExternalCall("kongregate.stats.submit", new object[]
+			{
+				"Total Prestiges",
+				GameManager.Instance.statPrestiges
+			});
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	public static SceneLoadManager Instance;
+}

@@ -1,0 +1,66 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class CommanderMenu : MonoBehaviour
+{
+	private void Start()
+	{
+		this.expSlider.minValue = 0f;
+		this.expSlider.maxValue = 1f;
+		this.updatePanel();
+	}
+
+	private void OnEnable()
+	{
+		if (GameManager.Instance != null)
+		{
+			this.updatePanel();
+		}
+	}
+
+	public void clickedThis()
+	{
+		UIManager.Instance.blackbg.SetActive(true);
+		UIManager.Instance.updateCommPanel.SetActive(true);
+		UIManager.Instance.commNotifIcon.SetActive(false);
+	}
+
+	public void updatePanel()
+	{
+		this.commIcon.sprite = UIManager.Instance.commIcons[GameManager.Instance.commIcon];
+		this.commName.text = UIManager.Instance.commIconNames[GameManager.Instance.commIcon] + " " + GameManager.Instance.commName;
+		this.expSlider.value = (float)(GameManager.Instance.commCurrExp - GameManager.Instance.commLastExp) / (float)(GameManager.Instance.commNextExp - GameManager.Instance.commLastExp);
+		if (this.expSlider.value >= 1f)
+		{
+			this.expSlider.value = 1f;
+		}
+		this.commLvl.text = GameManager.Instance.commLevel.ToString();
+		this.savedExp = GameManager.Instance.commCurrExp;
+		this.savedIcon = GameManager.Instance.commIcon;
+		this.savedName = GameManager.Instance.commName;
+	}
+
+	private void Update()
+	{
+		if (this.savedExp != GameManager.Instance.commCurrExp || this.savedIcon != GameManager.Instance.commIcon || this.savedName != GameManager.Instance.commName)
+		{
+			this.updatePanel();
+		}
+	}
+
+	public Image commIcon;
+
+	public Text commName;
+
+	public Slider expSlider;
+
+	public Text commLvl;
+
+	private int savedExp;
+
+	private int savedIcon;
+
+	private string savedName;
+}

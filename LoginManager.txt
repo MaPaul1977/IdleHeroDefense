@@ -1,0 +1,390 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using PlayFab;
+using PlayFab.ClientModels;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+[Serializable]
+public class LoginManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		if (LoginManager.Instance == null)
+		{
+			LoginManager.Instance = this;
+		}
+		else if (LoginManager.Instance != this)
+		{
+			UnityEngine.Object.Destroy(base.gameObject);
+			return;
+		}
+		UnityEngine.Object.DontDestroyOnLoad(base.gameObject);
+		base.gameObject.name = "LoginManager";
+	}
+
+	private void Start()
+	{
+		string @string = PlayerPrefs.GetString("AcceptedPolicies", string.Empty);
+		if (@string == "X" || Application.platform == RuntimePlatform.WebGLPlayer)
+		{
+			this.startLoginStuff();
+		}
+		else
+		{
+			this.blackBg.SetActive(true);
+			this.dataGDPRPanel.SetActive(true);
+		}
+	}
+
+	public void clickedViewEULA()
+	{
+		Application.OpenURL("https://www.ironhorsegames.org/eula");
+	}
+
+	public void clickedViewPolicies()
+	{
+		Application.OpenURL("https://www.ironhorsegames.org/privacy-policy");
+	}
+
+	public void clickedAgreeCheckbox()
+	{
+		if (!this.checkImage.activeSelf)
+		{
+			this.checkImage.SetActive(true);
+			this.agreeButtonNo.SetActive(false);
+		}
+		else
+		{
+			this.checkImage.SetActive(false);
+			this.agreeButtonNo.SetActive(true);
+		}
+	}
+
+	public void clickedPoliciesAgree()
+	{
+		PlayerPrefs.SetString("AcceptedPolicies", "X");
+		this.blackBg.SetActive(false);
+		this.dataGDPRPanel.SetActive(false);
+		this.startLoginStuff();
+	}
+
+	public void startLoginStuff()
+	{
+		UnityEngine.Debug.Log("init login object");
+		IntroManager.Instance.loadingText.text = "Retrieving User Data...";
+		this.playFabUsername = PlayerPrefs.GetString("Username");
+		this.playFabPassword = PlayerPrefs.GetString("Password");
+		if (Application.platform != RuntimePlatform.IPhonePlayer)
+		{
+			if (Application.platform == RuntimePlatform.Android)
+			{
+				if (this.playFabUsername != string.Empty && this.playFabPassword != string.Empty)
+				{
+					UnityEngine.Debug.Log("logging in with cloud credentials...");
+					PlayFabSettings.TitleId = "ED4A";
+					LoginWithEmailAddressRequest request = new LoginWithEmailAddressRequest
+					{
+						TitleId = "ED4A",
+						Email = this.playFabUsername,
+						Password = this.playFabPassword
+					};
+					PlayFabClientAPI.LoginWithEmailAddress(request, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+				}
+				else
+				{
+					AndroidJavaClass androidJavaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+					AndroidJavaObject @static = androidJavaClass.GetStatic<AndroidJavaObject>("currentActivity");
+					AndroidJavaObject androidJavaObject = @static.Call<AndroidJavaObject>("getContentResolver", new object[0]);
+					AndroidJavaClass androidJavaClass2 = new AndroidJavaClass("android.provider.Settings$Secure");
+					string androidDeviceId = androidJavaClass2.CallStatic<string>("getString", new object[]
+					{
+						androidJavaObject,
+						"android_id"
+					});
+					UnityEngine.Debug.Log("logging in anonymously...");
+					PlayFabSettings.TitleId = "ED4A";
+					LoginWithAndroidDeviceIDRequest request2 = new LoginWithAndroidDeviceIDRequest
+					{
+						TitleId = "ED4A",
+						AndroidDeviceId = androidDeviceId,
+						CreateAccount = new bool?(true)
+					};
+					PlayFabClientAPI.LoginWithAndroidDeviceID(request2, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+				}
+			}
+			else if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				UnityEngine.Debug.Log("playing on Kong");
+				if (!this.APIInitialized)
+				{
+					this.initKongAPI();
+				}
+			}
+			else if (this.playFabUsername != string.Empty && this.playFabPassword != string.Empty)
+			{
+				UnityEngine.Debug.Log("logging in with cloud credentials...");
+				PlayFabSettings.TitleId = "ED4A";
+				LoginWithEmailAddressRequest request3 = new LoginWithEmailAddressRequest
+				{
+					TitleId = "ED4A",
+					Email = this.playFabUsername,
+					Password = this.playFabPassword
+				};
+				PlayFabClientAPI.LoginWithEmailAddress(request3, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+			}
+			else
+			{
+				UnityEngine.Debug.Log("logging in anonymously...");
+				PlayFabSettings.TitleId = "ED4A";
+				LoginWithEmailAddressRequest request4 = new LoginWithEmailAddressRequest
+				{
+					TitleId = "ED4A",
+					Email = "editor@test.com",
+					Password = "q12345"
+				};
+				PlayFabClientAPI.LoginWithEmailAddress(request4, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+			}
+		}
+	}
+
+	public void initKongAPI()
+	{
+		UnityEngine.Debug.Log("try init API");
+		Application.ExternalEval("\n\t\t\tif(typeof(kongregateUnitySupport) != 'undefined'){\n        \t\tkongregateUnitySupport.initAPI('LoginManager', 'OnKongregateAPILoaded');\n      \t\t}else{\n\t\t\t\tconsole.log('kongregateUnitySupport undefined');\n\t\t\t}");
+	}
+
+	public void OnKongregateAPILoaded(string userInfoString)
+	{
+		this.APIInitialized = true;
+		UnityEngine.Debug.Log("Kongregate API loaded");
+		Application.ExternalEval("\n            console.log('adding login handler');\n            kongregate.services.addEventListener('login', function(){\n                var unityObject = kongregateUnitySupport.getUnityObject();\n                var services = kongregate.services;\n                var params=[services.getUserId(), services.getUsername(),\n                services.getGameAuthToken()].join('|');\n                unityObject.SendMessage('LoginManager', 'OnKongregateUserInfo', params);\n            });\n        ");
+		this.OnKongregateUserInfo(userInfoString);
+	}
+
+	public void OnKongregateUserInfo(string userInfoString)
+	{
+		string[] array = userInfoString.Split(new char[]
+		{
+			'|'
+		});
+		this.KongregateUserId = array[0];
+		this.KongregateUsername = array[1];
+		this.AuthToken = array[2];
+		if (this.KongregateUsername == "Guest" || this.KongregateUserId == "0")
+		{
+			UnityEngine.Debug.Log("playing as guest");
+			this.blackBg.SetActive(true);
+			this.kongGuestPanel.SetActive(true);
+		}
+		else
+		{
+			UnityEngine.Debug.Log("signed in to Kong");
+			this.blackBg.SetActive(false);
+			this.kongGuestPanel.SetActive(false);
+			this.PlayerLoggedIntoKongregate = true;
+			PlayFabSettings.TitleId = "714C";
+			LoginWithKongregateRequest request = new LoginWithKongregateRequest
+			{
+				TitleId = "714C",
+				KongregateId = this.KongregateUserId,
+				AuthTicket = this.AuthToken,
+				CreateAccount = new bool?(true)
+			};
+			PlayFabClientAPI.LoginWithKongregate(request, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+		}
+	}
+
+	public void tryLogInPlayFab()
+	{
+		UnityEngine.Debug.Log("trying to log into playfab...");
+		this.playFabUsername = PlayerPrefs.GetString("Username");
+		this.playFabPassword = PlayerPrefs.GetString("Password");
+		if (Application.platform != RuntimePlatform.IPhonePlayer)
+		{
+			if (Application.platform == RuntimePlatform.Android)
+			{
+				if (this.playFabUsername != string.Empty && this.playFabPassword != string.Empty)
+				{
+					UnityEngine.Debug.Log("logging in with cloud credentials...");
+					PlayFabSettings.TitleId = "ED4A";
+					LoginWithEmailAddressRequest request = new LoginWithEmailAddressRequest
+					{
+						TitleId = "ED4A",
+						Email = this.playFabUsername,
+						Password = this.playFabPassword
+					};
+					PlayFabClientAPI.LoginWithEmailAddress(request, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+				}
+				else
+				{
+					AndroidJavaClass androidJavaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+					AndroidJavaObject @static = androidJavaClass.GetStatic<AndroidJavaObject>("currentActivity");
+					AndroidJavaObject androidJavaObject = @static.Call<AndroidJavaObject>("getContentResolver", new object[0]);
+					AndroidJavaClass androidJavaClass2 = new AndroidJavaClass("android.provider.Settings$Secure");
+					string androidDeviceId = androidJavaClass2.CallStatic<string>("getString", new object[]
+					{
+						androidJavaObject,
+						"android_id"
+					});
+					UnityEngine.Debug.Log("logging in anonymously...");
+					PlayFabSettings.TitleId = "ED4A";
+					LoginWithAndroidDeviceIDRequest request2 = new LoginWithAndroidDeviceIDRequest
+					{
+						TitleId = "ED4A",
+						AndroidDeviceId = androidDeviceId,
+						CreateAccount = new bool?(true)
+					};
+					PlayFabClientAPI.LoginWithAndroidDeviceID(request2, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+				}
+			}
+			else if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				UnityEngine.Debug.Log("playing on Kong");
+				PlayFabSettings.TitleId = "714C";
+				LoginWithKongregateRequest request3 = new LoginWithKongregateRequest
+				{
+					TitleId = "714C",
+					KongregateId = this.KongregateUserId,
+					AuthTicket = this.AuthToken,
+					CreateAccount = new bool?(true)
+				};
+				PlayFabClientAPI.LoginWithKongregate(request3, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+			}
+			else if (this.playFabUsername != string.Empty && this.playFabPassword != string.Empty)
+			{
+				UnityEngine.Debug.Log("logging in with cloud credentials...");
+				PlayFabSettings.TitleId = "ED4A";
+				LoginWithEmailAddressRequest request4 = new LoginWithEmailAddressRequest
+				{
+					TitleId = "ED4A",
+					Email = this.playFabUsername,
+					Password = this.playFabPassword
+				};
+				PlayFabClientAPI.LoginWithEmailAddress(request4, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+			}
+			else
+			{
+				UnityEngine.Debug.Log("logging in anonymously...");
+				PlayFabSettings.TitleId = "ED4A";
+				LoginWithEmailAddressRequest request5 = new LoginWithEmailAddressRequest
+				{
+					TitleId = "ED4A",
+					Email = "editor@test2.com",
+					Password = "q12345"
+				};
+				PlayFabClientAPI.LoginWithEmailAddress(request5, new Action<LoginResult>(this.OnLoginSuccess), new Action<PlayFabError>(this.OnLoginFailure), null, null);
+			}
+		}
+	}
+
+	private void OnLoginSuccess(LoginResult result)
+	{
+		UnityEngine.Debug.Log("logged into playfab");
+		this.isConnectedPlayfab = true;
+		this.playFabID = result.PlayFabId;
+		if (result.NewlyCreated)
+		{
+			this.newAccount = true;
+			if (this.PlayerLoggedIntoKongregate)
+			{
+				DataManager.Instance.updatePlayfabDisplayName(this.KongregateUsername);
+			}
+			else
+			{
+				DataManager.Instance.updatePlayfabDisplayName("Nobody");
+			}
+		}
+		if (this.playFabUsername != string.Empty && this.playFabPassword != string.Empty)
+		{
+			this.isLoggedInCloud = true;
+		}
+		if (SceneManager.GetActiveScene().name == "IntroScene")
+		{
+			IntroManager.Instance.startLoading();
+		}
+		else if (GameManager.Instance != null)
+		{
+			PlayFabClientAPI.GetTime(new GetTimeRequest(), delegate(GetTimeResult result2)
+			{
+				GameManager.Instance.currServerTime = result2.Time;
+				UnityEngine.Debug.Log("successfulled check server stuff... server time: " + GameManager.Instance.currServerTime);
+			}, delegate(PlayFabError error2)
+			{
+			}, null, null);
+		}
+	}
+
+	private void OnLoginFailure(PlayFabError error)
+	{
+		UnityEngine.Debug.Log("failed to login to playfab");
+		this.isConnectedPlayfab = false;
+		this.isLoggedInCloud = false;
+		if (SceneManager.GetActiveScene().name == "IntroScene")
+		{
+			if (Application.platform == RuntimePlatform.IPhonePlayer)
+			{
+				IntroManager.Instance.startLoading();
+			}
+			else if (Application.platform == RuntimePlatform.Android)
+			{
+				IntroManager.Instance.startLoading();
+			}
+			else if (Application.platform == RuntimePlatform.WebGLPlayer)
+			{
+				this.blackBg.SetActive(true);
+				this.playfabPanel.SetActive(true);
+			}
+			else
+			{
+				IntroManager.Instance.startLoading();
+			}
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	public static LoginManager Instance;
+
+	public string AuthToken;
+
+	public string KongregateUserId = "0";
+
+	public string KongregateUsername;
+
+	public bool APIInitialized;
+
+	public bool PlayerLoggedIntoKongregate;
+
+	private const string GUEST_KONGREGATE_ID = "0";
+
+	private const string GUEST_KONGREGATE_USERNAME = "Guest";
+
+	public string playFabID = "no";
+
+	public bool isConnectedPlayfab;
+
+	public bool newAccount;
+
+	public bool isLoggedInCloud;
+
+	public string playFabUsername = string.Empty;
+
+	public string playFabPassword = string.Empty;
+
+	public bool gameIsLoaded;
+
+	public GameObject blackBg;
+
+	public GameObject kongGuestPanel;
+
+	public GameObject playfabPanel;
+
+	public GameObject dataGDPRPanel;
+
+	public GameObject checkImage;
+
+	public GameObject agreeButtonNo;
+}

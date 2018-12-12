@@ -1,0 +1,146 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class SpecialtyCell : MonoBehaviour
+{
+	private void Start()
+	{
+		this.updateCell();
+	}
+
+	private void OnEnable()
+	{
+		this.updateCell();
+	}
+
+	public void updateCell()
+	{
+		this.nameText.text = UIManager.Instance.listCommNames[this.specialtyNum];
+		this.iconImage.sprite = UIManager.Instance.listCommIcons[this.specialtyNum];
+		this.reqLvlText.text = "Lvl " + this.reqLvl + "\nReq.";
+		if (GameManager.Instance.commLevel >= this.reqLvl)
+		{
+			this.buttonGo.SetActive(true);
+		}
+		else
+		{
+			this.buttonGo.SetActive(false);
+		}
+		if (this.specialtyNum == 21)
+		{
+			this.iapButtonMobile.SetActive(false);
+			this.iapButtonKong.SetActive(false);
+			if (!GameManager.Instance.iapCommClass1)
+			{
+				this.buttonGo.SetActive(false);
+				if (Application.platform != RuntimePlatform.WebGLPlayer)
+				{
+					this.iapButtonMobile.SetActive(true);
+				}
+				else
+				{
+					this.iapButtonKong.SetActive(true);
+				}
+			}
+			else
+			{
+				this.buttonGo.SetActive(true);
+			}
+		}
+		if (this.specialtyNum == 22)
+		{
+			this.iapButtonMobile.SetActive(false);
+			this.iapButtonKong.SetActive(false);
+			if (!GameManager.Instance.iapCommClass2)
+			{
+				this.buttonGo.SetActive(false);
+				if (Application.platform != RuntimePlatform.WebGLPlayer)
+				{
+					this.iapButtonMobile.SetActive(true);
+				}
+				else
+				{
+					this.iapButtonKong.SetActive(true);
+				}
+			}
+			else
+			{
+				this.buttonGo.SetActive(true);
+			}
+		}
+		if (this.specialtyNum == 23)
+		{
+			this.iapButtonMobile.SetActive(false);
+			this.iapButtonKong.SetActive(false);
+			if (!GameManager.Instance.iapCommClass3)
+			{
+				this.buttonGo.SetActive(false);
+				if (Application.platform != RuntimePlatform.WebGLPlayer)
+				{
+					this.iapButtonMobile.SetActive(true);
+				}
+				else
+				{
+					this.iapButtonKong.SetActive(true);
+				}
+			}
+			else
+			{
+				this.buttonGo.SetActive(true);
+			}
+		}
+		if (GameManager.Instance.commIcon == this.specialtyNum)
+		{
+			this.buttonCheck.SetActive(true);
+			RectTransform component = base.gameObject.GetComponent<RectTransform>();
+			RectTransform component2 = CommUpdateMenu.Instance.selectedCellBg.GetComponent<RectTransform>();
+			component2.anchoredPosition = new Vector2(component2.anchoredPosition.x, component.anchoredPosition.y + 2f);
+		}
+		else
+		{
+			this.buttonCheck.SetActive(false);
+		}
+		this.savedExp = GameManager.Instance.commCurrExp;
+		this.savedIcon = GameManager.Instance.commIcon;
+	}
+
+	public void clickedButton()
+	{
+		GameManager.Instance.commIcon = this.specialtyNum;
+		this.updateCell();
+	}
+
+	private void Update()
+	{
+		if (GameManager.Instance.commCurrExp != this.savedExp || GameManager.Instance.commIcon != this.savedIcon)
+		{
+			this.updateCell();
+		}
+	}
+
+	[Header("Manually Set")]
+	public int specialtyNum;
+
+	public int reqLvl;
+
+	[Header("Automatically Set")]
+	public Text nameText;
+
+	public Image iconImage;
+
+	public Text reqLvlText;
+
+	public GameObject buttonGo;
+
+	public GameObject buttonCheck;
+
+	public GameObject iapButtonMobile;
+
+	public GameObject iapButtonKong;
+
+	private int savedExp;
+
+	private int savedIcon;
+}

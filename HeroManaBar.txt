@@ -1,0 +1,48 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HeroManaBar : MonoBehaviour
+{
+	private void Start()
+	{
+		base.GetComponent<Slider>().minValue = 0f;
+		base.GetComponent<Slider>().maxValue = 1f;
+	}
+
+	private void Update()
+	{
+		if (this.thisHero.isActiveHero)
+		{
+			this.needToMoveBarWhenDeactive = true;
+			if (this.thisHero.currHp <= 0.0)
+			{
+				this.waitToDelete += Time.deltaTime;
+				if (this.waitToDelete >= 1.5f)
+				{
+					base.gameObject.SetActive(false);
+				}
+			}
+			float num = (float)this.thisHero.currMana / (float)this.thisHero.getActMaxMana();
+			if (num <= 0f)
+			{
+				num = 0f;
+			}
+			base.GetComponent<Slider>().value = num;
+			UtilityMethods.MoveUiElementToWorldPosition(base.GetComponent<RectTransform>(), this.thisHero.transform.position + new Vector3(0f, 1.275f, 0f));
+		}
+		else if (this.needToMoveBarWhenDeactive)
+		{
+			UtilityMethods.MoveUiElementToWorldPosition(base.GetComponent<RectTransform>(), this.thisHero.transform.position + new Vector3(0f, 1.275f, 0f));
+			this.needToMoveBarWhenDeactive = false;
+		}
+	}
+
+	[Header("Automatically Set Attributes")]
+	public Hero thisHero;
+
+	private float waitToDelete;
+
+	private bool needToMoveBarWhenDeactive;
+}

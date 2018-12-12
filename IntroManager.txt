@@ -1,0 +1,55 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class IntroManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		IntroManager.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	public void startLoading()
+	{
+		DataManager.Instance.loadData();
+	}
+
+	public void startLoadingScene()
+	{
+		LoginManager.Instance.gameIsLoaded = true;
+		base.StartCoroutine(this.AsynchronousLoad("GameScene"));
+	}
+
+	private IEnumerator AsynchronousLoad(string scene)
+	{
+		yield return null;
+		AsyncOperation ao = SceneManager.LoadSceneAsync(scene);
+		ao.allowSceneActivation = false;
+		while (!ao.isDone)
+		{
+			float progress = Mathf.Clamp01(ao.progress / 0.9f);
+			this.loadingText.text = "Loading Game... " + (progress * 100f).ToString("f0") + "%";
+			this.progressBar.value = progress;
+			if (ao.progress == 0.9f)
+			{
+				this.progressBar.value = 1f;
+				ao.allowSceneActivation = true;
+			}
+			yield return null;
+		}
+		yield break;
+	}
+
+	public static IntroManager Instance;
+
+	public Text loadingText;
+
+	public Slider progressBar;
+}

@@ -1,0 +1,72 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class MusicManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		MusicManager.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	public void playMusic()
+	{
+		base.GetComponent<AudioSource>().Stop();
+		if (GameManager.Instance.settingsBgMusic)
+		{
+			this.PlaySoundWithCallback(this.listMusic[GameManager.Instance.settingsOnSongNum], new MusicManager.AudioCallback(this.AudioFinished));
+			this.songNameText.text = "Currently playing:\n" + this.listNames[GameManager.Instance.settingsOnSongNum];
+		}
+	}
+
+	public void getNextSong()
+	{
+		GameManager.Instance.settingsOnSongNum = UnityEngine.Random.Range(0, this.listMusic.Count);
+	}
+
+	public void PlaySoundWithCallback(AudioClip clip, MusicManager.AudioCallback callback)
+	{
+		if (this.co != null)
+		{
+			base.StopCoroutine(this.co);
+		}
+		base.GetComponent<AudioSource>().PlayOneShot(clip, 0.75f);
+		this.co = base.StartCoroutine(this.DelayedCallback(clip.length, callback));
+	}
+
+	private IEnumerator DelayedCallback(float time, MusicManager.AudioCallback callback)
+	{
+		yield return new WaitForSeconds(time);
+		callback();
+		yield break;
+	}
+
+	private void AudioFinished()
+	{
+		this.getNextSong();
+		this.playMusic();
+	}
+
+	private void Update()
+	{
+	}
+
+	public static MusicManager Instance;
+
+	public List<AudioClip> listMusic;
+
+	public List<string> listNames;
+
+	public Text songNameText;
+
+	private Coroutine co;
+
+	public delegate void AudioCallback();
+}

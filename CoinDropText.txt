@@ -1,0 +1,29 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+
+public class CoinDropText : MonoBehaviour
+{
+	private void Start()
+	{
+	}
+
+	private void Update()
+	{
+		this.moveAmt += this.moveSpeed * Time.deltaTime;
+		base.transform.position += new Vector3(0f, this.moveAmt * 2f, 0f);
+		this.spawnCounter += Time.deltaTime;
+		if (this.spawnCounter >= 1f)
+		{
+			this.moveAmt = 0f;
+			this.spawnCounter = 0f;
+			base.gameObject.SetActive(false);
+		}
+	}
+
+	private float spawnCounter;
+
+	private float moveSpeed = 1f;
+
+	private float moveAmt;
+}

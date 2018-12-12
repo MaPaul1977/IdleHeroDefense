@@ -1,0 +1,96 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class EnemyOverviewMenu : MonoBehaviour
+{
+	private void Awake()
+	{
+		EnemyOverviewMenu.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	private void OnEnable()
+	{
+	}
+
+	public void updAggHp()
+	{
+	}
+
+	public void clickedFarmButton()
+	{
+		if (GameManager.Instance.isFarmingWave)
+		{
+			GameManager.Instance.isFarmingWave = false;
+		}
+		else
+		{
+			GameManager.Instance.isFarmingWave = true;
+		}
+	}
+
+	private void Update()
+	{
+		if (TheUnderground.Instance.playingMiniGame)
+		{
+			this.waveNum.text = "Wave " + TheUnderground.Instance.onWaveNum;
+			this.waveDesc.text = "Evil Monsters!";
+		}
+		else if (PirateRaid.Instance.playingMiniGame)
+		{
+			this.waveNum.text = "Wave " + PirateRaid.Instance.onWaveNum;
+			this.waveDesc.text = "Pirates!";
+		}
+		else
+		{
+			this.waveNum.text = "Wave " + GameManager.Instance.enemyWaveNum;
+			if (EnemyManager.Instance.enemyList.Count > 0)
+			{
+				Enemy enemy = EnemyManager.Instance.enemyList[0];
+				if (!enemy.isBoss)
+				{
+					this.waveDesc.text = EnemyManager.Instance.enemyList.Count + "/10";
+				}
+				else
+				{
+					this.waveDesc.text = "BOSS";
+				}
+			}
+		}
+		if (EnemyManager.Instance.enemyList.Count > 0)
+		{
+			Enemy enemy2 = EnemyManager.Instance.enemyList[0];
+			if (!enemy2.isBoss && !TheUnderground.Instance.playingMiniGame && !PirateRaid.Instance.playingMiniGame)
+			{
+				this.dpsText.text = UIManager.Instance.convertNumberFormat(GameManager.Instance.getActEnemyDps(false).ToString("0"));
+				this.hpText.text = UIManager.Instance.convertNumberFormat(GameManager.Instance.getActEnemyHp(false).ToString("0"));
+			}
+			else
+			{
+				this.dpsText.text = UIManager.Instance.convertNumberFormat(enemy2.dps.ToString("0"));
+				this.hpText.text = UIManager.Instance.convertNumberFormat(enemy2.maxHp.ToString("0"));
+			}
+		}
+	}
+
+	public static EnemyOverviewMenu Instance;
+
+	public Text waveNum;
+
+	public Text waveDesc;
+
+	public Slider hpSlider;
+
+	public Text dpsText;
+
+	public Text hpText;
+
+	public GameObject farmCheck;
+
+	private double savedMaxHp;
+}

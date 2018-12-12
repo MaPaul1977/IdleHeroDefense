@@ -1,0 +1,45 @@
+// dnSpy decompiler from Assembly-CSharp.dll
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AchievementManager : MonoBehaviour
+{
+	private void Awake()
+	{
+		AchievementManager.Instance = this;
+	}
+
+	private void Start()
+	{
+	}
+
+	public void checkIfAchComplete(int achNum)
+	{
+		bool flag = false;
+		for (int i = 0; i < this.listAch.Count; i++)
+		{
+			Achievement achievement = this.listAch[i];
+			if (achievement.level < 10 && achievement.currAmt >= achievement.nextAmt)
+			{
+				flag = true;
+			}
+		}
+		if (flag)
+		{
+			UIManager.Instance.notifIconAchievements.SetActive(true);
+		}
+		else
+		{
+			UIManager.Instance.notifIconAchievements.SetActive(false);
+		}
+	}
+
+	private void Update()
+	{
+	}
+
+	public static AchievementManager Instance;
+
+	public List<Achievement> listAch;
+}
